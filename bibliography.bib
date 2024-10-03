@@ -1,0 +1,207 @@
+
+@article{callahan_dada2_2016,
+  title      = {{DADA2}: {High}-resolution sample inference from {Illumina} amplicon data},
+  volume     = {13},
+  copyright  = {© 2016 Nature Publishing Group, a division of Macmillan Publishers Limited. All Rights Reserved.},
+  issn       = {1548-7091, 1548-7105},
+  shorttitle = {{DADA2}},
+  url        = {http://www.nature.com/articles/nmeth.3869},
+  doi        = {10.1038/nmeth.3869},
+  abstract   = {We present the open-source software package DADA2 for modeling and correcting Illumina-sequenced amplicon errors (https://github.com/benjjneb/dada2). DADA2 infers sample sequences exactly and resolves differences of as little as 1 nucleotide. In several mock communities, DADA2 identified more real variants and output fewer spurious sequences than other methods. We applied DADA2 to vaginal samples from a cohort of pregnant women, revealing a diversity of previously undetected Lactobacillus crispatus variants.},
+  language   = {en},
+  number     = {7},
+  urldate    = {2023-03-28},
+  journal    = {Nature Methods},
+  author     = {Callahan, Benjamin J and McMurdie, Paul J and Rosen, Michael J and Han, Andrew W and Johnson, Amy Jo A and Holmes, Susan P},
+  month      = jul,
+  year       = {2016},
+  note       = {bibtex: callahan\_2016},
+  keywords   = {Metagenomics, Software, Statistical methods, molecular tools, description\_pipeline\_mycea},
+  pages      = {581--583},
+  file       = {Callahan et al. - 2016 - DADA2 High-resolution sample inference from Illum.pdf:/home/adrien/Nextcloud/Zotero/storage/ZX7S6QZM/Callahan et al. - 2016 - DADA2 High-resolution sample inference from Illum.pdf:application/pdf}
+}
+
+@article{mcmurdie_phyloseq_2013,
+  title      = {phyloseq: {An} {R} {Package} for {Reproducible} {Interactive} {Analysis} and {Graphics} of {Microbiome} {Census} {Data}},
+  volume     = {8},
+  issn       = {1932-6203},
+  shorttitle = {phyloseq},
+  url        = {https://dx.plos.org/10.1371/journal.pone.0061217},
+  doi        = {10.1371/journal.pone.0061217},
+  abstract   = {Background: The analysis of microbial communities through DNA sequencing brings many challenges: the integration of different types of data with methods from ecology, genetics, phylogenetics, multivariate statistics, visualization and testing. With the increased breadth of experimental designs now being pursued, project-specific statistical analyses are often needed, and these analyses are often difficult (or impossible) for peer researchers to independently reproduce. The vast majority of the requisite tools for performing these analyses reproducibly are already implemented in R and its extensions (packages), but with limited support for high throughput microbiome census data.
+                Results: Here we describe a software project, phyloseq, dedicated to the object-oriented representation and analysis of microbiome census data in R. It supports importing data from a variety of common formats, as well as many analysis techniques. These include calibration, filtering, subsetting, agglomeration, multi-table comparisons, diversity analysis, parallelized Fast UniFrac, ordination methods, and production of publication-quality graphics; all in a manner that is easy to document, share, and modify. We show how to apply functions from other R packages to phyloseq-represented data, illustrating the availability of a large number of open source analysis techniques. We discuss the use of phyloseq with tools for reproducible research, a practice common in other fields but still rare in the analysis of highly parallel microbiome census data. We have made available all of the materials necessary to completely reproduce the analysis and figures included in this article, an example of best practices for reproducible research.
+                Conclusions: The phyloseq project for R is a new open-source software package, freely available on the web from both GitHub and Bioconductor.},
+  language   = {en},
+  number     = {4},
+  urldate    = {2023-03-28},
+  journal    = {PLoS ONE},
+  author     = {McMurdie, Paul J. and Holmes, Susan},
+  editor     = {Watson, Michael},
+  month      = apr,
+  year       = {2013},
+  note       = {bibtex: mcmurdie\_2013},
+  keywords   = {ENDO, description\_pipeline\_mycea},
+  pages      = {e61217},
+  file       = {McMurdie et Holmes - 2013 - phyloseq An R Package for Reproducible Interactiv.pdf:/home/adrien/Nextcloud/Zotero/storage/79XZLTSZ/McMurdie et Holmes - 2013 - phyloseq An R Package for Reproducible Interactiv.pdf:application/pdf}
+}
+
+@article{mcmurdie_waste_2014,
+  title      = {Waste {Not}, {Want} {Not}: {Why} {Rarefying} {Microbiome} {Data} {Is} {Inadmissible}},
+  volume     = {10},
+  issn       = {1553-7358},
+  shorttitle = {Waste {Not}, {Want} {Not}},
+  url        = {https://dx.plos.org/10.1371/journal.pcbi.1003531},
+  doi        = {10.1371/journal.pcbi.1003531},
+  abstract   = {Current practice in the normalization of microbiome count data is inefficient in the statistical sense. For apparently historical reasons, the common approach is either to use simple proportions (which does not address heteroscedasticity) or to use rarefying of counts, even though both of these approaches are inappropriate for detection of differentially abundant species. Well-established statistical theory is available that simultaneously accounts for library size differences and biological variability using an appropriate mixture model. Moreover, specific implementations for DNA sequencing read count data (based on a Negative Binomial model for instance) are already available in RNA-Seq focused R packages such as edgeR and DESeq. Here we summarize the supporting statistical theory and use simulations and empirical data to demonstrate substantial improvements provided by a relevant mixture model framework over simple proportions or rarefying. We show how both proportions and rarefied counts result in a high rate of false positives in tests for species that are differentially abundant across sample classes. Regarding microbiome sample-wise clustering, we also show that the rarefying procedure often discards samples that can be accurately clustered by alternative methods. We further compare different Negative Binomial methods with a recently-described zero-inflated Gaussian mixture, implemented in a package called metagenomeSeq. We find that metagenomeSeq performs well when there is an adequate number of biological replicates, but it nevertheless tends toward a higher false positive rate. Based on these results and well-established statistical theory, we advocate that investigators avoid rarefying altogether. We have provided microbiome-specific extensions to these tools in the R package, phyloseq.},
+  language   = {en},
+  number     = {4},
+  urldate    = {2023-03-28},
+  journal    = {PLoS Computational Biology},
+  author     = {McMurdie, Paul J. and Holmes, Susan},
+  editor     = {McHardy, Alice Carolyn},
+  month      = apr,
+  year       = {2014},
+  note       = {bibtex: mcmurdie\_2014},
+  keywords   = {STATS, microbio/eco, molecular, description\_pipeline\_mycea},
+  pages      = {e1003531},
+  file       = {McMurdie et Holmes - 2014 - Waste Not, Want Not Why Rarefying Microbiome Data.pdf:/home/adrien/Nextcloud/Zotero/storage/2Z6UQ73G/McMurdie et Holmes - 2014 - Waste Not, Want Not Why Rarefying Microbiome Data.pdf:application/pdf}
+}
+
+@article{pauvert_bioinformatics_2019,
+  title      = {Bioinformatics matters: {The} accuracy of plant and soil fungal community data is highly dependent on the metabarcoding pipeline},
+  volume     = {41},
+  issn       = {17545048},
+  shorttitle = {Bioinformatics matters},
+  url        = {https://linkinghub.elsevier.com/retrieve/pii/S1754504818302800},
+  doi        = {10.1016/j.funeco.2019.03.005},
+  abstract   = {Fungal communities associated with plants and soil inﬂuence plant ﬁtness and ecosystem functioning. They are frequently studied by metabarcoding approaches targeting the ribosomal internal transcribed spacer (ITS), but there is no consensus concerning the most appropriate bioinformatic approach for the analysis of these data. We sequenced an artiﬁcial fungal community composed of 189 strains covering a wide range of Ascomycota and Basidiomycota, to compare the performance of 360 software and parameter combinations. The most sensitive approaches, based on the USEARCH and VSEARCH clustering algorithms, detected almost all fungal strains but greatly overestimated the total number of strains. By contrast, approaches using DADA2 to detect amplicon sequence variants were the most effective for recovering the richness and composition of the fungal community. Our results suggest that analyzing single forward (R1) sequences with DADA2 and no ﬁlter other than the removal of low-quality and chimeric sequences is a good option for fungal community characterization.},
+  language   = {en},
+  urldate    = {2023-04-14},
+  journal    = {Fungal Ecology},
+  author     = {Pauvert, Charlie and Buée, Marc and Laval, Valérie and Edel-Hermann, Véronique and Fauchery, Laure and Gautier, Angélique and Lesur, Isabelle and Vallance, Jessica and Vacher, Corinne},
+  month      = oct,
+  year       = {2019},
+  keywords   = {description\_pipeline\_mycea},
+  pages      = {23--33},
+  file       = {Pauvert et al. - 2019 - Bioinformatics matters The accuracy of plant and .pdf:/home/adrien/Nextcloud/Zotero/storage/E35RALW7/Pauvert et al. - 2019 - Bioinformatics matters The accuracy of plant and .pdf:application/pdf}
+}
+
+@article{rognes_vsearch_2016,
+  title      = {{VSEARCH}: a versatile open source tool for metagenomics},
+  volume     = {4},
+  issn       = {2167-8359},
+  shorttitle = {{VSEARCH}},
+  url        = {https://peerj.com/articles/2584},
+  doi        = {10.7717/peerj.2584},
+  abstract   = {Background VSEARCH is an open source and free of charge multithreaded 64-bit tool for processing and preparing metagenomics, genomics and population genomics nucleotide sequence data. It is designed as an alternative to the widely used USEARCH tool (Edgar, 2010) for which the source code is not publicly available, algorithm details are only rudimentarily described, and only a memory-confined 32-bit version is freely available for academic use. Methods When searching nucleotide sequences, VSEARCH uses a fast heuristic based on words shared by the query and target sequences in order to quickly identify similar sequences, a similar strategy is probably used in USEARCH. VSEARCH then performs optimal global sequence alignment of the query against potential target sequences, using full dynamic programming instead of the seed-and-extend heuristic used by USEARCH. Pairwise alignments are computed in parallel using vectorisation and multiple threads. Results VSEARCH includes most commands for analysing nucleotide sequences available in USEARCH version 7 and several of those available in USEARCH version 8, including searching (exact or based on global alignment), clustering by similarity (using length pre-sorting, abundance pre-sorting or a user-defined order), chimera detection (reference-based or de novo), dereplication (full length or prefix), pairwise alignment, reverse complementation, sorting, and subsampling. VSEARCH also includes commands for FASTQ file processing, i.e., format detection, filtering, read quality statistics, and merging of paired reads. Furthermore, VSEARCH extends functionality with several new commands and improvements, including shuffling, rereplication, masking of low-complexity sequences with the well-known DUST algorithm, a choice among different similarity definitions, and FASTQ file format conversion. VSEARCH is here shown to be more accurate than USEARCH when performing searching, clustering, chimera detection and subsampling, while on a par with USEARCH for paired-ends read merging. VSEARCH is slower than USEARCH when performing clustering and chimera detection, but significantly faster when performing paired-end reads merging and dereplication. VSEARCH is available at https://github.com/torognes/vsearch under either the BSD 2-clause license or the GNU General Public License version 3.0. Discussion VSEARCH has been shown to be a fast, accurate and full-fledged alternative to USEARCH. A free and open-source versatile tool for sequence analysis is now available to the metagenomics community.},
+  language   = {en},
+  urldate    = {2023-03-28},
+  journal    = {PeerJ},
+  author     = {Rognes, Torbjørn and Flouri, Tomáš and Nichols, Ben and Quince, Christopher and Mahé, Frédéric},
+  month      = oct,
+  year       = {2016},
+  note       = {bibtex: rognes\_2016},
+  pages      = {e2584},
+  file       = {Rognes et al. - 2016 - VSEARCH a versatile open source tool for metageno.pdf:/home/adrien/Nextcloud/Zotero/storage/J7T4XSZP/Rognes et al. - 2016 - VSEARCH a versatile open source tool for metageno.pdf:application/pdf}
+}
+
+@article{opik_online_2010,
+  title    = {The online database {MaarjAM} reveals global and ecosystemic distribution patterns in arbuscular mycorrhizal fungi ({Glomeromycota})},
+  volume   = {188},
+  issn     = {1469-8137},
+  url      = {http://onlinelibrary.wiley.com.gate1.inist.fr/doi/10.1111/j.1469-8137.2010.03334.x/abstract},
+  doi      = {10.1111/j.1469-8137.2010.03334.x},
+  abstract = {* •Here, we describe a new database, MaarjAM, that summarizes publicly available Glomeromycota DNA sequence data and associated metadata. The goal of the database is to facilitate the description of distribution and richness patterns in this group of fungi.
+              * •Small subunit (SSU) rRNA gene sequences and available metadata were collated from all suitable taxonomic and ecological publications. These data have been made accessible in an open-access database (http://maarjam.botany.ut.ee).
+              * •Two hundred and eighty-two SSU rRNA gene virtual taxa (VT) were described based on a comprehensive phylogenetic analysis of all collated Glomeromycota sequences. Two-thirds of VT showed limited distribution ranges, occurring in single current or historic continents or climatic zones. Those VT that associated with a taxonomically wide range of host plants also tended to have a wide geographical distribution, and vice versa. No relationships were detected between VT richness and latitude, elevation or vascular plant richness.
+              * •The collated Glomeromycota molecular diversity data suggest limited distribution ranges in most Glomeromycota taxa and a positive relationship between the width of a taxon’s geographical range and its host taxonomic range. Inconsistencies between molecular and traditional taxonomy of Glomeromycota, and shortage of data from major continents and ecosystems, are highlighted.},
+  language = {en},
+  number   = {1},
+  urldate  = {2023-03-28},
+  journal  = {New Phytologist},
+  author   = {Öpik, M. and Vanatoa, A. and Vanatoa, E. and Moora, M. and Davison, J. and Kalwij, J. M. and Reier, Ü. and Zobel, M.},
+  month    = oct,
+  year     = {2010},
+  note     = {bibtex: opik\_2010},
+  keywords = {SSU rDNA, arbuscular mycorrhizal (AM) fungi, distribution, diversity, sequence database, global, host range, metadata},
+  pages    = {223--241},
+  file     = {Öpik et al. - 2010 - The online database MaarjAM reveals global and eco.pdf:/home/adrien/Nextcloud/Zotero/storage/R56IZUMC/Öpik et al. - 2010 - The online database MaarjAM reveals global and eco.pdf:application/pdf}
+}
+
+ @article{landau_targets_2021,
+  title   = {The targets R package: a dynamic Make-like function-oriented pipeline toolkit for reproducibility and high-performance computing},
+  author  = {William Michael Landau},
+  journal = {Journal of Open Source Software},
+  year    = {2021},
+  volume  = {6},
+  number  = {57},
+  pages   = {2959},
+  url     = {https://doi.org/10.21105/joss.02959}
+}
+
+  @article{edgar_search_2010,
+  title    = {Search and clustering orders of magnitude faster than {BLAST}},
+  volume   = {26},
+  issn     = {1367-4811, 1367-4803},
+  url      = {https://academic.oup.com/bioinformatics/article/26/19/2460/230188},
+  doi      = {10.1093/bioinformatics/btq461},
+  abstract = {Motivation: Biological sequence data is accumulating rapidly, motivating the development of improved high-throughput methods for sequence classification.
+              Results: UBLAST and USEARCH are new algorithms enabling sensitive local and global search of large sequence databases at exceptionally high speeds. They are often orders of magnitude faster than BLAST in practical applications, though sensitivity to distant protein relationships is lower. UCLUST is a new clustering method that exploits USEARCH to assign sequences to clusters. UCLUST offers several advantages over the widely used program CD-HIT, including higher speed, lower memory use, improved sensitivity, clustering at lower identities and classification of much larger datasets.
+              Availability: Binaries are available at no charge for non-commercial use at http://www.drive5.com/usearch
+              Contact: robert@drive5.com
+              Supplementary information: Supplementary data are available at Bioinformatics online.},
+  language = {en},
+  number   = {19},
+  urldate  = {2023-03-28},
+  journal  = {Bioinformatics},
+  author   = {Edgar, Robert C.},
+  month    = oct,
+  year     = {2010},
+  pmid     = {20709691},
+  note     = {03277
+              bibtex: edgar\_2010},
+  pages    = {2460--2461},
+  file     = {Edgar - 2010 - Search and clustering orders of magnitude faster t.pdf:/home/adrien/Nextcloud/Zotero/storage/TRUNTXHQ/Edgar - 2010 - Search and clustering orders of magnitude faster t.pdf:application/pdf}
+}
+@article{taudiere_miscmetabar_2023,
+  doi       = {10.21105/joss.06038},
+  url       = {https://doi.org/10.21105/joss.06038},
+  year      = {2023},
+  publisher = {The Open Journal},
+  volume    = {8},
+  number    = {92},
+  pages     = {6038},
+  author    = {Adrien Taudière},
+  title     = {MiscMetabar: an R package to facilitate visualization and reproducibility in metabarcoding analysis},
+  journal   = {Journal of Open Source Software}
+}
+
+@article{brandine_falco_2021,
+  author  = { de Sena Brandine, G and Smith, AD},
+  title   = {Falco: high-speed FastQC emulation for quality control of sequencing data [version 2; peer review: 2 approved]
+             },
+  journal = {F1000Research},
+  volume  = {8},
+  year    = {2021},
+  number  = {1874},
+  doi     = {10.12688/f1000research.21142.2}
+}
+
+@article{ewels_multiqc_2016,
+  author   = {Ewels, Philip and Magnusson, Måns and Lundin, Sverker and Käller, Max},
+  title    = {{MultiQC: summarize analysis results for multiple tools and samples in a single report}},
+  journal  = {Bioinformatics},
+  volume   = {32},
+  number   = {19},
+  pages    = {3047-3048},
+  year     = {2016},
+  month    = {06},
+  abstract = {{Motivation: Fast and accurate quality control is essential for studies involving next-generation sequencing data. Whilst numerous tools exist to quantify QC metrics, there is no common approach to flexibly integrate these across tools and large sample sets. Assessing analysis results across an entire project can be time consuming and error prone; batch effects and outlier samples can easily be missed in the early stages of analysis.Results: We present MultiQC, a tool to create a single report visualising output from multiple tools across many samples, enabling global trends and biases to be quickly identified. MultiQC can plot data from many common bioinformatics tools and is built to allow easy extension and customization.Availability and implementation: MultiQC is available with an GNU GPLv3 license on GitHub, the Python Package Index and Bioconda. Documentation and example reports are available at http://multiqc.infoContact:  phil.ewels@scilifelab.se}},
+  issn     = {1367-4803},
+  doi      = {10.1093/bioinformatics/btw354},
+  url      = {https://doi.org/10.1093/bioinformatics/btw354},
+  eprint   = {https://academic.oup.com/bioinformatics/article-pdf/32/19/3047/49021359/bioinformatics\_32\_19\_3047.pdf}
+}
+
+
+
