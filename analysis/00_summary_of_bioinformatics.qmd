@@ -1,0 +1,25 @@
+---
+title: "Bioinformatics pipeline summary"
+format: html
+bibliography: references.bib
+link-citations: true
+---
+
+## 
+
+## 
+
+```{r}
+#< Start information report
+information_report <- list(
+  "platform_info" = sessioninfo::platform_info(),
+  "external_info" = sessioninfo::external_info(),
+  "session_info" = sessioninfo::session_info(),
+  "conda_info" = system2("conda", "list", stdout = TRUE),
+  "vsearch_version" = system2("vsearch", "--version", stdout = TRUE),
+  "cutadapt" = system2("bash", "code/cutadapt_version.sh", stdout = TRUE),
+  "falco" = system2("falco", "--version", stdout = TRUE),
+  "multiqc" = system2("multiqc", "--version", stdout = TRUE))
+
+capture.output(information_report, file="output/information_run.txt")
+```
