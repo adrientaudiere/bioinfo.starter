@@ -1,7 +1,7 @@
-
 # bioinfo.starter
 
 <!-- badges: start -->
+
 <!-- badges: end -->
 
 The goal of bioinfo.starter is to ...
@@ -11,7 +11,7 @@ The goal of bioinfo.starter is to ...
 You can install the development version of bioinfo.starter like so:
 
 ``` r
-# FILL THIS IN! HOW CAN PEOPLE INSTALL YOUR DEV PACKAGE?
+devtools::install_github("adrientaudiere/bioinfo.starter")
 ```
 
 ## Example
@@ -22,4 +22,3 @@ This is a basic example which shows you how to solve a common problem:
 library(bioinfo.starter)
 ## basic example code
 ```
-
