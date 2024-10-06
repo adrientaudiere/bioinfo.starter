@@ -1,0 +1,307 @@
+# Recipe for some analyses modifications
+
+## Forward only pipeline
+
+1. Replace all the "paired end" area with the following code
+
+```{r, eval=FALSE}
+  ##> Remove primers
+  tar_target(
+    cutadapt,
+    cutadapt_remove_primers(
+      path_to_fastq = here("data/data_raw/rawseq/"),
+      primer_fw = fw_primer_sequences,
+      folder_output = here("data/data_intermediate/seq_wo_primers/"),
+      args_before_cutadapt = "source ~/miniforge3/etc/profile.d/conda.sh && conda activate cutadaptenv && "
+    )
+  ),
+  tar_target(data_raw, {
+    cutadapt
+    list_fastq_files(path = here::here("data/data_intermediate/seq_wo_primers/"),
+                     paired_end = FALSE)
+  }),
+
+  ##> Classical dada2 pipeline
+  tar_target(data_fnfs, data_raw$fnfs),
+  ### Pre-filtered data with low stringency
+  tar_target(
+    filtered,
+    filter_trim(
+      output_fw = paste(
+        getwd(),
+        here("/data/data_intermediate/filterAndTrim_fwd"),
+        sep = ""
+      ),
+      rev = data_fnrs,
+      multithread = n_threads,
+      compress = TRUE
+    )
+  ),
+
+  ### Dereplicate fastq files
+  tar_target(derep_fs, derepFastq(filtered[[1]]), format = "qs"),
+  tar_target(derep_rs, derepFastq(filtered[[2]]), format = "qs"),
+  ### Learns the error rates
+  tar_target(err_fs, learnErrors(derep_fs, multithread = 4), format = "qs"),
+  tar_target(err_rs, learnErrors(derep_rs, multithread = 4), format = "qs"),
+  ### Make amplicon sequence variants
+  tar_target(ddF, dada(derep_fs, err_fs, multithread = 4), format = "qs"),
+  tar_target(ddR, dada(derep_rs, err_rs, multithread = 4), format = "qs"),
+  ### Build a a table of ASV x Samples
+  tar_target(seq_tab, makeSequenceTable(ddF)),
+
+```
+
+
+
+## Add a second taxonomic assignation using a different database or algorithm
+
+1. Add a new database file (**fasta**) in data/data_raw/refseq
+1. Copy and complete with good name the two targets below
+1. Rename the targets by using the new name (e.g. `data_phyloseq_newDB`) instead of `data_phyloseq` in the subsequent targets
+
+
+```{r, eval=FALSE}
+[...]
+tar_target(
+    name = file_refseq_taxo2,
+    command = "data/data_raw/refseq/XXX",
+    format = "file"
+)
+
+[...]
+
+tar_target(
+  data_phyloseq_newDB,
+  add_new_taxonomy_pq(
+    data_phyloseq,
+    file_refseq_taxo2,
+    suffix = "PR2",
+    taxLevels = c(
+      "Kingdom",
+      "Supergroup",
+      "Division",
+      "Subdivision",
+      "Class",
+      "Order",
+      "Family",
+      "Genus",
+      "Species"
+    )
+  )
+)
+```
+
+
+## Filter by % sequence (whith blast)
+
+```{r, eval=FALSE}
+tar_target(d_blast,
+    filter_taxa_blast(
+      data_phyloseq,
+      fasta_for_db = paste0(here::here(), "/", file_refseq_taxo),
+      nproc = 4
+    )
+)
+```
+
+## Add funguild informations for Fungi
+
+```{r, eval=FALSE}
+tar_target(d_funguild, 
+  MiscMetabar::add_funguild_info(data_phyloseq)
+)
+```
+
+
+
+## Add Protax informations for Bacteria
+
+<!--
+## FAPROTAX analysis
+
+### Assign functionnality 
+
+```{r}
+# Inspiration from https://forum.qiime2.org/t/exporting-otu-table-from-phyloseq-into-either-biom-or-text-format/19103/7
+write_biom_csv <- function(physeq, file, sep = "; ") {
+  ps <- phyloseq::taxa_sums(physeq) |> 
+    as.data.frame()
+ 
+  ps |>  tibble::rownames_to_column("#OTU ID") |> 
+    left_join(phyloseq::tax_table(physeq) |>  
+                as.data.frame() |> 
+                tibble::rownames_to_column("#OTU ID") |>  
+                tidyr::unite("taxonomy", !`#OTU ID`, sep = sep)) -> phyloseq_biom
+  
+  write.table(phyloseq_biom, file = file, sep = "\t", quote = FALSE, row.names = FALSE)
+}
+
+```
+
+
+```{r}
+here::i_am("report_16S.qmd")
+tax_tab_path <- here::here("output/faprotax_tax_table.csv")
+FAPROTAX_path <- here::here("code/FAPROTAX_1.2.7")
+d_vs@tax_table <- tax_table(cbind(d_vs@tax_table,   "Genus_species" = paste(d_vs@tax_table[,"Genus"], 
+                                                      d_vs@tax_table[,"Species"]) ))
+write.table(subset_taxa(d_vs, !is.na(Species))@tax_table, tax_tab_path, sep = ";")
+write_biom_csv(d_vs, tax_tab_path)
+dir.create("output/FAPROTAX")
+
+# system(pip install biom-format)
+system(paste0("python3 ", FAPROTAX_path, "/collapse_table.py", " -i ", tax_tab_path, " -o output/FAPROTAX/func_table.csv -g ", FAPROTAX_path, '/FAPROTAX.txt -r output/FAPROTAX/report.txt -s output/FAPROTAX/output_subtables/ -f -c "#" -d "taxonomy" --omit_columns 0 --column_names_are_in last_comment_line -n columns_after_collapsing -v --out_groups2records_table output/FAPROTAX/faprotax_result_OTU.tsv'))
+
+func_tab <- read.table("output/FAPROTAX/faprotax_result_OTU.tsv", sep="\t", header = TRUE)
+colnames(func_tab) <- gsub("FPTax_record", "record_faprotax", paste0("FPTax_", colnames(func_tab)))
+
+
+tax_tab <-
+    as.matrix(cbind(
+      tax_table(d_vs),
+      func_tab
+    ))
+d_vs@tax_table <- tax_table(tax_tab)
+```
+
+### Functionnal analysis
+
+```{r}
+func_group <- colSums(apply(d_vs@tax_table[,grepl("FPTax",colnames(d_vs@tax_table))], 2, as.numeric))
+func_group <- func_group[func_group>0]
+
+DT::datatable(as.data.frame(sort(func_group, decreasing = T)))
+
+func_group_more_than20 <- func_group[func_group>20]
+
+d_vs_Treatment <- speedyseq::merge_samples2(d_vs, "Treatment")
+```
+
+
+```{r}
+psm <- psmelt(d_vs) |> 
+  filter(Abundance > 0) |> 
+  mutate(across(all_of(starts_with("FPTax_")), as.numeric))
+
+psm |> 
+  group_by(Sample) |>  
+  summarise("sumFPTax_chemoheterotrophy" = sum(FPTax_chemoheterotrophy))
+   
+ggplot(psm, aes(x = Treatment, y = FPTax_chemoheterotrophy, fill = Sample)) +
+  geom_bar(stat = "identity")
+
+ggplot(psm, aes(x = Treatment, y = FPTax_chemoheterotrophy)) + geom_boxplot()
+  
+psm2 <- psm |>  
+  group_by(Sample) |> 
+  summarise(across(all_of(starts_with("FPTax_")), sum))  |>  
+  tidyr::pivot_longer(all_of(starts_with("FPTax_")),
+                      names_to = "Function",
+                      values_to = "Nb_ASV")
+
+psm2_na <- psm |>
+  group_by(Sample) |>
+  summarise(across(all_of(starts_with("FPTax_")), function(x) {
+    sum(x == 0)
+  }))  |>
+  tidyr::pivot_longer(all_of(starts_with("FPTax_")),
+                      names_to = "Function",
+                      values_to = "Nb_ASV_NA")
+
+psm2_nbseq <- psm |>
+  group_by(Sample) |>
+  summarise(across(all_of(starts_with("FPTax_")), function(x) {
+    sum(x * Abundance)
+  }))  |>
+  tidyr::pivot_longer(all_of(starts_with("FPTax_")),
+                      names_to = "Function",
+                      values_to = "Nb_seq")
+
+psm3 <-  psm2 |> 
+  filter(Function %in% names(func_group_more_than20)) 
+psm3_na <-  psm2_na |> 
+  filter(Function %in% names(func_group_more_than20)) 
+psm3_nbseq <-  psm2_nbseq |> 
+  filter(Function %in% names(func_group_more_than20)) 
+
+
+psm_4 <- cbind(psm3, 
+                    "Nb_ASV_NA"=psm3_na$Nb_ASV_NA, 
+                    "Nb_seq"=psm3_nbseq$Nb_seq)
+
+psm_4 <- psm_4 |> 
+  mutate("Prop_ASV" = Nb_ASV/(Nb_ASV + Nb_ASV_NA))
+
+psm_4$Treatment <- d_vs@sam_data$Treatment[match(psm_4$Sample, sample_names(d_vs))]
+
+ggplot(psm_4, aes(y = Function, x = Nb_ASV, fill= Treatment)) +
+  geom_boxplot()
+
+ggplot(psm_4, aes(y = Function, x = Nb_seq, fill= Treatment)) +
+  geom_boxplot()
+
+ggstatsplot::ggbetweenstats(psm_4 |> filter(Function == "FPTax_chemoheterotrophy"), 
+                            Treatment, Nb_ASV)
+```
+
+
+
+```{r}
+psm_treat <- psmelt(d_vs_Treatment) |> 
+  filter(Abundance > 0) |> 
+  mutate(across(all_of(starts_with("FPTax_")), as.numeric))
+
+psm_treat2 <- psm_treat |>  
+  group_by(Treatment) |> 
+  summarise(across(all_of(starts_with("FPTax_")), sum)) |> 
+  group_by(Treatment)   |>  
+  tidyr::pivot_longer(all_of(starts_with("FPTax_")),
+                      names_to = "Function",
+                      values_to = "Nb_ASV")
+
+psm_treat2_na <- psm_treat |>  
+  group_by(Treatment) |> 
+  summarise(across(all_of(starts_with("FPTax_")), function(x){
+    sum(x == 0) 
+  })) |> 
+  group_by(Treatment)   |>  
+  tidyr::pivot_longer(all_of(starts_with("FPTax_")),
+                      names_to = "Function",
+                      values_to = "Nb_ASV_NA")
+
+psm_treat2_seq <- psm_treat |>  
+  group_by(Treatment) |> 
+  summarise(across(all_of(starts_with("FPTax_")), function(x){
+   sum(x*Abundance)
+  })) |> 
+  group_by(Treatment)   |>  
+  tidyr::pivot_longer(all_of(starts_with("FPTax_")),
+                      names_to = "Function",
+                      values_to = "Nb_seq")
+
+
+psm_treat3 <-  psm_treat2 |> 
+  filter(Function %in% names(func_group_more_than20))
+psm_treat3_na <-  psm_treat2_na |> 
+  filter(Function %in% names(func_group_more_than20))
+psm_treat3_seq <-  psm_treat2_seq |> 
+  filter(Function %in% names(func_group_more_than20))
+
+psm_treat4 <- cbind(psm_treat3, 
+                    "Nb_ASV_NA"=psm_treat3_na$Nb_ASV_NA, 
+                    "Nb_seq"=psm_treat3_seq$Nb_seq)
+
+psm_treat4 <- psm_treat4 |> 
+  mutate("Prop_ASV" = Nb_ASV/(Nb_ASV + Nb_ASV_NA))
+
+ggplot(psm_treat4, aes(y = Function, x = Nb_ASV, fill = Treatment)) +
+  geom_bar(stat = "identity", position = "Fill")
+
+ggplot(psm_treat4, aes(y = Function, x = Nb_seq, fill = Treatment)) +
+  geom_bar(stat = "identity", position = "Fill")
+
+ggplot(psm_treat4, aes(y = Treatment, x = Prop_ASV, fill = Treatment)) +
+  geom_bar(stat = "identity") + facet_wrap(~Function)
+```
+-->

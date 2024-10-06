@@ -1,0 +1,174 @@
+body {
+  font-family: "Baskerville", sans-serif, "Fira Sans";
+  font-size: 16px;
+}
+
+/* ------------------------------------------- Titles ----------------- */
+h1 {
+  margin-block-start: 20px;
+   font-family: "Baskerville";
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+@media (min-width: 1024px) {
+  h1 {
+    font-size: 3rem;
+  }
+}
+h2 {
+   font-family: "Baskerville";
+  margin-top: 100px !important;
+  margin-block-start: 20px;
+  border-bottom: 0.1px solid rgb(232, 232, 232);
+  padding-bottom: 0.5rem;
+  font-size: 1.875rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  transition: color 0.2s ease;
+  color: var(--secondary-color)
+}
+h2:first-of-type {
+  margin-top: 0;
+}
+h3 {
+   font-family: "Baskerville";
+  margin-top: 2rem;
+  margin-block-start: 20px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+/* ------------------------------------------- Text ----------------- */
+p {
+  line-height: 28px;
+}
+p:not(:first-child) {
+  margin-top: 12px;
+}
+a {
+  font-weight: 500;
+  color: var(--primary-color);
+  text-decoration: underline;
+  text-underline-offset: 0.25rem;
+}
+
+/* ------------------------------------------- Lists ----------------- */
+ul {
+  margin: 1.5rem 0;
+  margin-left: 1.5rem;
+  list-style-type: disc;
+}
+ul > li {
+  margin-top: 0.5rem;
+}
+
+/* ------------------------------------------- Buttons used for tabs ----------------- */
+.nav-pills .nav-link {
+  color: var(--primary-color);
+  background-color: white;
+  border-radius: 4px;
+  border-color: var(--primary-color);
+  padding: 5px;
+  margin-right: 4px;
+}
+.nav-pills .nav-link.active {
+  color: white;
+  background-color: var(--primary-color);
+}
+ul.nav.nav-tabs {
+  margin: 0px;
+  border: none;
+}
+.tab-content {
+  border: none;
+  margin-top: 10px;
+  padding: 0px;
+}
+
+.button-collapse {
+  color: white;
+  background-color: var(--secondary-color);
+  border-color: white;
+  border-radius: 4px;
+  padding: 5px;
+}
+
+.button-collapse.collapsed {
+  color: var(--secondary-color);
+  background-color: white;
+  border-color: var(--secondary-color);
+}
+
+
+/* ------------------------------------------- Table of content ----------------- */
+.sidebar nav[role="doc-toc"] ul > li > a.active,
+.sidebar nav[role="doc-toc"] ul > li > ul > li > a.active {
+  border-left: 1px solid var(--primary-color);
+  color: var(--primary-color) !important;
+}
+#TOC {
+  top: 50%;
+  position: relative;
+  transform: translate(0, -50%);
+}
+
+/* ------------------------------------------- Horizontal separator ----------------- */
+hr {
+  margin-top: 23px;
+  margin-bottom: 23px;
+  border: 0;
+  border-top: 1px solid black;
+  width: 0;
+  animation: separator-width 2s ease-in-out forwards;
+}
+@keyframes separator-width {
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 200px;
+  }
+}
+
+/* ------------------------------------------- Footer ----------------- */
+.footer-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-top: 40px;
+  padding-bottom: 40px;
+}
+
+/* ------------------------------------------- DT table: smaller font ----------------- */
+table.dataTable tbody th,
+table.dataTable tbody td {
+  padding: 6px 10px;
+  font-size: 12px;
+}
+
+/* ------------------------------------------- Callout ----------------- */
+div.callout.callout {
+  border: none;
+  padding: 0.4em 0.7em;
+  border-left: var(--primary-color) 4px solid;
+  background-color: color-mix(in srgb, var(--primary-color), transparent 95%);
+  border-radius: 0px;
+}
+
+button {
+  color: var(--primary-color);
+  background-color: white;
+  border: var(--primary-color) 1px solid;
+  border-radius: 1px;
+}
+
+.grey-section {
+  background-color: var(--grey-bg-color);
+  padding-top: 40px;
+  padding-bottom: 40px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
