@@ -1,6 +1,19 @@
-# Recipe for some analyses modifications
+---
+title: "Recipes for some analyses modifications"
+subtitle: "Where we present some piece of codes to modify the bioinformatic pipeline"
+author: Adrien Taudière
+date: last-modified
+execute: 
+  eval: false
+format: 
+  html:     
+    code-fold: false
+# bibliography: bibliography.bib
+# link-citations: true
+---
 
 ## Forward only pipeline
+
 
 1. Replace all the "paired end" area with the following code
 
@@ -56,8 +69,8 @@
 
 ## Add a second taxonomic assignation using a different database or algorithm
 
-1. Add a new database file (**fasta**) in data/data_raw/refseq
-1. Copy and complete with good name the two targets below
+1. Add a new database file (*fasta*) in `data/data_raw/refseq`
+1. Copy and complete with good names the two targets below
 1. Rename the targets by using the new name (e.g. `data_phyloseq_newDB`) instead of `data_phyloseq` in the subsequent targets
 
 
@@ -117,7 +130,9 @@ tar_target(d_funguild,
 
 ## Add Protax informations for Bacteria
 
-<!--
+
+::: {.content-hidden}
+
 ## FAPROTAX analysis
 
 ### Assign functionnality 
@@ -304,4 +319,4 @@ ggplot(psm_treat4, aes(y = Function, x = Nb_seq, fill = Treatment)) +
 ggplot(psm_treat4, aes(y = Treatment, x = Prop_ASV, fill = Treatment)) +
   geom_bar(stat = "identity") + facet_wrap(~Function)
 ```
--->
+:::

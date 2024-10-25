@@ -2,6 +2,7 @@
   :root {
     --primary-color: $primary-color$;
     --secondary-color: $secondary-color$;
+    --tertiary-color: $tertiary-color$;
     --grey-bg-color: $grey-bg-color$;
   }
   .title-block-content {
@@ -10,14 +11,15 @@
     padding-bottom: 130px;
     max-width: 752px;
     margin: auto;
+    padding-left: 12px;
   }
   .header-keyword {
-    color: rgb(59, 59, 59);
+    color: var(--primary-color);
     opacity: 0.5;
     font-size: 14;
   }
   .octocat-container {
-    fill: var(--primary-color);
+    fill: var(--secondary-color);
     color: #fff;
     position: absolute;
     top: 0;
@@ -34,10 +36,8 @@
 </style>
 
 <header id="title-block-header" style="position: relative">
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-    rel="stylesheet"
-  />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/firacode@6.2.0/distr/fira_code.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap">
 
   <div id="particles-js"></div>
 
@@ -155,5 +155,122 @@ $if(github-repo)$
       animation: octocat-wave 560ms ease-in-out;
     }
   }
+</style>
+$endif$
+
+<!------------------------- Code for the pinned circle menu  ------------------->
+$if(pinned-menu)$
+<nav class="menu">
+  =
+  <ul>
+    <li><a href="/">Home</a></li>
+    <li><a href="/analysis/01_bioinformatics.html">Bioinformatics</a></li>
+    <li><a href="#Alpha-diversity">Alpha-diversity</a></li>
+    <li><a href="#Beta-diversity">Beta-diversity</a></li>
+    <li><a href="#About">About</a></li>
+  </ul>
+</nav>
+<style>
+.menu {
+  position: fixed;
+  top: 5%;
+  left: 5%;
+  background: var(--secondary-color);
+  width: 50px;
+  height: 50px;
+  border-radius: 5em;
+  margin: auto;
+  cursor: pointer;
+  text-align: center;
+  line-height: 50px;
+  font-size: 2em;
+  color: var(--grey-bg-color);
+  z-index:2;
+}
+.menu ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 9px;
+}
+.menu li {
+  width: 160px;
+  height: 1.8em;
+  text-align: left;
+  transition: all 1s;
+  background: var(--grey-bg-color);
+  opacity: 0;
+  z-index: -1;
+  position: relative;
+  padding: 0px 4px 44px 4px;
+  font-size: 20px;
+  line-height: 44px;
+  border-bottom: 2px solid var(--secondary-color);
+  margin: 0;
+}
+
+.menu:hover li {
+ opacity: 1;
+}
+
+.menu li.menu:hover li {
+  opacity: 1;
+  background: var(--secondary-color);
+  filter: brightness(50%);
+}
+/**
+ * Add a pseudo element to cover the space
+ * between the links. This is so the menu
+ * does not lose :hover focus and disappear
+ */
+.menu:hover ul::before {
+  position: absolute;
+  content: "";
+  width: 0;
+  height: 0;
+  display: block;
+  left: 50%;
+  /**
+   * The pseudo-element is a semi-circle
+   * created with CSS. Top, bottom, and right
+   * borders are 6.5em (left being 0), and then
+   * a border-radius is added to the two corners
+   * on the right.
+   */
+  border-width: 26em;
+  border-radius: 0 7.5em 7.5em 0;
+  border-left: 0;
+  border-style: solid;
+  /**
+   * Have to have a border color for the border
+   * to be hoverable. I'm using a very light one
+   * so that it looks invisible.
+   */
+  border-color: rgba(0,0,0,0.01);
+  /**
+   * Put the psuedo-element behind the links
+   * (So they can be clicked on)
+   */
+  z-index: -1;
+  /**
+   * Make the cursor default so it looks like
+   * nothing is there
+   */
+  cursor: default;
+}
+.menu a {
+  color: var(--secondary-color);
+  text-decoration: none;
+  /**
+   * This is to vertically center the text on the
+   * little tab-like things that the text is on.
+   */
+  line-height: 1.5em;
+}
+
+.menu li:hover {
+  background: var(--secondary-color);
+  z-index: 10;
+}
+
 </style>
 $endif$

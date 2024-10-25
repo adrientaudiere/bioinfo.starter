@@ -11,9 +11,16 @@ RoxygenNote: 7.3.2
 Depends: 
   MiscMetabar,
   tarchetypes,
-  targets,
+  targets
+Suggests:  
   here,
-  tidyverse
+  tidyverse,
+  DT,
+  visNetwork,
+  formattable,
+  viridis,
+  patchwork,
+  ggstatsplot
 BugReports: https://github.com/adrientaudiere/bioinfo.starter/issues
 Imports: 
     conflicted

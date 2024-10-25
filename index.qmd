@@ -1,0 +1,31 @@
+---
+title: "Home"
+subtitle: ""
+author: Adrien Taudière
+date: last-modified
+# bibliography: bibliography.bib
+# link-citations: true
+---
+
+
+# Welcome on this project website
+
+
+:::{.question}
+ A text with some critical questions and hypothesis.
+:::
+
+## Some calcul and plot
+```{r}
+1+1
+```
+
+```{r}
+plot(c(1:10),c(1:10))
+```
+
+
+
+:::{.conclusion}
+A precise and straightforward conclusion
+:::

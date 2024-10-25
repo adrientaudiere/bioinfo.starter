@@ -1,0 +1,56 @@
+---
+title: "Alpha-diversity"
+subtitle: "Where we analyse the effect of a factor on local diversity"
+date: last-modified
+author:
+  - name: Adrien Taudière
+    url: https://adrientaudiere.github.io/bioinfo.starter/analysis/02_alpha_diversity.qmd
+    affiliation: IdEst
+    affiliation-url: https://orcid.org/my-orcid?orcid=0000-0003-1088-1182
+citation: true
+# bibliography: bibliography.bib
+# link-citations: true
+---
+
+
+```{r}
+factor_of_interest <- NULL
+```
+
+
+```{r,  message=FALSE, warning=FALSE}
+library(knitr)
+library(targets)
+library(MiscMetabar)
+source(here::here("R", "functions.R"))
+```
+
+```{r}
+#d_pq <- tar_read(script=here::here("_targets.R"))
+d_pq <- data_fungi
+```
+
+
+```{r}
+hill_pq(data_fungi, factor_of_interest, one_plot = TRUE) &
+  (
+    theme_idest(
+      subtitle_size = 8,
+      plot_title_size = 12,
+      plot_margin = margin(5, 10, 5, 10),
+      axis_title_size = 9,
+      axis_text_size = 8
+    ) + theme(legend.position = "none")
+  ) 
+```
+
+
+```{r}
+MiscMetabar::accu_plot_balanced_modality(d_pq, factor_of_interest, nperm=20) + theme_idest()
+```
+
+
+```{r}
+ggbetween_pq(d_pq, factor_of_interest)
+```
+

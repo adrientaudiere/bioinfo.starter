@@ -1,0 +1,31 @@
+project:
+  type: website
+format:
+  html:
+    theme: custom.scss
+    css: "/assets/styles.css"
+    toc: true
+    toc-location: left
+    toc-title: " "
+    #number-sections: true
+    smooth-scroll: true
+    title-block-banner: true
+    logo: "/assets/logo.png"
+    github-repo: "https://github.com/adrientaudiere/bioinfo.starter"
+    pinned-menu: true
+    primary-color: "#c93312"
+    secondary-color: "#2e7891"
+    tertiary-color: "#c8a734"
+    grey-bg-color: "#faefd1"
+    self-contained: true
+    # include-in-header:
+    include-after-body: "assets/footer.html"
+    template-partials: "/assets/title-block.html"
+    code-fold: true
+    # code-link: true
+    code-tools: true
+    code-summary: "Code"
+    monofont: "Fira code"
+    mainfont: "Lato"
+    fig-cap-location: margin
+    # embed-resources: true

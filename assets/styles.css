@@ -1,12 +1,12 @@
 body {
-  font-family: "Baskerville", sans-serif, "Fira Sans";
+  font-family: "Baskerville", sans-serif, "Lato";
   font-size: 16px;
 }
 
 /* ------------------------------------------- Titles ----------------- */
 h1 {
   margin-block-start: 20px;
-   font-family: "Baskerville";
+  font-family: "Baskerville";
   font-size: 2rem;
   font-weight: 800;
   letter-spacing: -0.02em;
@@ -18,7 +18,7 @@ h1 {
 }
 h2 {
    font-family: "Baskerville";
-  margin-top: 100px !important;
+  margin-top: 80px !important;
   margin-block-start: 20px;
   border-bottom: 0.1px solid rgb(232, 232, 232);
   padding-bottom: 0.5rem;
@@ -38,6 +38,12 @@ h3 {
   font-size: 1.5rem;
   font-weight: 600;
   letter-spacing: -0.02em;
+}
+
+
+.subtitle{
+  font-size: 2rem;
+  font-family: "Fira Code";
 }
 
 /* ------------------------------------------- Text ----------------- */
@@ -171,4 +177,58 @@ button {
   padding-bottom: 40px;
   margin-top: 20px;
   margin-bottom: 20px;
+}
+
+/* ------------------------------------------- code tools menu in the right bottom corner----------------- */
+#quarto-code-tools-menu {
+  position: fixed;
+  bottom: 10px;
+  left: 20px;
+  z-index: 3;
+}
+
+/* ------------------------------------------- cell code border ----------------- */
+.cell {
+border-left: 4px solid color-mix(in srgb, var(--secondary-color) 70%, white);
+  margin-bottom: 20px;
+    padding-left: 12px
+}
+
+
+nav tablist {
+  border-bottom: 2px solid var(--primary-color);
+  padding-bottom: 4px;
+}
+
+a.inline-btn {
+background-color: color-mix(in srgb, var(--grey-bg-color) 90%, black);
+  color: color-mix(in srgb, var(--secondary-color) 70%, black);
+  border-radius: 4px;
+  padding: 4px 4px 4px 4px;
+  text-decoration: none;
+  font-family: fira code;
+  font-size: 0.8em;
+}
+
+
+.question{
+  position: relative;
+  padding: 1rem 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid var(--secondary-color);
+  border-radius: .45rem;
+  color: color-mix(in srgb, var(--secondary-color), black 45%);
+  background-color: var(--grey-bg-color);
+  font-size: larger;
+}
+
+
+.conclusion {
+  color: color-mix(in srgb, var(--primary-color), black 25%) !important;
+  text-align: justify;
+  padding: 5px 11px 0px 22px;
+  border-radius: 10px;
+  box-shadow: color-mix(in srgb, var(--primary-color), transparent 65%) 5px 5px 2px;
+  border: 2px solid color-mix(in srgb, var(--primary-color), black 25%);
+  margin-bottom: 12px;
 }

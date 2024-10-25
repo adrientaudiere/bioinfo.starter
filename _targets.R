@@ -198,3 +198,4 @@ tar_plan(
     fastqc_plot("data/data_final/quality_fastqc/filterAndTrim_rev")
   )
 )
+
