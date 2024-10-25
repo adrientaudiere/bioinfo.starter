@@ -11,6 +11,7 @@ seq_len_min <- 200
 fw_primer_sequences <- ""
 rev_primer_sequences <- ""
 n_threads <- 4
+refseq_file_name <- ""
 
 tar_plan(
   #> Place for file input
@@ -22,7 +23,7 @@ tar_plan(
 
   tar_target(
     name = file_refseq_taxo,
-    command = here("data/data_raw/refseq/XXX"),
+    command = here("data/data_raw/refseq/", refseq_file_name),
     format = "file"
   ),
 
