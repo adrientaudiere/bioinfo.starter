@@ -14,21 +14,21 @@ citation: true
 
 # Summary of the bioinformatic pipeline
 
-```{r,  message=FALSE, warning=FALSE}
+```{r, message=FALSE, warning=FALSE}
 library(knitr)
 library(targets)
 library(MiscMetabar)
+here::i_am("analysis/01_bioinformatics.qmd")
 ```
 
-```{r Visualise target plan, out.width='80%', error = TRUE}
+```{r Visualise target plan, out.width='80%'}
 tar_glimpse(script=here::here("_targets.R"), targets_only = TRUE, callr_arguments = list(show = FALSE))
 ```
 
-
 ## Load phyloseq object from targets store
 
-```{r, error = TRUE}
-d_pq <- tar_read(script=here::here("_targets.R"))
+```{r}
+d_pq <- tar_read("d_vs")
 ```
 
 <hr/>
@@ -48,10 +48,10 @@ DT::datatable(d_pq@sam_data)
 
 ## Sequences, samples and clusters across the pipeline
 
-```{r, error=TRUE}
+```{r}
 formattable_pq(
     d_pq,
-    "Height",
+    "Type",
     min_nb_seq_taxa = 10000,
     formattable_args = list("Phylum" = FALSE),
     log10trans = TRUE
@@ -62,14 +62,14 @@ formattable_pq(
 
 ## All samples together
 
-```{r, error=TRUE}
+```{r}
 track_sequences_samples_clusters
 ```
 
 
 ## Per samples
 
-```{r, error=TRUE}
+```{r}
 track_by_samples
 ```
 
