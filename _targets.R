@@ -155,7 +155,7 @@ tar_plan(
         "Genus",
         "Species"
       ),
-      multithread = TRUE
+      multithread = n_threads
     )
   ),
 
