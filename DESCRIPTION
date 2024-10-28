@@ -22,7 +22,8 @@ Suggests:
   patchwork,
   ggstatsplot,
   qs,
-  quarto
+  quarto,
+  sessioninfo
 BugReports: https://github.com/adrientaudiere/bioinfo.starter/issues
 Imports: 
     conflicted

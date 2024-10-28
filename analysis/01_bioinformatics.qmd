@@ -21,14 +21,28 @@ library(MiscMetabar)
 here::i_am("analysis/01_bioinformatics.qmd")
 ```
 
+```{r}
+d_pq <- tar_read("d_vs", store=here::here("_targets/"))
+```
+
 ```{r Visualise target plan, out.width='80%'}
 tar_glimpse(script=here::here("_targets.R"), targets_only = TRUE, callr_arguments = list(show = FALSE))
 ```
 
+```{r}
+tar_meta(targets_only = T) |> 
+  dplyr::mutate(time = paste0(seconds %/% 3600,":",seconds %/% 60,":",floor(seconds %% 60)))|>
+  dplyr::select(name, seconds, bytes, format, time) |>
+  dplyr::mutate(Gb=round(bytes/10^9,2)) |>
+  dplyr::arrange(desc(seconds), desc(bytes))  |> 
+  kable()
+```
+
+
 ## Load phyloseq object from targets store
 
 ```{r}
-d_pq <- tar_read("d_vs")
+d_pq <- tar_read("d_vs", store=here::here("_targets/"))
 ```
 
 <hr/>
@@ -37,10 +51,9 @@ The {targets} package is at the core of this project. Please read the intro of t
 
 ::: {.cell .page-columns .page-full .column-screen .grey-section}
 The {targets} package store ... *targets* in a folder and can load (`tar_load()`) and read (`tar_read`) object from this folder.
-::: 
+:::
 
-
-## Sample data 
+## Sample data
 
 ```{r}
 DT::datatable(d_pq@sam_data)
@@ -52,39 +65,41 @@ DT::datatable(d_pq@sam_data)
 formattable_pq(
     d_pq,
     "Type",
-    min_nb_seq_taxa = 10000,
-    formattable_args = list("Phylum" = FALSE),
+    min_nb_seq_taxa = 1000,
+    taxonomic_levels=c("Order", "Family", "Genus"),
     log10trans = TRUE
   )
 ```
 
 ::: {.panel-tabset .nav-pills}
-
 ## All samples together
 
 ```{r}
-track_sequences_samples_clusters
+kable(tar_read(track_sequences_samples_clusters, store=here::here("_targets/")))
 ```
-
 
 ## Per samples
 
-```{r}
-track_by_samples
+```{r, results='asis'}
+#| message: false
+tab_samp <- tar_read(track_by_samples, store=here::here("_targets/"))
+
+for (li in names(tab_samp)) {
+  print(knitr::kable(tab_samp[[li]], caption = li, format="html"))
+  cat('\n<!-- -->\n\n')
+}
 ```
-
-
-::: 
+:::
 
 ## Session Information
 
-
-
 Session information are detailed below. More information about the machine, the system, as well as python and R packages, are available in the file <a href="data_final/information_run.txt" title="Download the informations about the hardwares and softwfares used to run these analysis" class="inline-btn"> data_final/information_run.txt </a>.
 
+<button style="width:100%" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" class="button-collapse">
 
-<button style="width:100%" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" class="button-collapse">Session Information</button>
+Session Information
 
+</button>
 
 :::: {#collapseOne .accordion-collapse .collapse}
 <div>
@@ -106,7 +121,8 @@ information_report <- list(
   "vsearch_version" = system2("vsearch", "--version", stdout = TRUE)
   )
 
-capture.output(information_report, file="data_final/information_run.txt")
+capture.output(information_report, file=here::here("data/data_final/information_run.txt"))
 ```
+
 </div>
 ::::
