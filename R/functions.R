@@ -2,12 +2,13 @@
 
 #fastq_dir <- system.file("extdata", package = "dada2")
 #fastqc_agg(fastq_dir, qc.dir = "~/essai_fastqc")
-
 fastqc_agg <- function(fq.dir = getwd(),
                        qc.dir = NULL,
                        threads = 4,
                        fastqc.path = "~/bin/FastQC/fastqc",
-                       aggregate = TRUE) {
+                       aggregate = TRUE, 
+                       progressbar = FALSE,
+                       multiqc = FALSE) {
   fastqcr::fastqc(
     fq.dir = fq.dir,
     qc.dir = qc.dir,
@@ -16,7 +17,11 @@ fastqc_agg <- function(fq.dir = getwd(),
   )
 
   if (aggregate) {
-    res <-  fastqcr::qc_aggregate(qc.dir)
+    res <-  fastqcr::qc_aggregate(qc.dir, progressbar = progressbar)
+  }
+
+  if(multiqc) {
+    system(paste0("cd ", qc.dir, "; multiqc ."))
   }
 
   message(paste("Fastqc reports are available in the folder", qc.dir, "."))
@@ -40,7 +45,7 @@ fastqc_plot <- function(qc.dir,
   p <- fastqcr::qc_plot_collection(fastqcr::qc_read_collection(
     list.files(qc.dir, pattern = "*.zip", full.names = TRUE),
     list.files(qc.dir, pattern = "*.zip"),
-    modules = modules
+    modules = modules, verbose =  FALSE
   ),
   modules = modules)
 

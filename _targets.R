@@ -9,8 +9,8 @@ source(here("R/functions.R"))
 lapply(list.files("~/Nextcloud/IdEst/Projets/MiscMetabar/R/", full.names = TRUE), source)
 
 seq_len_min <- 200
-fw_primer_sequences <- "AAGCTCGTAGTTGAATTTCG"
-rev_primer_sequences <- "CCCAACTATCCCTATTAATCAT"
+fw_primer_sequences <- "AAGCTCGTAGTTGAATTTCG" # AMV4.5NF Sato et al. (2005)
+rev_primer_sequences <- "CCCAACTATCCCTATTAATCAT" # AMDGR Sato et al. (2005)
 n_threads <- 4
 refseq_file_name <- "maarjam_dada2.fasta.gz"
 sam_data_file_name <- "sam_data.csv"
@@ -30,13 +30,19 @@ tar_plan(
     command = here("data/data_raw/refseq/", refseq_file_name),
     format = "file"
   ),
- 
+
+  tar_target(
+    name = fastq_files_folder,
+    command = here("data/data_raw/rawseq/"),
+    format = "file"
+  ),
+
   #> Match samples names from fastq files and metadata sam_data
   #> ———————————————————
   tar_target(s_d,
     sam_data_matching_names(
       path_sam_data = here("data/data_raw/metadata", sam_data_file_name),
-      path_raw_seq =  here("data/data_raw/rawseq/"),
+      path_raw_seq =  fastq_files_folder,
       sample_col_name = sample_col_name,
       pattern_remove_sam_data = "22MET-",
       pattern_remove_fastq_files = "22MET-|22MET|_S.*",
@@ -51,7 +57,7 @@ tar_plan(
   tar_target(
     cutadapt,
     cutadapt_remove_primers(
-      path_to_fastq = here("data/data_raw/rawseq/"),
+      path_to_fastq = fastq_files_folder,
       primer_fw = fw_primer_sequences,
       primer_rev = rev_primer_sequences,
       folder_output = here("data/data_intermediate/seq_wo_primers/"),
@@ -129,13 +135,13 @@ tar_plan(
     sam_tab,
     rename_samples(sample_data(s_d$sam_data), names_of_samples = s_d$sam_data$samples_names_common)
   ),
-  tar_target(samp_n_otu_table, 
+  tar_target(samp_n_otu_table,
       s_d$sam_names_matching$common_names[match(rownames(seqtab), s_d$sam_names_matching$raw_fastq)]
     ),
 
   tar_target(asv_tab, otu_table(
     rename_samples(
-      otu_table(seqtab[!(duplicated(samp_n_otu_table) | duplicated(samp_n_otu_table, fromLast=TRUE)),], taxa_are_rows = FALSE), 
+      otu_table(seqtab[!(duplicated(samp_n_otu_table) | duplicated(samp_n_otu_table, fromLast=TRUE)),], taxa_are_rows = FALSE),
         names_of_samples = samp_n_otu_table[!(duplicated(samp_n_otu_table) | duplicated(samp_n_otu_table, fromLast=TRUE))]),
     taxa_are_rows = FALSE
   )),
@@ -155,39 +161,43 @@ tar_plan(
         "Genus",
         "Species"
       ),
-      multithread = TRUE
+      multithread = n_threads
     )
   ),
-  
+
   ##> Create the phyloseq object 'data_phyloseq' with
   ###   (i) table of asv,
   ###   ii) taxonomic table,
   ###   (iii) sample data and
   ###   (iv) references sequences
 
-  
+
   tar_target(data_phyloseq, add_dna_to_phyloseq(
     phyloseq(asv_tab, sam_tab, tax_table(
       as.matrix(tax_tab, dimnames = rownames(tax_tab))
     ))
   )),
 
+  tar_target(d_asv, 
+    add_new_taxonomy_pq(data_phyloseq, ref_fasta = "data/data_raw/refseq/DADA2_EUK_SSU_v1.9_Glomeromycota.fasta", suffix = "_eukaryome_Glomero")
+  ),
+
   ##> Create post-clustering ASV into OTU using vsearch
   tar_target(d_vs, asv2otu(
-    data_phyloseq, method = "vsearch", tax_adjust = 0
+    d_asv, method = "vsearch", tax_adjust = 0
   )),
   ##> Clean post-clustering OTU using mumu
   tar_target(d_vs_mumu, mumu_pq(d_vs)$new_physeq),
   ##> Make a rarefied dataset
   tar_target(d_vs_mumu_rarefy, rarefy_even_depth(d_vs_mumu, sample.size = 2000)),
 
-  ##> Create the phyloseq object 'data_phyloseq' with
+  ##> Create the phyloseq object 'd_asv' with
   tar_target(track_sequences_samples_clusters, track_wkflow(
     list(
       "Paired sequences" = seq_tab_Pairs,
       "Paired sequences without chimera" = seqtab_wo_chimera,
       "Paired sequences without chimera and longer than 200bp" = seqtab,
-      "ASV denoising" = data_phyloseq,
+      "ASV denoising" = d_asv,
       "OTU after vsearch reclustering at 97%" = d_vs,
       "OTU vs after mumu cleaning algorithm" = d_vs_mumu,
       "OTU vs + mumu + rarefaction by sequencing depth" = d_vs_mumu_rarefy
@@ -195,31 +205,23 @@ tar_plan(
   )),
   tar_target(track_by_samples, track_wkflow_samples(
     list(
-      "ASV denoising" = data_phyloseq,
+      "ASV denoising" = d_asv,
       "OTU after vsearch reclustering at 97%" = d_vs,
       "OTU vs after mumu cleaning algorithm" = d_vs_mumu,
       "OTU vs + mumu + rarefaction by sequencing depth" = d_vs_mumu_rarefy
     )
   )),
-
+ 
   ##> Build fastq quality report across the pipeline
   ### With raw sequences
   tar_target(
     quality_raw_seq,
-    fastqc_agg(here("data/data_raw/rawseq/"), qc.dir = here("data/data_final/quality_fastqc/raw_seq/"))
-  ),
-  tar_target(
-    quality_raw_seq_plot,
-    fastqc_plot(here("data/data_final/quality_fastqc/raw_seq/"))
+    fastqc_agg(fastq_files_folder, qc.dir = here("data/data_final/quality_fastqc/raw_seq/"), multiqc=TRUE)
   ),
   ### After cutadapt
   tar_target(
     quality_seq_wo_primers,
     fastqc_agg(here("data/data_intermediate/seq_wo_primers/"), qc.dir = here("data/data_final/quality_fastqc/seq_wo_primers/"))
-  ),
-  tar_target(
-    quality_seq_wo_primers_plot,
-    fastqc_plot(here("data/data_final/quality_fastqc/seq_wo_primers/"))
   ),
   ### After filtering and trimming (separate report for forward and reverse)
   tar_target(
@@ -227,20 +229,19 @@ tar_plan(
     fastqc_agg(here(filtered[[1]]), qc.dir = here("data/data_final/quality_fastqc/filterAndTrim_fwd/"))
   ),
   tar_target(
-    quality_seq_filtered_trimmed_FW_plot, {quality_seq_filtered_trimmed_FW
-    fastqc_plot(here("data/data_final/quality_fastqc/filterAndTrim_fwd"))
-    }
-  ),
-  tar_target(
     quality_seq_filtered_trimmed_REV,
     fastqc_agg(here(filtered[[1]]), qc.dir = here("data/data_final/quality_fastqc/filterAndTrim_rev/"))
   ),
-   tar_target(
-     quality_seq_filtered_trimmed_REV_plot, 
-     {quality_seq_filtered_trimmed_REV
-     fastqc_plot(here("data/data_final/quality_fastqc/filterAndTrim_rev"))
-          }
-  ),
-  tar_quarto(bioinfo_report, here("analysis/01_bioinformatics.qmd"))
+  
+  ##>  Build bioinformatic quarto report
+  tar_target(bioinfo_report, {
+    track_sequences_samples_clusters
+    quarto::quarto_render(here::here("analysis", "01_bioinformatics.qmd"))
+  }
+  )#,
+  # tar_target(build_website, {
+  #   track_sequences_samples_clusters
+  #   quarto::quarto_render(here::here())
+  # }
+  # )
 )
-

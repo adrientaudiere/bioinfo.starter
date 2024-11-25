@@ -12,6 +12,8 @@ format:
 # link-citations: true
 ---
 
+See also [Easy16S](https://github.com/YongxinLiu/EasyAmplicon/blob/master/pipeline_en.sh) for inspiration in bash. 
+
 ## Forward only pipeline
 
 
