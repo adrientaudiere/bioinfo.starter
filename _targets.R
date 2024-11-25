@@ -220,9 +220,9 @@ tar_plan(
   ),
   ### After cutadapt
   tar_target(
-    quality_seq_wo_primers,
+    quality_seq_wo_primers, {cutadapt
     fastqc_agg(here("data/data_intermediate/seq_wo_primers/"), qc.dir = here("data/data_final/quality_fastqc/seq_wo_primers/"))
-  ),
+  }),
   ### After filtering and trimming (separate report for forward and reverse)
   tar_target(
     quality_seq_filtered_trimmed_FW,
