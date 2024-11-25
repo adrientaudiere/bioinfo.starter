@@ -7,6 +7,7 @@
 
 /.quarto/
 /data/data_raw/rawseq
+/data/data_raw/refseq
 /data/data_intermediate/seq_wo_primers
 /data/data_intermediate/filterAndTrim_fwd
 /data/data_intermediate/filterAndTrim_rev

@@ -22,7 +22,11 @@ here::i_am("analysis/01_bioinformatics.qmd")
 ```
 
 ```{r}
-d_pq <- tar_read("d_vs", store=here::here("_targets/"))
+d_pq <- clean_pq(tar_read("d_vs", store=here::here("_targets/")))
+```
+
+```{r}
+summary_plot_pq(d_pq)
 ```
 
 ```{r Visualise target plan, out.width='80%'}
@@ -30,7 +34,7 @@ tar_glimpse(script=here::here("_targets.R"), targets_only = TRUE, callr_argument
 ```
 
 ```{r}
-tar_meta(targets_only = T) |> 
+tar_meta(store=here::here("_targets/"), targets_only = TRUE) |> 
   dplyr::mutate(time = paste0(seconds %/% 3600,":",seconds %/% 60,":",floor(seconds %% 60)))|>
   dplyr::select(name, seconds, bytes, format, time) |>
   dplyr::mutate(Gb=round(bytes/10^9,2)) |>
@@ -61,15 +65,6 @@ DT::datatable(d_pq@sam_data)
 
 ## Sequences, samples and clusters across the pipeline
 
-```{r}
-formattable_pq(
-    d_pq,
-    "Type",
-    min_nb_seq_taxa = 1000,
-    taxonomic_levels=c("Order", "Family", "Genus"),
-    log10trans = TRUE
-  )
-```
 
 ::: {.panel-tabset .nav-pills}
 ## All samples together
@@ -80,8 +75,9 @@ kable(tar_read(track_sequences_samples_clusters, store=here::here("_targets/")))
 
 ## Per samples
 
-```{r, results='asis'}
+```{r}
 #| message: false
+#| results: asis
 tab_samp <- tar_read(track_by_samples, store=here::here("_targets/"))
 
 for (li in names(tab_samp)) {
@@ -89,40 +85,59 @@ for (li in names(tab_samp)) {
   cat('\n<!-- -->\n\n')
 }
 ```
+
 :::
 
-## Session Information
 
-Session information are detailed below. More information about the machine, the system, as well as python and R packages, are available in the file <a href="data_final/information_run.txt" title="Download the informations about the hardwares and softwfares used to run these analysis" class="inline-btn"> data_final/information_run.txt </a>.
 
-<button style="width:100%" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" class="button-collapse">
-
-Session Information
-
-</button>
-
-:::: {#collapseOne .accordion-collapse .collapse}
-<div>
+### Compare taxonomy using either Marjaam or Eukaryome database
 
 ```{r}
-sessionInfo()
+krona(d_asv, file = here::here("data", "data_final", "Marjaam.html"), ranks= 2:7, name="Marjaam")
+krona(d_asv, file = here::here("data", "data_final", "Eukaryome.html"), ranks= 10:15, name="Eukaryome")
+
+merge_krona(c(here::here("data", "data_final", "Marjaam.html"), here::here("data", "data_final", "Eukaryome.html")), here::here("data", "data_final", "compare_tax_database.html"))
 ```
 
-```{r, include=FALSE, eval=FALSE}
-information_report <- list(
-  "date" = Sys.Date(), 
-  "platform_info" = sessioninfo::platform_info(),
-  "external_info" = sessioninfo::external_info(),
-  "session_info" = sessioninfo::session_info(),
-  "env_info" = Sys.getenv(),
-  "system_locale" = Sys.getlocale(),
-  "machine_info" = .Machine,
-  "conda_info" = system("export PATH='/home/adrien/miniforge3/bin:$PATH'; conda list -n cutadaptenv"),
-  "vsearch_version" = system2("vsearch", "--version", stdout = TRUE)
-  )
+```{r}
+table(d_pq@tax_table[,"Family"])
+table(d_pq@tax_table[,"Family__eukaryome_Glomero"])
 
-capture.output(information_report, file=here::here("data/data_final/information_run.txt"))
+table(d_pq@tax_table[,"Genus"])
+table(d_pq@tax_table[,"Genus__eukaryome_Glomero"])
 ```
 
-</div>
-::::
+
+```{r}
+psm <- psmelt(d_pq)
+
+d_pq@sam_data$expe = "Solace_AM"
+
+ggplot(psm, aes(y=Abundance,  x = Type, fill = Genus)) +
+  geom_bar(stat="identity")
+
+
+plot_tax_pq(
+  d_pq,
+  "Type", 
+  type = "nb_taxa",
+  taxa_fill="Class",
+  color_border = rgb(0, 0, 0, 0)
+)  
+
+plot_tax_pq(
+  d_pq,
+  "Type", 
+  type = "nb_taxa",
+  taxa_fill="Class__eukaryome_Glomero",
+  color_border = rgb(0, 0, 0, 0)
+)  
+
+```
+
+```{r}
+
+```
+
+
+{{< include _session_info.qmd >}}
