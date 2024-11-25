@@ -178,10 +178,6 @@ tar_plan(
     ))
   )),
 
-  tar_target(d_asv, 
-    add_new_taxonomy_pq(data_phyloseq, ref_fasta = "data/data_raw/refseq/DADA2_EUK_SSU_v1.9_Glomeromycota.fasta", suffix = "_eukaryome_Glomero")
-  ),
-
   ##> Create post-clustering ASV into OTU using vsearch
   tar_target(d_vs, asv2otu(
     d_asv, method = "vsearch", tax_adjust = 0
