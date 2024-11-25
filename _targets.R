@@ -9,12 +9,12 @@ source(here("R/functions.R"))
 lapply(list.files("~/Nextcloud/IdEst/Projets/MiscMetabar/R/", full.names = TRUE), source)
 
 seq_len_min <- 200
-fw_primer_sequences <- "AAGCTCGTAGTTGAATTTCG" # AMV4.5NF Sato et al. (2005)
-rev_primer_sequences <- "CCCAACTATCCCTATTAATCAT" # AMDGR Sato et al. (2005)
+fw_primer_sequences <- XXXX
+rev_primer_sequences <- XXXX
 n_threads <- 4
-refseq_file_name <- "maarjam_dada2.fasta.gz"
+refseq_file_name <- "XXX.fasta"
 sam_data_file_name <- "sam_data.csv"
-sample_col_name <- "ref_ADNid"
+sample_col_name <- "samples_names"
 set.seed(22)
 
 tar_plan(
