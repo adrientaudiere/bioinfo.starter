@@ -23,7 +23,9 @@ Suggests:
   ggstatsplot,
   qs,
   quarto,
-  sessioninfo
+  sessioninfo,
+  qs2,
+  autometric
 BugReports: https://github.com/adrientaudiere/bioinfo.starter/issues
 Imports: 
     conflicted
