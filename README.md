@@ -4,23 +4,29 @@
 
 <!-- badges: end -->
 
-The goal of bioinfo.starter is to ...
+The goal of bioinfo.starter is to [...]
 
 ## Installation
 
-You can install the development version of bioinfo.starter like so:
+### Clone from github
 
-``` r
-devtools::install_github("adrientaudiere/bioinfo.starter")
+```sh
+git clone https://github.com/adrientaudiere/bioinfo.starter.git
+git checkout -b name_analyse
 ```
 
-## Example
+### Adapt to your pipeline
 
-This is a basic example which shows you how to solve a common problem:
+- Replace `data/data_raw/metadata/sam_data.csv` with good metadata file
+- Copy fastq files in `data/data_raw/rawseq`
+- Add references database in `data/data_raw/refseq`
+- Modify the `_targets.R` files (at least modify primers sequences and name of the reference database) 
 
-``` r
-library(bioinfo.starter)
-## basic example code
+### Install R packages and run targets pipeline
+
+```r
+renv::install()
+targets::tar_make()
 ```
 
 ## Colophon

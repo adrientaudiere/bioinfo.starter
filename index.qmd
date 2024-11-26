@@ -12,7 +12,7 @@ date: last-modified
 
 
 :::{.question}
- A text with some critical questions and hypothesis.
+A text with some critical questions and hypothesis.
 :::
 
 ## Some calcul and plot

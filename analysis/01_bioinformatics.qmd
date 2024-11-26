@@ -12,14 +12,63 @@ citation: true
 # link-citations: true
 ---
 
-# Summary of the bioinformatic pipeline
 
 ```{r, message=FALSE, warning=FALSE}
 library(knitr)
 library(targets)
 library(MiscMetabar)
+library(patchwork)
 here::i_am("analysis/01_bioinformatics.qmd")
+source(here::here("R/styles.R"))
+source(here::here("R/functions.R"))
 ```
+
+# Carbon footprint
+```{r, message=FALSE, warning=FALSE}
+res_ga <- greenAlgoR::ga_targets(store=here::here("_targets/"))
+library("emojifont")
+ggvalue_box(
+  round(res_ga$carbon_footprint_total_gCO2), 
+  "Carbon footprint (g)", 
+  icons = fontawesome(search_fontawesome("industry")[1]), 
+  alpha_icon = 0.7,
+  colors = idest_pal$ligth_color_idest[[1]][[3]],
+  color_icon = idest_pal$dark_color_idest[[1]][[5]], 
+  value_font_color = idest_pal$dark_color_idest[[1]][[5]], 
+  lab_font_color = idest_pal$dark_color_idest[[1]][[5]]) +
+ggvalue_box(
+  round(res_ga$energy_needed_kWh,2), 
+  "Energy used (kWh)", 
+  icons = fontawesome(search_fontawesome("bolt")), 
+  alpha_icon = 0.7,
+  colors = idest_pal$ligth_color_idest[[1]][[1]],
+  color_icon = idest_pal$dark_color_idest[[1]][[2]], 
+  value_font_color = idest_pal$dark_color_idest[[1]][[2]], 
+  lab_font_color = idest_pal$dark_color_idest[[1]][[2]]) 
+```
+
+# Summary of the bioinformatic pipeline
+
+## Timeline and cpu usage
+```{r, message=FALSE, warning=FALSE}
+log_data <- autometric::log_read(
+  here::here("data/data_final/autometric_log.txt"),
+  units_time = "hours",
+  units_memory = "gigabytes"
+)
+
+log_data |>
+  filter(!grepl("conclude:", phase)) |>
+  filter(!grepl("prepare:", phase)) |>
+  filter(!grepl("__DEFAULT__", phase)) |>
+  ggplot(aes(x = time, y = reorder(phase, desc(time)), color = resident)) +
+  geom_line(aes(linewidth = cpu)) +
+  scale_color_viridis_b("Memory (Gb)", end = 0.9, direction = -1) +
+  theme_idest() +
+  xlab("Time (in hours)") +
+  ylab("Targets")
+```
+
 
 ```{r}
 d_pq <- clean_pq(tar_read("d_vs", store=here::here("_targets/")))

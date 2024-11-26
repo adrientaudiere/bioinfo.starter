@@ -3,19 +3,28 @@ library("MiscMetabar")
 library("targets")
 library("tarchetypes")
 library("here")
+library("autometric")
+
+if (tar_active()) {
+  log_start(
+    path = "data/data_final/autometric_log.txt",
+    seconds = 1
+  )
+}
 
 here::i_am("_targets.R")
 source(here("R/functions.R"))
 lapply(list.files("~/Nextcloud/IdEst/Projets/MiscMetabar/R/", full.names = TRUE), source)
 
 seq_len_min <- 200
-fw_primer_sequences <- "AAGCTCGTAGTTGAATTTCG" # AMV4.5NF Sato et al. (2005)
-rev_primer_sequences <- "CCCAACTATCCCTATTAATCAT" # AMDGR Sato et al. (2005)
+fw_primer_sequences <- "GCATCGATGAAGAACGCAGC" 
+rev_primer_sequences <- "TCCTCCGCTTATTGATATGC" 
 n_threads <- 4
-refseq_file_name <- "maarjam_dada2.fasta.gz"
+refseq_file_name <- "sh_general_release_dynamic_s_04.04.2024.fasta"
 sam_data_file_name <- "sam_data.csv"
-sample_col_name <- "ref_ADNid"
+sample_col_name <- "Sample_names"
 set.seed(22)
+
 
 tar_plan(
   #> Place for file input
@@ -41,11 +50,10 @@ tar_plan(
   #> ———————————————————
   tar_target(s_d,
     sam_data_matching_names(
-      path_sam_data = here("data/data_raw/metadata", sam_data_file_name),
+      path_sam_data = file_sam_data_csv,
       path_raw_seq =  fastq_files_folder,
       sample_col_name = sample_col_name,
-      pattern_remove_sam_data = "22MET-",
-      pattern_remove_fastq_files = "22MET-|22MET|_S.*",
+      pattern_remove_fastq_files = "_L001.*",
       prefix = "samp_"
     )
   ),
@@ -179,7 +187,7 @@ tar_plan(
   )),
 
   tar_target(d_asv, 
-    add_new_taxonomy_pq(data_phyloseq, ref_fasta = "data/data_raw/refseq/DADA2_EUK_SSU_v1.9_Glomeromycota.fasta", suffix = "_eukaryome_Glomero")
+    add_new_taxonomy_pq(data_phyloseq, ref_fasta = "data/data_raw/refseq/DADA2_EUK_SSU_v1.9_Fungi.fasta", suffix = "Eukaryome")
   ),
 
   ##> Create post-clustering ASV into OTU using vsearch
@@ -220,9 +228,10 @@ tar_plan(
   ),
   ### After cutadapt
   tar_target(
-    quality_seq_wo_primers,
+    quality_seq_wo_primers,{
+      cutadapt
     fastqc_agg(here("data/data_intermediate/seq_wo_primers/"), qc.dir = here("data/data_final/quality_fastqc/seq_wo_primers/"))
-  ),
+  }),
   ### After filtering and trimming (separate report for forward and reverse)
   tar_target(
     quality_seq_filtered_trimmed_FW,
