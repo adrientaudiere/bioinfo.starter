@@ -3,6 +3,14 @@ library("MiscMetabar")
 library("targets")
 library("tarchetypes")
 library("here")
+library("autometric")
+
+if (tar_active()) {
+  log_start(
+    path = "data/data_final/autometric_log.txt",
+    seconds = 1
+  )
+}
 
 here::i_am("_targets.R")
 source(here("R/functions.R"))
@@ -165,14 +173,14 @@ tar_plan(
     )
   ),
 
-  ##> Create the phyloseq object 'data_phyloseq' with
+  ##> Create the phyloseq object 'data_asv' with
   ###   (i) table of asv,
   ###   ii) taxonomic table,
   ###   (iii) sample data and
   ###   (iv) references sequences
 
 
-  tar_target(data_phyloseq, add_dna_to_phyloseq(
+  tar_target(d_asv, add_dna_to_phyloseq(
     phyloseq(asv_tab, sam_tab, tax_table(
       as.matrix(tax_tab, dimnames = rownames(tax_tab))
     ))
