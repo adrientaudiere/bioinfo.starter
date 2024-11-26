@@ -19,7 +19,33 @@ library(knitr)
 library(targets)
 library(MiscMetabar)
 here::i_am("analysis/01_bioinformatics.qmd")
+source("R/styles.R")
 ```
+
+## Timeline and cpu usage
+```{r}
+log_data <- autometric::log_read(
+  "data/data_final/autometric_log.txt",
+  units_time = "hours",
+  units_memory = "gigabytes"
+)
+
+log_data |>
+  filter(!grepl("conclude:", phase)) |>
+  filter(!grepl("prepare:", phase)) |>
+  filter(!grepl("__DEFAULT__", phase)) |>
+  ggplot(aes(x = time, y = reorder(phase, desc(time)), color = resident)) +
+  geom_line(aes(linewidth = cpu)) +
+  scale_color_viridis_b("Memory (Gb)", end = 0.9, direction = -1) +
+  theme_idest() +
+  xlab("Time (in hours)") +
+  ylab("")
+
+```
+
+## Main phyloseq object
+
+You may want to select another targets such as d_asv or d_vs_mumu for example. 
 
 ```{r}
 d_pq <- clean_pq(tar_read("d_vs", store=here::here("_targets/")))
