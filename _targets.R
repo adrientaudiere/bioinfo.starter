@@ -120,9 +120,7 @@ tar_plan(
       dadaF = ddF,
       dadaR = ddR,
       derepF = derep_fs,
-      derepR = derep_rs,
-      minOverlap = 8,
-      maxMismatch = 1
+      derepR = derep_rs
     ),
     format = "qs"
   ),
