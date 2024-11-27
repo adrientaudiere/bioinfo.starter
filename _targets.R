@@ -225,16 +225,16 @@ tar_plan(
   ### After cutadapt
   tar_target(
     quality_seq_wo_primers, {cutadapt
-    fastqc_agg(here("data/data_intermediate/seq_wo_primers/"), qc.dir = here("data/data_final/quality_fastqc/seq_wo_primers/"))
+    fastqc_agg(here("data/data_intermediate/seq_wo_primers/"), qc.dir = here("data/data_final/quality_fastqc/seq_wo_primers/"), multiqc=TRUE)
   }),
   ### After filtering and trimming (separate report for forward and reverse)
   tar_target(
     quality_seq_filtered_trimmed_FW,
-    fastqc_agg(here(filtered[[1]]), qc.dir = here("data/data_final/quality_fastqc/filterAndTrim_fwd/"))
+    fastqc_agg(here(filtered[[1]]), qc.dir = here("data/data_final/quality_fastqc/filterAndTrim_fwd/"), multiqc=TRUE)
   ),
   tar_target(
     quality_seq_filtered_trimmed_REV,
-    fastqc_agg(here(filtered[[1]]), qc.dir = here("data/data_final/quality_fastqc/filterAndTrim_rev/"))
+    fastqc_agg(here(filtered[[1]]), qc.dir = here("data/data_final/quality_fastqc/filterAndTrim_rev/"), multiqc=TRUE)
   ),
   
   ##>  Build bioinformatic quarto report
