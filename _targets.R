@@ -198,6 +198,9 @@ tar_plan(
   ##> Create the phyloseq object 'd_asv' with
   tar_target(track_sequences_samples_clusters, track_wkflow(
     list(
+      "Raw Forward sequences" = unlist(list_fastq_files(fastq_files_folder, paired_end = FALSE)),
+      "Forward wo primers" = unlist(list_fastq_files(here::here("data/data_intermediate/seq_wo_primers/"), paired_end = FALSE)),
+      "Forward sequences" = ddF,
       "Paired sequences" = seq_tab_Pairs,
       "Paired sequences without chimera" = seqtab_wo_chimera,
       "Paired sequences without chimera and longer than 200bp" = seqtab,
