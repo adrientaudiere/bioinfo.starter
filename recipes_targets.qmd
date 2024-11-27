@@ -14,6 +14,30 @@ format:
 
 See also [Easy16S](https://github.com/YongxinLiu/EasyAmplicon/blob/master/pipeline_en.sh) for inspiration in bash. 
 
+## Change the parameter to merged forward and reverse sequences 
+
+1. Play with option min Overlap (default to 12) and maxMismach (default to 0). For example, replace the `merged_seq` 
+targets with the following code to allow 1 mismatch and a minimum overlap of 8.
+
+```{r, eval=FALSE}
+tar_target(
+    merged_seq,
+    mergePairs(
+      dadaF = ddF,
+      dadaR = ddR,
+      derepF = derep_fs,
+      derepR = derep_rs,
+      minOverlap = 8,
+      maxMismatch = 1)
+    ),
+    format = "qs"
+  )
+)
+
+```
+
+
+
 ## Forward only pipeline
 
 
