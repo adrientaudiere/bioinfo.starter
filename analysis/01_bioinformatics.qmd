@@ -23,6 +23,11 @@ source(here::here("R/styles.R"))
 source(here::here("R/functions.R"))
 ```
 
+```{r}
+conflicts_prefer(dplyr::filter)
+conflicts_prefer(dplyr::rename)
+```
+
 # Carbon footprint
 ```{r, message=FALSE, warning=FALSE}
 res_ga <- greenAlgoR::ga_targets(store=here::here("_targets/"))
@@ -61,7 +66,7 @@ log_data |>
   filter(!grepl("conclude:", phase)) |>
   filter(!grepl("prepare:", phase)) |>
   filter(!grepl("__DEFAULT__", phase)) |>
-  ggplot(aes(x = time, y = reorder(phase, desc(time)), color = resident)) +
+  ggplot(aes(x = time, y = reorder(phase, dplyr::desc(time)), color = resident)) +
   geom_line(aes(linewidth = cpu)) +
   scale_color_viridis_b("Memory (Gb)", end = 0.9, direction = -1) +
   theme_idest() +
@@ -136,6 +141,7 @@ for (li in names(tab_samp)) {
 ```
 
 :::
+
 
 
 {{< include _session_info.qmd >}}
