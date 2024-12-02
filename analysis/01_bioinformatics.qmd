@@ -115,4 +115,13 @@ for (li in names(tab_samp)) {
 :::
 
 
+## Make krona html files
+
+```{r}
+krona(clean_pq(d_pq, simplify_taxo =TRUE), here::here("data/data_final/krona_nb_seq.html"))
+krona(clean_pq(d_pq, simplify_taxo =TRUE), nb_seq = FALSE, here::here("data/data_final/krona_nb_taxa.html"))
+```
+
+
+
 {{< include _session_info.qmd >}}
