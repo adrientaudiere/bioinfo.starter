@@ -52,8 +52,8 @@ tar_plan(
       path_sam_data = here("data/data_raw/metadata", sam_data_file_name),
       path_raw_seq =  fastq_files_folder,
       sample_col_name = sample_col_name,
-      pattern_remove_sam_data = "22MET-",
-      pattern_remove_fastq_files = "22MET-|22MET|_S.*",
+      #pattern_remove_sam_data = "XXX",
+      #pattern_remove_fastq_files = "_L001.*",
       prefix = "samp_"
     )
   ),
