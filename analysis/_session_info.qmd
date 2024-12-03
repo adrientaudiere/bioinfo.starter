@@ -1,7 +1,7 @@
 
 ## Session Information
 
-Session information are detailed below. More information about the machine, the system, as well as python and R packages, are available in the file <a href="data_final/information_run.txt" title="Download the informations about the hardwares and softwfares used to run these analysis" class="inline-btn"> data_final/information_run.txt </a>.
+Session information are detailed below. More information about the machine, the system, as well as python and R packages, are available in the file <a href="data_final/information_run.txt" title="Download the information about the hardware and softwfare used to run these analysis" class="inline-btn"> data/data_final/information_run.txt </a>.
 
 <button style="width:100%" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" class="button-collapse">
 
@@ -18,7 +18,6 @@ sessionInfo()
 
 ```{r}
 #| include: false
-#| eval: false
 information_report <- list(
   "date" = Sys.Date(), 
   "platform_info" = sessioninfo::platform_info(),
