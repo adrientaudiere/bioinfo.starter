@@ -9,7 +9,7 @@ author:
     affiliation-url: https://orcid.org/my-orcid?orcid=0000-0003-1088-1182
     citation: true
 params:
-  factor_of_interest: "Type"
+  factor_of_interest: "XXX"
 # bibliography: bibliography.bib
 # link-citations: true
 ---
@@ -39,7 +39,7 @@ d_pq <- clean_pq(tar_read("d_vs", store=here::here("_targets/")))
 ```{r}
 #| error: true
 formattable_pq(
-    subset_samples(d_pq, Type %in% c("Mix", "Mono")),
+    d_pq,
     factor_of_interest,
     min_nb_seq_taxa = 1000, 
     lev_col_taxa = "Family",
@@ -56,39 +56,25 @@ plot_ordination(d_pq, vegan::decorana(vegdist(as(otu_table(d_pq), "matrix"),
     method = "robust.aitchison"
   )), color = factor_of_interest) +
   geom_point(size = 3) +
-  stat_ellipse(inherit.aes = F, aes(x = DCA1, y = DCA2, linetype = .data[[factor_of_interest]], col = .data[[factor_of_interest]])) + theme_idest() + scale_color_manual(values=idest_pal$dark_color_idest[[1]][c(5,4,2)])
+  stat_ellipse(inherit.aes = F, aes(x = DCA1, y = DCA2, linetype = .data[[factor_of_interest]], col = .data[[factor_of_interest]])) + 
+  theme_idest() +
+  scale_color_manual(values=idest_pal$dark_color_idest[[1]][c(5,4,2)])
 ```
 
 
 ```{r}
 #| error: true
-adonis_pq(subset_samples(d_pq, Type %in% c("Mix", "Mono")), factor_of_interest, na_remove = TRUE, correction_for_sample_size = TRUE, by = "terms")
+adonis_pq(d_pq, factor_of_interest, na_remove = TRUE, correction_for_sample_size = TRUE, by = "terms")
 ```
 
 
 ```{r}
 #| error: true
 d_pq |>
-  subset_samples(Type %in% c("Mix", "Mono")) |>
+  subset_samples(factor_of_interest %in% d_pq@sam_data[factor_of_interest,c(1,2]) |>
 biplot_pq(merge_sample_by = factor_of_interest, rarefy_after_merging = T)
 ```
 
-
-```{r}
-#| error: true
-res_var <- var_par_rarperm_pq(
-    subset_samples(d_pq, Type %in% c("Mix", "Mono")),
-    list_component = list(
-      "Tmt" = c("Tmt"),
-      "Bloc" = c("Bloc"),
-      "Type" = c("Type")
-    ),
-    nperm = 9,
-    dbrda_computation = TRUE
-  )
-
-plot_var_part_pq(res_var)
-```
 
 
 {{< include _session_info.qmd >}}
