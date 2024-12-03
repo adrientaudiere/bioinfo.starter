@@ -14,7 +14,7 @@ params:
 # link-citations: true
 ---
 
-See the documentation of the `MiscMetabar` package for example of [btea diversity analysis](https://adrientaudiere.github.io/MiscMetabar/articles/beta-div.html). 
+See the documentation of the `MiscMetabar` package for example of [beta-diversity analysis](https://adrientaudiere.github.io/MiscMetabar/articles/beta-div.html). 
 
 ```{r}
 if(base::interactive()) {
