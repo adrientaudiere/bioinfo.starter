@@ -24,32 +24,34 @@ source(here::here("R/functions.R"))
 ```
 
 ```{r}
-conflicts_prefer(dplyr::filter)
-conflicts_prefer(dplyr::rename)
+conflicted::conflicts_prefer(dplyr::filter)
+conflicted::conflicts_prefer(dplyr::rename)
 ```
 
 # Carbon footprint
 ```{r, message=FALSE, warning=FALSE}
-res_ga <- greenAlgoR::ga_targets(store=here::here("_targets/"))
+res_ga <- greenAlgoR::ga_targets(store = here::here("_targets/"))
 library("emojifont")
 ggvalue_box(
-  round(res_ga$carbon_footprint_total_gCO2), 
-  "Carbon footprint (g)", 
-  icons = fontawesome(search_fontawesome("industry")[1]), 
+  round(res_ga$carbon_footprint_total_gCO2),
+  "Carbon footprint (g)",
+  icons = fontawesome(search_fontawesome("industry")[1]),
   alpha_icon = 0.7,
   colors = idest_pal$ligth_color_idest[[1]][[3]],
-  color_icon = idest_pal$dark_color_idest[[1]][[5]], 
-  value_font_color = idest_pal$dark_color_idest[[1]][[5]], 
-  lab_font_color = idest_pal$dark_color_idest[[1]][[5]]) +
-ggvalue_box(
-  round(res_ga$energy_needed_kWh,2), 
-  "Energy used (kWh)", 
-  icons = fontawesome(search_fontawesome("bolt")), 
-  alpha_icon = 0.7,
-  colors = idest_pal$ligth_color_idest[[1]][[1]],
-  color_icon = idest_pal$dark_color_idest[[1]][[2]], 
-  value_font_color = idest_pal$dark_color_idest[[1]][[2]], 
-  lab_font_color = idest_pal$dark_color_idest[[1]][[2]]) 
+  color_icon = idest_pal$dark_color_idest[[1]][[5]],
+  value_font_color = idest_pal$dark_color_idest[[1]][[5]],
+  lab_font_color = idest_pal$dark_color_idest[[1]][[5]]
+) +
+  ggvalue_box(
+    round(res_ga$energy_needed_kWh, 2),
+    "Energy used (kWh)",
+    icons = fontawesome(search_fontawesome("bolt")),
+    alpha_icon = 0.7,
+    colors = idest_pal$ligth_color_idest[[1]][[1]],
+    color_icon = idest_pal$dark_color_idest[[1]][[2]],
+    value_font_color = idest_pal$dark_color_idest[[1]][[2]],
+    lab_font_color = idest_pal$dark_color_idest[[1]][[2]]
+  )
 ```
 
 # Summary of the bioinformatic pipeline
@@ -62,7 +64,25 @@ log_data <- autometric::log_read(
   units_memory = "gigabytes"
 )
 
-log_data |>
+res <- NULL
+for(pid_char in as.character(rev(unique(log_data$pid)))) {
+  print(pid_char)
+  print(paste0("NROW=", nrow(res)))
+  for (phase_char in unique(log_data$phase)) {
+    print(phase_char)
+    if (sum(res$phase == phase_char) == 0) {
+      ld <- log_data |>
+        filter(phase == phase_char) |>
+        filter(pid == pid_char)
+      print(paste0("nrow_ld:",nrow(ld)))
+      res <- bind_rows(ld, res)
+    } else {
+      print(paste0("nrow=", nrow(res)))
+    }
+  }
+}
+
+autom_p <- res |>
   filter(!grepl("conclude:", phase)) |>
   filter(!grepl("prepare:", phase)) |>
   filter(!grepl("__DEFAULT__", phase)) |>
@@ -72,11 +92,20 @@ log_data |>
   theme_idest() +
   xlab("Time (in hours)") +
   ylab("Targets")
+
+autom_p + xlim(c(167, 174))
+
+data_2 <- autom_p$data |> 
+  group_by(phase) |>
+  summarise(time=min(time), resident = mean(resident))
+
+autom_p + geom_point(data = data_2, shape=3) + xlim(c(167, 174))
+
 ```
 
 
 ```{r}
-d_pq <- clean_pq(tar_read("d_vs", store=here::here("_targets/")))
+d_pq <- clean_pq(tar_read("d_vs", store = here::here("_targets/")))
 ```
 
 ```{r}
@@ -84,15 +113,17 @@ summary_plot_pq(d_pq)
 ```
 
 ```{r Visualise target plan, out.width='80%'}
-tar_glimpse(script=here::here("_targets.R"), targets_only = TRUE, callr_arguments = list(show = FALSE))
+tar_glimpse(script = here::here("_targets.R"), 
+            targets_only = TRUE, 
+            callr_arguments = list(show = FALSE))
 ```
 
 ```{r}
-tar_meta(store=here::here("_targets/"), targets_only = TRUE) |> 
-  dplyr::mutate(time = paste0(seconds %/% 3600,":",seconds %/% 60,":",floor(seconds %% 60)))|>
+tar_meta(store = here::here("_targets/"), targets_only = TRUE) |>
+  dplyr::mutate(time = paste0(seconds %/% 3600, ":", seconds %/% 60, ":", floor(seconds %% 60))) |>
   dplyr::select(name, seconds, bytes, format, time) |>
-  dplyr::mutate(Gb=round(bytes/10^9,2)) |>
-  dplyr::arrange(desc(seconds), desc(bytes))  |> 
+  dplyr::mutate(Gb = round(bytes / 10^9, 2)) |>
+  dplyr::arrange(desc(seconds), desc(bytes)) |>
   kable()
 ```
 
@@ -100,7 +131,7 @@ tar_meta(store=here::here("_targets/"), targets_only = TRUE) |>
 ## Load phyloseq object from targets store
 
 ```{r}
-d_pq <- tar_read("d_vs", store=here::here("_targets/"))
+d_pq <- tar_read("d_vs", store = here::here("_targets/"))
 ```
 
 <hr/>
@@ -124,7 +155,7 @@ DT::datatable(d_pq@sam_data)
 ## All samples together
 
 ```{r}
-kable(tar_read(track_sequences_samples_clusters, store=here::here("_targets/")))
+kable(tar_read(track_sequences_samples_clusters, store = here::here("_targets/")))
 ```
 
 ## Per samples
@@ -132,11 +163,11 @@ kable(tar_read(track_sequences_samples_clusters, store=here::here("_targets/")))
 ```{r}
 #| message: false
 #| results: asis
-tab_samp <- tar_read(track_by_samples, store=here::here("_targets/"))
+tab_samp <- tar_read(track_by_samples, store = here::here("_targets/"))
 
 for (li in names(tab_samp)) {
-  print(knitr::kable(tab_samp[[li]], caption = li, format="html"))
-  cat('\n<!-- -->\n\n')
+  print(knitr::kable(tab_samp[[li]], caption = li, format = "html"))
+  cat("\n<!-- -->\n\n")
 }
 ```
 
@@ -145,15 +176,233 @@ for (li in names(tab_samp)) {
 ## Make krona files
 
 ```{r}
-krona(clean_pq(d_pq, simplify_taxo =TRUE), "krona_unite.html", name="Unite")
-krona(clean_pq(d_pq, simplify_taxo =TRUE), ranks=8:14, "krona_eukaryome.html", name="Eukaryome")
-merge_krona(c("krona_unite.html", "krona_eukaryome.html"))
+krona(clean_pq(d_pq, simplify_taxo = TRUE),
+  paste0(here::here("data/data_final/"), "krona_unite.html"),
+  name = "Unite"
+)
+krona(clean_pq(d_pq, simplify_taxo = TRUE),
+  ranks = 8:14,
+  paste0(here::here("data/data_final/"), "krona_eukaryome.html"), name = "Eukaryome"
+)
+merge_krona(c(
+  paste0(here::here("data/data_final/"), "krona_unite.html"),
+  paste0(here::here("data/data_final/"), "krona_eukaryome.html")
+))
 ```
 
 ```{r}
-krona(clean_pq(d_pq, simplify_taxo =TRUE), "krona_unite_taxa.html", nb_seq=FALSE, name="Unite")
-krona(clean_pq(d_pq, simplify_taxo =TRUE), ranks=8:14, "krona_eukaryome_taxa.html", nb_seq=FALSE, name="Eukaryome")
-merge_krona(c("krona_unite_taxa.html", "krona_eukaryome_taxa.html"), output="mergeKrona_taxa.html")
+krona(clean_pq(d_pq, simplify_taxo = TRUE),
+  paste0(here::here("data/data_final/"), "krona_unite_taxa.html"),
+  nb_seq = FALSE, name = "Unite"
+)
+krona(clean_pq(d_pq, simplify_taxo = TRUE),
+  ranks = 8:14,
+  paste0(here::here("data/data_final/"), "krona_eukaryome_taxa.html"),
+  nb_seq = FALSE, name = "Eukaryome"
+)
+merge_krona(
+  c(
+    paste0(here::here("data/data_final/"), "krona_unite_taxa.html"),
+    paste0(here::here("data/data_final/"), "krona_eukaryome_taxa.html")
+  ),
+  output = paste0(here::here("data/data_final/"), "mergeKrona_taxa.html")
+)
+```
+
+## Save phyloseq object in R data object
+
+```{r}
+tar_load(d_asv, store = here::here("_targets/"))
+tar_load(d_vs, store = here::here("_targets/"))
+tar_load(d_vs_mumu, store = here::here("_targets/"))
+save(d_asv, d_vs, d_vs_mumu,
+  file = paste0(here::here("data/data_final/"), "phyloseq_object.Rdata")
+)
+```
+
+### Save phyloseq object per project in R data object
+
+```{r}
+d_asv_Camila <- clean_pq(subset_samples(d_asv, Projet == "Camila"),
+                         simplify_taxo = TRUE)
+d_asv_DIVFUN <- clean_pq(subset_samples(d_asv, Projet == "DIVFUN"), 
+                         simplify_taxo = TRUE)
+d_asv_Cistaceae <- clean_pq(subset_samples(d_asv, Projet == "Cistaceae"), 
+                            simplify_taxo = TRUE)
+  
+d_vs_Camila <- clean_pq(subset_samples(d_vs, Projet == "Camila"), 
+                        simplify_taxo = TRUE)
+d_vs_DIVFUN <- clean_pq(subset_samples(d_vs, Projet == "DIVFUN"), 
+                        simplify_taxo = TRUE)
+d_vs_Cistaceae <- clean_pq(subset_samples(d_vs, Projet == "Cistaceae"), 
+                           simplify_taxo = TRUE)
+
+dir.create(paste0(here::here("data/data_final/"), "Camila"))
+dir.create(paste0(here::here("data/data_final/"), "DIVFUN"))
+dir.create(paste0(here::here("data/data_final/"), "Cistaceae"))
+
+save_pq(d_vs_Camila,
+  path = paste0(here::here("data/data_final/Camila/"), 
+                "otu_reclustering_vsearch")
+)
+save_pq(d_asv_Camila,
+  path = paste0(here::here("data/data_final/Camila/"),
+                "asv_dada2")
+)
+
+save_pq(d_vs_DIVFUN,
+  path = paste0(here::here("data/data_final/DIVFUN/"),
+                "otu_reclustering_vsearch")
+)
+save_pq(d_asv_DIVFUN,
+  path = paste0(here::here("data/data_final/DIVFUN/"), 
+                "asv_dada2")
+)
+
+save_pq(d_vs_Cistaceae,
+  path = paste0(here::here("data/data_final/Cistaceae/"), 
+                "otu_reclustering_vsearch")
+)
+save_pq(d_asv_Cistaceae,
+  path = paste0(here::here("data/data_final/Cistaceae/"),
+                "asv_dada2")
+)
+
+```
+
+### Krona for Camila
+
+```{r}
+path_camila <- here::here("data/data_final/Camila/")
+krona(d_vs_Camila,
+  paste0(path_camila, "krona_unite_nb_seq.html"),
+  name = "Nb_seq_Unite",
+  ranks=c(1:7)
+)
+krona(d_vs_Camila,
+      nb_seq = FALSE,
+  paste0(path_camila, "krona_unite_nb_asv.html"),
+  name = "Nb_ASV_Unite",
+  ranks=c(1:7)
+)
+krona(d_vs_Camila,
+  paste0(path_camila, "krona_eukaryome_nb_seq.html"),
+  name = "Nb_seq_Euk",
+  ranks=c(8:14)
+)
+krona(d_vs_Camila,
+      nb_seq = FALSE,
+  paste0(path_camila, "krona_eukaryome_nb_asv.html"),
+  name = "Nb_ASV_Euk",
+  ranks=c(8:14)
+)
+merge_krona(
+  c(
+   paste0(path_camila, "krona_unite_nb_asv.html"),
+   paste0(path_camila, "krona_eukaryome_nb_asv.html"),
+   paste0(path_camila, "krona_unite_nb_seq.html"),
+   paste0(path_camila, "krona_eukaryome_nb_seq.html")
+  ),
+  output = paste0(path_camila, "krona_unite_eukaryome.html")
+)
+unlink(paste0(path_camila, "krona_unite_nb_asv.html"))
+unlink(paste0(path_camila, "krona_unite_nb_seq.html"))
+unlink(paste0(path_camila, "krona_eukaryome_nb_asv.html"))
+unlink(paste0(path_camila, "krona_eukaryome_nb_seq.html"))
+```
+
+### Krona for DIVFUN
+
+```{r}
+path_divfun <- here::here("data/data_final/DIVFUN/")
+krona(d_vs_DIVFUN,
+  paste0(path_divfun, "krona_unite_nb_seq.html"),
+  name = "Nb_seq_Unite",
+  ranks=c(1:7)
+)
+krona(d_vs_DIVFUN,
+      nb_seq = FALSE,
+  paste0(path_divfun, "krona_unite_nb_asv.html"),
+  name = "Nb_ASV_Unite",
+  ranks=c(1:7)
+)
+krona(d_vs_DIVFUN,
+  paste0(path_divfun, "krona_eukaryome_nb_seq.html"),
+  name = "Nb_seq_Euk",
+  ranks=c(8:14)
+)
+krona(d_vs_DIVFUN,
+      nb_seq = FALSE,
+  paste0(path_divfun, "krona_eukaryome_nb_asv.html"),
+  name = "Nb_ASV_Euk",
+  ranks=c(8:14)
+)
+merge_krona(
+  c(
+   paste0(path_divfun, "krona_unite_nb_asv.html"),
+   paste0(path_divfun, "krona_eukaryome_nb_asv.html"),
+   paste0(path_divfun, "krona_unite_nb_seq.html"),
+   paste0(path_divfun, "krona_eukaryome_nb_seq.html")
+  ),
+  output = paste0(path_divfun, "krona_unite_eukaryome.html")
+)
+unlink(paste0(path_divfun, "krona_unite_nb_asv.html"))
+unlink(paste0(path_divfun, "krona_unite_nb_seq.html"))
+unlink(paste0(path_divfun, "krona_eukaryome_nb_asv.html"))
+unlink(paste0(path_divfun, "krona_eukaryome_nb_seq.html"))
+```
+
+
+### Krona for Cistaceae
+
+```{r}
+path_cistaceae <- here::here("data/data_final/Cistaceae/")
+krona(d_vs_Cistaceae,
+  paste0(path_cistaceae, "krona_unite_nb_seq.html"),
+  name = "Nb_seq_Unite",
+  ranks=c(1:7)
+)
+krona(d_vs_Cistaceae,
+      nb_seq = FALSE,
+  paste0(path_cistaceae, "krona_unite_nb_asv.html"),
+  name = "Nb_ASV_Unite",
+  ranks=c(1:7)
+)
+krona(d_vs_Cistaceae,
+  paste0(path_cistaceae, "krona_eukaryome_nb_seq.html"),
+  name = "Nb_seq_Euk",
+  ranks=c(8:14)
+)
+krona(d_vs_Cistaceae,
+      nb_seq = FALSE,
+  paste0(path_cistaceae, "krona_eukaryome_nb_asv.html"),
+  name = "Nb_ASV_Euk",
+  ranks=c(8:14)
+)
+merge_krona(
+  c(
+   paste0(path_cistaceae, "krona_unite_nb_asv.html"),
+   paste0(path_cistaceae, "krona_eukaryome_nb_asv.html"),
+   paste0(path_cistaceae, "krona_unite_nb_seq.html"),
+   paste0(path_cistaceae, "krona_eukaryome_nb_seq.html")
+  ),
+  output = paste0(path_cistaceae, "krona_unite_eukaryome.html")
+)
+unlink(paste0(path_cistaceae, "krona_unite_nb_asv.html"))
+unlink(paste0(path_cistaceae, "krona_unite_nb_seq.html"))
+unlink(paste0(path_cistaceae, "krona_eukaryome_nb_asv.html"))
+unlink(paste0(path_cistaceae, "krona_eukaryome_nb_seq.html"))
+```
+
+
+
+```{r}
+krona(subset_taxa(d_asv, Genus_Eukaryome=="Apiotrichum"), 
+      ranks=c(1:7),
+      nb_seq= FALSE,
+      file = paste0(here::here("data/data_final/"),
+                    "Apiotrichum_fromEUK_uniteTax.html")
+      )
 ```
 
 {{< include _session_info.qmd >}}

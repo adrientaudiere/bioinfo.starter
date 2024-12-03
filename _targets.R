@@ -18,7 +18,7 @@ lapply(list.files("~/Nextcloud/IdEst/Projets/MiscMetabar/R/", full.names = TRUE)
 
 seq_len_min <- 200
 fw_primer_sequences <- "GCATCGATGAAGAACGCAGC" 
-rev_primer_sequences <- "TCCTCCGCTTATTGATATGC" 
+rev_primer_sequences <- "TCCTCCGCTTATTGATATGC"
 n_threads <- 4
 refseq_file_name <- "sh_general_release_dynamic_s_04.04.2024.fasta"
 sam_data_file_name <- "sam_data.csv"
@@ -100,7 +100,9 @@ tar_plan(
       fw = data_fnfs,
       rev = data_fnrs,
       multithread = n_threads,
-      compress = TRUE
+      compress = TRUE,
+      trimLeft = 1,
+      trimRight = 1
     )
   ),
 
@@ -185,7 +187,9 @@ tar_plan(
   )),
 
   tar_target(d_asv, 
-    add_new_taxonomy_pq(data_phyloseq, ref_fasta = "data/data_raw/refseq/DADA2_EUK_SSU_v1.9_Fungi.fasta", suffix = "Eukaryome")
+    add_new_taxonomy_pq(data_phyloseq, 
+      ref_fasta = "data/data_raw/refseq/DADA2_EUK_SSU_v1.9_Fungi.fasta", 
+      suffix = "Eukaryome")
   ),
 
   ##> Create post-clustering ASV into OTU using vsearch

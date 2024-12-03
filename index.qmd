@@ -12,20 +12,17 @@ date: last-modified
 
 
 :::{.question}
-A text with some critical questions and hypothesis.
+This is the index of the TBI analyse website. 
+The bioinformatic pipeline is the same for the 3 projects called:
+
+- Camila
+- DIVFUN
+- Cistaceae
+
+The separate phyloseq object are available in the folder `data/data_final/name_of_the_project`.
 :::
-
-## Some calcul and plot
-```{r}
-1+1
-```
-
-```{r}
-plot(c(1:10),c(1:10))
-```
-
 
 
 :::{.conclusion}
-A precise and straightforward conclusion
+Alpha and beta-diversity analysis are only example using project as factor.
 :::

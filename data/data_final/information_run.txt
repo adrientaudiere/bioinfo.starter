@@ -1,0 +1,467 @@
+$date
+[1] "2024-12-03"
+
+$platform_info
+ setting  value
+ version  R version 4.4.2 (2024-10-31)
+ os       Debian GNU/Linux 12 (bookworm)
+ system   x86_64, linux-gnu
+ ui       X11
+ language
+ collate  fr_FR.UTF-8
+ ctype    fr_FR.UTF-8
+ tz       Europe/Paris
+ date     2024-12-03
+ pandoc   3.4 @ /usr/bin/ (via rmarkdown)
+
+$external_info
+ setting        value
+ cairo          1.16.0
+ cairoFT
+ pango          1.50.12
+ png            1.6.39
+ jpeg           6.2
+ tiff           LIBTIFF, Version 4.5.0
+ tcl            8.6.13
+ curl           7.88.1
+ zlib           1.2.13
+ bzlib          1.0.8, 13-Jul-2019
+ xz             5.4.1
+ deflate        1.14
+ PCRE           10.42 2022-12-11
+ ICU            72.1
+ TRE            TRE 0.8.0 R_fixes (BSD)
+ iconv          glibc 2.36
+ readline       8.2
+ BLAS           /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.11.0
+ lapack         /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.11.0
+ lapack_version 3.11.0
+
+$session_info
+─ Session info ───────────────────────────────────────────────────────────────
+ setting  value
+ version  R version 4.4.2 (2024-10-31)
+ os       Debian GNU/Linux 12 (bookworm)
+ system   x86_64, linux-gnu
+ ui       X11
+ language
+ collate  fr_FR.UTF-8
+ ctype    fr_FR.UTF-8
+ tz       Europe/Paris
+ date     2024-12-03
+ pandoc   3.4 @ /usr/bin/ (via rmarkdown)
+
+─ Packages ───────────────────────────────────────────────────────────────────
+ ! package              * version    date (UTC) lib source
+ P abind                  1.4-8      2024-09-12 [?] CRAN (R 4.4.1)
+ P ade4                   1.7-22     2023-02-06 [?] CRAN (R 4.4.1)
+ P ape                    5.8        2024-04-11 [?] CRAN (R 4.4.1)
+ P backports              1.5.0      2024-05-23 [?] CRAN (R 4.4.1)
+ P base64url              1.4        2018-05-14 [?] CRAN (R 4.4.1)
+ P BayesFactor            0.9.12-4.7 2024-01-24 [?] CRAN (R 4.4.1)
+ P bayestestR             0.15.0     2024-10-17 [?] CRAN (R 4.4.1)
+ P Biobase                2.66.0     2024-10-29 [?] Bioconduc~
+ P BiocGenerics           0.52.0     2024-10-29 [?] Bioconduc~
+ P BiocManager            1.30.25    2024-08-28 [?] CRAN (R 4.4.1)
+ P BiocParallel           1.40.0     2024-10-29 [?] Bioconduc~
+ P biomformat             1.34.0     2024-10-29 [?] Bioconduc~
+ P Biostrings             2.74.0     2024-10-29 [?] Bioconduc~
+ P bitops                 1.0-9      2024-10-03 [?] CRAN (R 4.4.1)
+ P BWStest                0.2.3      2023-10-10 [?] CRAN (R 4.4.1)
+ P cachem                 1.1.0      2024-05-16 [?] CRAN (R 4.4.1)
+ P callr                  3.7.6      2024-03-25 [?] CRAN (R 4.4.1)
+ P cli                    3.6.3      2024-06-21 [?] CRAN (R 4.4.1)
+ P cluster                2.1.6      2023-12-01 [?] CRAN (R 4.4.1)
+ P coda                   0.19-4.1   2024-01-31 [?] CRAN (R 4.4.1)
+ P codetools              0.2-20     2024-03-31 [?] CRAN (R 4.4.0)
+ P colorspace             2.1-1      2024-07-26 [?] CRAN (R 4.4.1)
+ P correlation            0.8.6      2024-10-26 [?] CRAN (R 4.4.1)
+ P crayon                 1.5.3      2024-06-20 [?] CRAN (R 4.4.1)
+ P dada2                * 1.34.0     2024-10-29 [?] Bioconduc~
+ P data.table             1.16.2     2024-10-10 [?] CRAN (R 4.4.1)
+ P datawizard             0.13.0     2024-10-05 [?] CRAN (R 4.4.1)
+ P DelayedArray           0.32.0     2024-10-29 [?] Bioconduc~
+ P deldir                 2.0-4      2024-02-28 [?] CRAN (R 4.4.1)
+ P digest                 0.6.37     2024-08-19 [?] CRAN (R 4.4.1)
+ P dplyr                * 1.1.4      2023-11-17 [?] CRAN (R 4.4.1)
+ P effectsize             0.8.9      2024-07-03 [?] CRAN (R 4.4.1)
+ P evaluate               1.0.1      2024-10-10 [?] CRAN (R 4.4.1)
+ P fansi                  1.0.6      2023-12-08 [?] CRAN (R 4.4.1)
+ P farver                 2.1.2      2024-05-13 [?] CRAN (R 4.4.1)
+ P fastmap                1.2.0      2024-05-15 [?] CRAN (R 4.4.1)
+ P foreach                1.5.2      2022-02-02 [?] CRAN (R 4.4.1)
+ P generics               0.1.3      2022-07-05 [?] CRAN (R 4.4.1)
+ P GenomeInfoDb           1.42.0     2024-10-29 [?] Bioconduc~
+ P GenomeInfoDbData       1.2.13     2024-11-25 [?] Bioconductor
+ P GenomicAlignments      1.42.0     2024-10-29 [?] Bioconduc~
+ P GenomicRanges          1.58.0     2024-10-29 [?] Bioconduc~
+ P ggplot2              * 3.5.1      2024-04-23 [?] CRAN (R 4.4.1)
+ P ggrepel                0.9.6      2024-09-07 [?] CRAN (R 4.4.1)
+ P ggsignif               0.6.4      2022-10-13 [?] CRAN (R 4.4.1)
+ P ggstatsplot            0.12.5     2024-11-01 [?] CRAN (R 4.4.1)
+ P glue                   1.8.0      2024-09-30 [?] CRAN (R 4.4.1)
+ P gmp                    0.7-5      2024-08-23 [?] CRAN (R 4.4.1)
+ P gtable                 0.3.6      2024-10-25 [?] CRAN (R 4.4.2)
+ P here                   1.0.1      2020-12-13 [?] CRAN (R 4.4.1)
+ P htmltools              0.5.8.1    2024-04-04 [?] CRAN (R 4.4.1)
+ P htmlwidgets            1.6.4      2023-12-06 [?] CRAN (R 4.4.1)
+ P httr                   1.4.7      2023-08-15 [?] CRAN (R 4.4.1)
+ P hwriter                1.3.2.1    2022-04-08 [?] CRAN (R 4.4.1)
+ P igraph                 2.1.1      2024-10-19 [?] CRAN (R 4.4.1)
+ P insight                0.20.5     2024-10-02 [?] CRAN (R 4.4.1)
+ P interp                 1.1-6      2024-01-26 [?] CRAN (R 4.4.1)
+ P IRanges                2.40.0     2024-10-29 [?] Bioconduc~
+ P iterators              1.0.14     2022-02-05 [?] CRAN (R 4.4.1)
+ P jpeg                   0.1-10     2022-11-29 [?] CRAN (R 4.4.1)
+ P jsonlite               1.8.9      2024-09-20 [?] CRAN (R 4.4.1)
+ P knitr                * 1.49       2024-11-08 [?] CRAN (R 4.4.2)
+ P kSamples               1.2-10     2023-10-07 [?] CRAN (R 4.4.1)
+ P labeling               0.4.3      2023-08-29 [?] CRAN (R 4.4.1)
+ P lattice                0.22-6     2024-03-20 [?] CRAN (R 4.4.1)
+ P latticeExtra           0.6-30     2022-07-04 [?] CRAN (R 4.4.1)
+ P lifecycle              1.0.4      2023-11-07 [?] CRAN (R 4.4.1)
+ P magrittr               2.0.3      2022-03-30 [?] CRAN (R 4.4.1)
+ P MASS                   7.3-61     2024-06-13 [?] CRAN (R 4.4.1)
+ P Matrix                 1.7-1      2024-10-18 [?] CRAN (R 4.4.1)
+ P MatrixGenerics         1.18.0     2024-10-29 [?] Bioconduc~
+ P MatrixModels           0.5-3      2023-11-06 [?] CRAN (R 4.4.1)
+ P matrixStats            1.4.1      2024-09-08 [?] CRAN (R 4.4.1)
+ P memoise                2.0.1      2021-11-26 [?] CRAN (R 4.4.1)
+ P mgcv                   1.9-1      2023-12-21 [?] CRAN (R 4.4.1)
+ P MiscMetabar          * 0.10.1     2024-10-07 [?] CRAN (R 4.4.1)
+ P multcompView           0.1-10     2024-03-08 [?] CRAN (R 4.4.1)
+ P multtest               2.62.0     2024-10-29 [?] Bioconduc~
+ P munsell                0.5.1      2024-04-01 [?] CRAN (R 4.4.1)
+ P mvtnorm                1.3-2      2024-11-04 [?] CRAN (R 4.4.2)
+ P nlme                   3.1-166    2024-08-14 [?] CRAN (R 4.4.1)
+ P paletteer              1.6.0      2024-01-21 [?] CRAN (R 4.4.1)
+ P parameters             0.23.0     2024-10-18 [?] CRAN (R 4.4.1)
+ P patchwork              1.3.0      2024-09-16 [?] CRAN (R 4.4.1)
+ P pbapply                1.7-2      2023-06-27 [?] CRAN (R 4.4.1)
+ P performance            0.12.4     2024-10-18 [?] CRAN (R 4.4.1)
+ P permute                0.9-7      2022-01-27 [?] CRAN (R 4.4.1)
+ P phyloseq             * 1.50.0     2024-10-29 [?] Bioconduc~
+ P pillar                 1.9.0      2023-03-22 [?] CRAN (R 4.4.1)
+ P pkgconfig              2.0.3      2019-09-22 [?] CRAN (R 4.4.1)
+ P plyr                   1.8.9      2023-10-02 [?] CRAN (R 4.4.1)
+ P PMCMRplus              1.9.12     2024-09-08 [?] CRAN (R 4.4.1)
+ P png                    0.1-8      2022-11-29 [?] CRAN (R 4.4.1)
+ P prismatic              1.1.2      2024-04-10 [?] CRAN (R 4.4.1)
+ P processx               3.8.4      2024-03-16 [?] CRAN (R 4.4.1)
+ P ps                     1.8.1      2024-10-28 [?] CRAN (R 4.4.2)
+ P purrr                * 1.0.2      2023-08-10 [?] CRAN (R 4.4.1)
+ P pwalign                1.2.0      2024-10-29 [?] Bioconduc~
+ P R6                     2.5.1      2021-08-19 [?] CRAN (R 4.4.1)
+ P RColorBrewer           1.1-3      2022-04-03 [?] CRAN (R 4.4.1)
+ P Rcpp                 * 1.0.13-1   2024-11-02 [?] CRAN (R 4.4.2)
+ P RcppParallel           5.1.9      2024-08-19 [?] CRAN (R 4.4.1)
+ P rematch2               2.1.2      2020-05-01 [?] CRAN (R 4.4.1)
+   renv                   1.0.11     2024-10-12 [1] CRAN (R 4.4.2)
+ P reshape2               1.4.4      2020-04-09 [?] CRAN (R 4.4.1)
+ P rhdf5                  2.50.0     2024-10-29 [?] Bioconduc~
+ P rhdf5filters           1.18.0     2024-10-29 [?] Bioconduc~
+ P Rhdf5lib               1.28.0     2024-10-29 [?] Bioconduc~
+ P rlang                  1.1.4      2024-06-04 [?] CRAN (R 4.4.1)
+ P rmarkdown              2.29       2024-11-04 [?] CRAN (R 4.4.2)
+ P Rmpfr                  1.0-0      2024-11-18 [?] CRAN (R 4.4.2)
+ P rprojroot              2.0.4      2023-11-05 [?] CRAN (R 4.4.1)
+ P Rsamtools              2.22.0     2024-10-29 [?] Bioconduc~
+   rstantools             2.4.0      2024-01-31 [1] CRAN (R 4.4.2)
+ P rstudioapi             0.17.1     2024-10-22 [?] CRAN (R 4.4.1)
+ P S4Arrays               1.6.0      2024-10-29 [?] Bioconduc~
+ P S4Vectors              0.44.0     2024-10-29 [?] Bioconduc~
+ P scales                 1.3.0      2023-11-28 [?] CRAN (R 4.4.1)
+ P secretbase             1.0.3      2024-10-02 [?] CRAN (R 4.4.1)
+ P sessioninfo            1.2.2      2021-12-06 [?] CRAN (R 4.4.1)
+ P ShortRead              1.64.0     2024-10-29 [?] Bioconduc~
+ P SparseArray            1.6.0      2024-10-29 [?] Bioconduc~
+ P statsExpressions       1.6.1      2024-10-31 [?] CRAN (R 4.4.1)
+ P stringi                1.8.4      2024-05-06 [?] CRAN (R 4.4.1)
+ P stringr                1.5.1      2023-11-14 [?] CRAN (R 4.4.1)
+ P SummarizedExperiment   1.36.0     2024-10-29 [?] Bioconduc~
+ P SuppDists              1.1-9.8    2024-09-03 [?] CRAN (R 4.4.1)
+ P survival               3.7-0      2024-06-05 [?] CRAN (R 4.4.1)
+ P targets              * 1.9.0      2024-11-20 [?] CRAN (R 4.4.2)
+ P tibble                 3.2.1      2023-03-20 [?] CRAN (R 4.4.1)
+ P tidyr                  1.3.1      2024-01-24 [?] CRAN (R 4.4.1)
+ P tidyselect             1.2.1      2024-03-11 [?] CRAN (R 4.4.1)
+ P UCSC.utils             1.2.0      2024-10-29 [?] Bioconduc~
+ P utf8                   1.2.4      2023-10-22 [?] CRAN (R 4.4.1)
+ P vctrs                  0.6.5      2023-12-01 [?] CRAN (R 4.4.1)
+ P vegan                  2.6-8      2024-08-28 [?] CRAN (R 4.4.1)
+ P withr                  3.0.2      2024-10-28 [?] CRAN (R 4.4.1)
+ P xfun                   0.49       2024-10-31 [?] CRAN (R 4.4.2)
+ P XVector                0.46.0     2024-10-29 [?] Bioconduc~
+ P yaml                   2.3.10     2024-07-26 [?] CRAN (R 4.4.1)
+ P zeallot                0.1.0      2018-01-28 [?] CRAN (R 4.4.1)
+ P zlibbioc               1.52.0     2024-10-29 [?] Bioconduc~
+
+ [1] /home/adrien/.cache/R/renv/library/bioinfo.starter-a409c7f6/linux-debian-bookworm/R-4.4/x86_64-pc-linux-gnu
+ [2] /home/adrien/.cache/R/renv/sandbox/linux-debian-bookworm/R-4.4/x86_64-pc-linux-gnu/9a444a72
+
+ P ── Loaded and on-disk path mismatch.
+
+──────────────────────────────────────────────────────────────────────────────
+
+$env_info
+_R_CHECK_COMPILATION_FLAGS_KNOWN_
+                        -Wformat -Werror=format-security -Wdate-time
+CHROME_DESKTOP          rstudio.desktop
+CLICOLOR_FORCE          1
+DBUS_SESSION_BUS_ADDRESS
+                        unix:path=/tmp/dbus-e2JogGystw,guid=788ef67bf477c530f97ef9cc674ebaf2
+DBUS_STARTER_ADDRESS    unix:path=/tmp/dbus-e2JogGystw,guid=788ef67bf477c530f97ef9cc674ebaf2
+DBUS_STARTER_BUS_TYPE   session
+DENO_DOM_PLUGIN         /opt/quarto/bin/tools/x86_64/deno_dom/libplugin.so
+DENO_NO_UPDATE_CHECK    1
+DENO_TLS_CA_STORE       system,mozilla
+DESKTOP_SESSION         plasma
+DISPLAY                 :0
+EDITOR                  vi
+GDK_BACKEND             x11
+GDM_LANG                fr_FR.UTF-8
+GDMSESSION              plasma
+GIT_ASKPASS             rpostback-askpass
+GPG_AGENT_INFO          /run/user/1000/gnupg/S.gpg-agent:0:1
+GTK_MODULES             canberra-gtk-module:gail:atk-bridge
+GTK_RC_FILES            /etc/gtk/gtkrc:/home/adrien/.gtkrc:/home/adrien/.config/gtkrc
+GTK2_RC_FILES           /etc/gtk-2.0/gtkrc:/home/adrien/.gtkrc-2.0:/home/adrien/.config/gtkrc-2.0
+HOME                    /home/adrien
+KDE_APPLICATIONS_AS_SCOPE
+                        1
+KDE_FULL_SESSION        true
+KDE_SESSION_UID         1000
+KDE_SESSION_VERSION     5
+LANG                    fr_FR.UTF-8
+LANGUAGE                
+LD_LIBRARY_PATH         /usr/lib/R/lib:/usr/lib/x86_64-linux-gnu:/usr/lib/jvm/default-java/lib/server:/usr/lib/R/lib:/usr/lib/x86_64-linux-gnu:/usr/lib/jvm/default-java/lib/server:/usr/lib/R/lib:/usr/lib/x86_64-linux-gnu:/usr/lib/jvm/default-java/lib/server
+LN_S                    ln -s
+LOGNAME                 adrien
+MAKE                    make
+MPLENGINE               tkAgg
+NO_AT_BRIDGE            1
+ORIGINAL_XDG_CURRENT_DESKTOP
+                        KDE
+PAGER                   /usr/bin/pager
+PAPERSIZE               a4
+PATH                    /usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/opt/quarto/bin:/usr/lib/rstudio/resources/app/bin/postback
+PKGLOAD_PARENT_TEMPDIR
+                        /tmp/RtmpxZKTjH
+PROCESSX_PSKKEM0CY3B6_1733243285
+                        YES
+PWD                     /home/adrien/Bureau/analyse_franck_camilla_jm_2024/bioinfo.starter
+PYTHONIOENCODING        utf-8
+QT_ACCESSIBILITY        1
+QT_AUTO_SCREEN_SCALE_FACTOR
+                        0
+QT_LOGGING_RULES        qt.qpa.xcb.warning=false
+QUARTO_BIN_PATH         /opt/quarto/bin
+QUARTO_DENO             /opt/quarto/bin/tools/x86_64/deno
+QUARTO_DOCUMENT_PATH    /home/adrien/Bureau/analyse_franck_camilla_jm_2024/bioinfo.starter/analysis
+QUARTO_FILTER_DEPENDENCY_FILE
+                        /tmp/quarto-session5811a5e7d003124a/c91d9c70ddcb8e71/e3e7cefdbd576890
+QUARTO_PROFILE          
+QUARTO_PROJECT_DIR      /home/adrien/Bureau/analyse_franck_camilla_jm_2024/bioinfo.starter
+QUARTO_PROJECT_ROOT     /home/adrien/Bureau/analyse_franck_camilla_jm_2024/bioinfo.starter
+QUARTO_ROOT             /
+QUARTO_SHARE_PATH       /opt/quarto/share
+R_ARCH                  
+R_BROWSER               xdg-open
+R_BZIPCMD               /bin/bzip2
+R_CLI_HAS_HYPERLINK_IDE_HELP
+                        true
+R_CLI_HAS_HYPERLINK_IDE_RUN
+                        true
+R_CLI_HAS_HYPERLINK_IDE_VIGNETTE
+                        true
+R_DOC_DIR               /usr/share/R/doc
+R_GZIPCMD               /bin/gzip -n
+R_HOME                  /usr/lib/R
+R_INCLUDE_DIR           /usr/share/R/include
+R_LIBS                  /home/adrien/.cache/R/renv/library/bioinfo.starter-a409c7f6/linux-debian-bookworm/R-4.4/x86_64-pc-linux-gnu:/home/adrien/.cache/R/renv/sandbox/linux-debian-bookworm/R-4.4/x86_64-pc-linux-gnu/9a444a72
+R_LIBS_SITE             /usr/local/lib/R/site-library/:/usr/local/lib/R/site-library/:/usr/local/lib/R/site-library/:/usr/local/lib/R/site-library:/usr/lib/R/site-library:/usr/lib/R/library:/usr/lib/R/library:/usr/lib/R/library
+R_LIBS_USER             /home/adrien/.cache/R/renv/library/bioinfo.starter-a409c7f6/linux-debian-bookworm/R-4.4/x86_64-pc-linux-gnu
+R_PAPERSIZE             letter
+R_PAPERSIZE_USER        letter
+R_PDFVIEWER             /usr/bin/xdg-open
+R_PLATFORM              x86_64-pc-linux-gnu
+R_PRINTCMD              /usr/bin/lpr
+R_RD4PDF                times,inconsolata,hyper
+R_RUNTIME               
+R_SESSION_TMPDIR        /tmp/RtmpkxOd2F
+R_SHARE_DIR             /usr/share/R/share
+R_STRIP_SHARED_LIB      strip --strip-unneeded
+R_STRIP_STATIC_LIB      strip --strip-debug
+R_TEXI2DVICMD           /usr/bin/texi2dvi
+R_UNZIPCMD              /usr/bin/unzip
+R_ZIPCMD                /usr/bin/zip
+RENV_DEFAULT_R_ENVIRON
+                        <NA>
+RENV_DEFAULT_R_ENVIRON_USER
+                        <NA>
+RENV_DEFAULT_R_LIBS     <NA>
+RENV_DEFAULT_R_LIBS_SITE
+                        /usr/local/lib/R/site-library/:/usr/local/lib/R/site-library:/usr/lib/R/site-library:/usr/lib/R/library
+RENV_DEFAULT_R_LIBS_USER
+                        /home/adrien/R/x86_64-pc-linux-gnu-library/4.4
+RENV_DEFAULT_R_PROFILE
+                        <NA>
+RENV_DEFAULT_R_PROFILE_USER
+                        <NA>
+RENV_PROJECT            /home/adrien/Bureau/analyse_franck_camilla_jm_2024/bioinfo.starter
+RETICULATE_MINICONDA_PYTHON_ENVPATH
+                        /home/adrien/Bureau/analyse_franck_camilla_jm_2024/bioinfo.starter/renv/python/r-reticulate
+RMARKDOWN_MATHJAX_PATH
+                        /usr/lib/rstudio/resources/app/resources/mathjax-27
+RS_LOG_LEVEL            WARN
+RS_RPOSTBACK_PATH       /usr/lib/rstudio/resources/app/bin/rpostback
+RS_SHARED_SECRET        41d02ca7-50e4-4c9e-bce4-6fdcf168f2e7
+RSTUDIO                 1
+RSTUDIO_CHILD_PROCESS_PANE
+                        job
+RSTUDIO_CLI_HYPERLINKS
+                        true
+RSTUDIO_CONSOLE_COLOR   256
+RSTUDIO_CONSOLE_WIDTH   81
+RSTUDIO_DESKTOP_EXE     /usr/lib/rstudio/rstudio
+RSTUDIO_PANDOC          /usr/lib/rstudio/resources/app/bin/quarto/bin/tools/x86_64
+RSTUDIO_PROGRAM_MODE    desktop
+RSTUDIO_SESSION_PID     69482
+RSTUDIO_SESSION_PORT    15517
+RSTUDIO_USER_IDENTITY   adrien
+RSTUDIOAPI_IPC_REQUESTS_FILE
+                        /tmp/RtmpxZKTjH/rstudio-ipc-requests-10f6a54515780.rds
+RSTUDIOAPI_IPC_RESPONSE_FILE
+                        /tmp/RtmpxZKTjH/rstudio-ipc-response-10f6a72849e50.rds
+RSTUDIOAPI_IPC_SHARED_SECRET
+                        014a51b7-084b-4a78-8202-f269e15ddb3b
+SED                     /bin/sed
+SESSION_MANAGER         local/leGarsBelou:@/tmp/.ICE-unix/2799,unix/leGarsBelou:/tmp/.ICE-unix/2799
+SHELL                   /usr/bin/zsh
+SHLVL                   1
+SSH_AGENT_PID           2643
+SSH_AUTH_SOCK           /tmp/ssh-XXXXXXvo83Sg/agent.2554
+TAR                     /bin/tar
+TERM                    xterm-256color
+USER                    adrien
+XAUTHORITY              /home/adrien/.Xauthority
+XCURSOR_SIZE            24
+XCURSOR_THEME           breeze_cursors
+XDG_CONFIG_DIRS         /home/adrien/.config/kdedefaults:/etc/xdg
+XDG_CURRENT_DESKTOP     KDE
+XDG_DATA_DIRS           /home/adrien/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share:/usr/local/share:/usr/share
+XDG_GREETER_DATA_DIR    /var/lib/lightdm/data/adrien
+XDG_RUNTIME_DIR         /run/user/1000
+XDG_SEAT                seat0
+XDG_SEAT_PATH           /org/freedesktop/DisplayManager/Seat0
+XDG_SESSION_CLASS       user
+XDG_SESSION_DESKTOP     plasma
+XDG_SESSION_ID          1
+XDG_SESSION_PATH        /org/freedesktop/DisplayManager/Session0
+XDG_SESSION_TYPE        x11
+XDG_VTNR                7
+
+$system_locale
+[1] "LC_CTYPE=fr_FR.UTF-8;LC_NUMERIC=C;LC_TIME=fr_FR.UTF-8;LC_COLLATE=fr_FR.UTF-8;LC_MONETARY=fr_FR.UTF-8;LC_MESSAGES=fr_FR.UTF-8;LC_PAPER=fr_FR.UTF-8;LC_NAME=C;LC_ADDRESS=C;LC_TELEPHONE=C;LC_MEASUREMENT=fr_FR.UTF-8;LC_IDENTIFICATION=C"
+
+$machine_info
+$machine_info$double.eps
+[1] 2.220446e-16
+
+$machine_info$double.neg.eps
+[1] 1.110223e-16
+
+$machine_info$double.xmin
+[1] 2.225074e-308
+
+$machine_info$double.xmax
+[1] 1.797693e+308
+
+$machine_info$double.base
+[1] 2
+
+$machine_info$double.digits
+[1] 53
+
+$machine_info$double.rounding
+[1] 5
+
+$machine_info$double.guard
+[1] 0
+
+$machine_info$double.ulp.digits
+[1] -52
+
+$machine_info$double.neg.ulp.digits
+[1] -53
+
+$machine_info$double.exponent
+[1] 11
+
+$machine_info$double.min.exp
+[1] -1022
+
+$machine_info$double.max.exp
+[1] 1024
+
+$machine_info$integer.max
+[1] 2147483647
+
+$machine_info$sizeof.long
+[1] 8
+
+$machine_info$sizeof.longlong
+[1] 8
+
+$machine_info$sizeof.longdouble
+[1] 16
+
+$machine_info$sizeof.pointer
+[1] 8
+
+$machine_info$sizeof.time_t
+[1] 8
+
+$machine_info$longdouble.eps
+[1] 1.084202e-19
+
+$machine_info$longdouble.neg.eps
+[1] 5.421011e-20
+
+$machine_info$longdouble.digits
+[1] 64
+
+$machine_info$longdouble.rounding
+[1] 5
+
+$machine_info$longdouble.guard
+[1] 0
+
+$machine_info$longdouble.ulp.digits
+[1] -63
+
+$machine_info$longdouble.neg.ulp.digits
+[1] -64
+
+$machine_info$longdouble.exponent
+[1] 15
+
+$machine_info$longdouble.min.exp
+[1] -16382
+
+$machine_info$longdouble.max.exp
+[1] 16384
+
+
+$conda_info
+[1] 0
+
+$vsearch_version
+[1] "Rognes T, Flouri T, Nichols B, Quince C, Mahe F (2016)"                      
+[2] "VSEARCH: a versatile open source tool for metagenomics"                      
+[3] "PeerJ 4:e2584 doi: 10.7717/peerj.2584 https://doi.org/10.7717/peerj.2584"    
+[4] ""                                                                            
+[5] "Compiled with support for gzip-compressed files, and the library is loaded." 
+[6] "zlib version 1.2.13, compile flags a9"                                       
+[7] "Compiled with support for bzip2-compressed files, and the library is loaded."
+
