@@ -25,7 +25,8 @@ Suggests:
   quarto,
   sessioninfo,
   qs2,
-  autometric
+  autometric,
+  fastqcr
 BugReports: https://github.com/adrientaudiere/bioinfo.starter/issues
 Imports: 
     conflicted

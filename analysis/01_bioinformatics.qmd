@@ -19,13 +19,14 @@ library(knitr)
 library(targets)
 library(MiscMetabar)
 here::i_am("analysis/01_bioinformatics.qmd")
-source("R/styles.R")
+source(here::here("R/styles.R"))
+source(here::here("R/functions.R"))
 ```
 
 ## Timeline and cpu usage
 ```{r}
 log_data <- autometric::log_read(
-  "data/data_final/autometric_log.txt",
+  here::here("data/data_final/autometric_log.txt"),
   units_time = "hours",
   units_memory = "gigabytes"
 )
@@ -118,8 +119,15 @@ for (li in names(tab_samp)) {
 ## Make krona html files
 
 ```{r}
-krona(clean_pq(d_pq, simplify_taxo =TRUE), here::here("data/data_final/krona_nb_seq.html"))
-krona(clean_pq(d_pq, simplify_taxo =TRUE), nb_seq = FALSE, here::here("data/data_final/krona_nb_taxa.html"))
+krona(
+  clean_pq(d_pq, simplify_taxo = TRUE),
+  file = here::here("data/data_final/krona_nb_seq.html")
+)
+krona(
+  clean_pq(d_pq, simplify_taxo = TRUE),
+  nb_seq = FALSE,
+  file =  here::here("data/data_final/krona_nb_taxa.html")
+)
 ```
 
 
