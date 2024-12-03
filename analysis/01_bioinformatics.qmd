@@ -23,6 +23,32 @@ source(here::here("R/styles.R"))
 source(here::here("R/functions.R"))
 ```
 
+## Carbon footprint
+
+```{r, message=FALSE, warning=FALSE}
+res_ga <- greenAlgoR::ga_targets(store = here::here("_targets/"))
+library("emojifont")
+ggvalue_box(
+  round(res_ga$carbon_footprint_total_gCO2),
+  "Carbon footprint (g)",
+  icons = fontawesome(search_fontawesome("industry")[1]),
+  alpha_icon = 0.7,
+  colors = idest_pal$ligth_color_idest[[1]][[3]],
+  color_icon = idest_pal$dark_color_idest[[1]][[5]],
+  value_font_color = idest_pal$dark_color_idest[[1]][[5]],
+  lab_font_color = idest_pal$dark_color_idest[[1]][[5]]
+) +
+  ggvalue_box(
+    round(res_ga$energy_needed_kWh, 2),
+    "Energy used (kWh)",
+    icons = fontawesome(search_fontawesome("bolt")),
+    alpha_icon = 0.7,
+    colors = idest_pal$ligth_color_idest[[1]][[1]],
+    color_icon = idest_pal$dark_color_idest[[1]][[2]],
+    value_font_color = idest_pal$dark_color_idest[[1]][[2]],
+    lab_font_color = idest_pal$dark_color_idest[[1]][[2]]
+  )
+```
 ## Timeline and cpu usage
 ```{r}
 log_data <- autometric::log_read(
