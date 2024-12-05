@@ -50,7 +50,8 @@ ggvalue_box(
   )
 ```
 ## Timeline and cpu usage
-```{r}
+
+```{r, message=FALSE, warning=FALSE}
 log_data <- autometric::log_read(
   here::here("data/data_final/autometric_log.txt"),
   units_time = "hours",
