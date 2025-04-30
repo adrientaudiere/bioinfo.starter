@@ -35,11 +35,12 @@ source(here::here("R/styles.R"))
 ```
 
 ```{r}
-d_pq <- clean_pq(tar_read("d_vs", store=here::here("_targets/")))
+d_mfre <- clean_pq(d_mfre)
 ```
 
 
 ```{r}
+#| error: true
 hill_pq(subset_samples(d_pq, Type %in% c("Mix", "Mono")), factor_of_interest, one_plot = TRUE) &
   (
     theme_idest(
@@ -60,9 +61,44 @@ MiscMetabar::accu_plot_balanced_modality(d_pq, factor_of_interest, nperm=20) + t
 
 
 ```{r}
-#| error: true
-ggbetween_pq(d_pq, factor_of_interest)
+ggbetween_pq(d_mfre, "type_ech", one_plot = TRUE)
+ggbetween_pq(d_mfre, "Type", one_plot = TRUE)
+ggbetween_pq(d_mfre, "Tmt", one_plot = TRUE)
 ```
+
+
+```{r}
+ggstatsplot::ggbetweenstats(psmelt_samples_pq(d_mfre), Tmt, Hill_0)
+ggstatsplot::ggbetweenstats(psmelt_samples_pq(d_mfre), Tmt, Hill_1)
+ggstatsplot::ggbetweenstats(psmelt_samples_pq(d_mfre), Tmt, Hill_2)
+```
+
+
+```{r}
+psmelt_samples_pq(d_mfre) |>
+  group_by(type_ech) |>
+    summarise(across(Abundance, 
+                     .fns = 
+                     list(min = min,
+                          mean = mean,
+                          stdev = sd,
+                          q25 = ~quantile(., 0.25),
+                          median = ~quantile(., 0.5),
+                          q75 = ~quantile(., 0.75),
+                          max = max)))
+```
+
+
+```{r}
+# psmelt_samples_pq(d_mfre) |>
+#   ggplot(aes(x = Abundance, y = type_ech)) +
+#   geom_violin(
+ggstatsplot::ggbetweenstats(psmelt_samples_pq(d_mfre), type_ech, Abundance)
+ggstatsplot::ggbetweenstats(psmelt_samples_pq(d_mfre), type_ech, Hill_0)
+ggstatsplot::ggbetweenstats(psmelt_samples_pq(d_mfre), type_ech, Hill_1)
+ggstatsplot::ggbetweenstats(psmelt_samples_pq(d_mfre), type_ech, Hill_2)
+```
+
 
 
 {{< include _session_info.qmd >}}

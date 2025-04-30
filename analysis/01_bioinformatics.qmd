@@ -18,35 +18,8 @@ citation: true
 library(knitr)
 library(targets)
 library(MiscMetabar)
+devtools::load_all("~/Nextcloud/IdEst/Projets/MiscMetabar/")
 here::i_am("analysis/01_bioinformatics.qmd")
-```
-
-```{r}
-d_pq <- clean_pq(tar_read("d_vs", store=here::here("_targets/")))
-```
-
-```{r}
-summary_plot_pq(d_pq)
-```
-
-```{r Visualise target plan, out.width='80%'}
-tar_glimpse(script=here::here("_targets.R"), targets_only = TRUE, callr_arguments = list(show = FALSE))
-```
-
-```{r}
-tar_meta(store=here::here("_targets/"), targets_only = TRUE) |> 
-  dplyr::mutate(time = paste0(seconds %/% 3600,":",seconds %/% 60,":",floor(seconds %% 60)))|>
-  dplyr::select(name, seconds, bytes, format, time) |>
-  dplyr::mutate(Gb=round(bytes/10^9,2)) |>
-  dplyr::arrange(desc(seconds), desc(bytes))  |> 
-  kable()
-```
-
-
-## Load phyloseq object from targets store
-
-```{r}
-d_pq <- tar_read("d_vs", store=here::here("_targets/"))
 ```
 
 <hr/>
@@ -57,10 +30,105 @@ The {targets} package is at the core of this project. Please read the intro of t
 The {targets} package store ... *targets* in a folder and can load (`tar_load()`) and read (`tar_read`) object from this folder.
 :::
 
+
+
+```{r}
+list.files(tar_read(fastq_files_folder))[!list.files(tar_read(fastq_files_folder))%in%list.files(tar_read(cutadapt))]
+```
+
+
+22MET-01206_S49_L001_R1_001.fastq.gz
+22MET-01218_S61_L001_R1_001.fastq.gz 
+22MET00155_S5_L001_R1_001.fastq.gz 
+22MET00182_S32_L001_R1_001.fastq.gz 
+22MET00262_S104_L001_R2_001.fastq.gz 
+22MET00268_S110_L001_R2_001.fastq.gz 
+22MET00283_S54_L001_R1_001.fastq.gz
+22MET00300_S71_L001_R2_001.fastq.gz 
+22MET00301_S72_L001_R1_001.fastq.gz 
+22MET00353_S83_L001_R2_001.fastq.gz 
+22MET01265_S12_L001_R1_001.fastq.gz
+22MET01273_S20_L001_R2_001.fastq.gz 
+22MET01275_S22_L001_R1_001.fastq.gz
+22MET01311_S58_L001_R1_001.fastq.gz 
+22MET01336_S83_L001_R1_001.fastq.gz 
+22MET01533_S20_L001_R1_001.fastq.gz
+
+22MET1561_S138_L001_R1_001.fastq.gz 
+22MET1561_S138_L001_R2_001.fastq.gz 
+22MET1562_S139_L001_R1_001.fastq.gz 
+22MET1562_S139_L001_R2_001.fastq.gz 
+Blanc-22LIBTaschen3_S88_L001_R1_001.fastq.gz 
+Blanc-22LIBTaschen3_S88_L001_R2_001.fastq.gz 
+Blanc-22LIBTaschen4_S113_L001_R1_001.fastq.gz
+Blanc-22LIBTaschen4_S113_L001_R2_001.fastq.gz 
+Blanc-Hyphes_S47_L001_R1_001.fastq.gz 
+Blanc-Hyphes_S47_L001_R2_001.fastq.gz 
+Blanc-Racine_S49_L001_R1_001.fastq.gz
+Blanc-Racine_S49_L001_R2_001.fastq.gz
+
+
+
+
+### Load dataset and filter out taxa with less than 10 sequences and present in less than 2 samples 
+
+```{r}
+# d_asv (ASV) or d_vs (OTU using vsearch)
+d_pq_interm <- tar_read("d_vs", store = here::here("_targets/"))
+d_pq_interm2 <- subset_taxa_pq(d_pq_interm, taxa_sums(as_binary_otu_table(d_pq_interm))>1)
+d_pq_interm2 <- subset_taxa_pq(d_pq_interm2, taxa_sums(d_pq_interm2)>10)
+```
+
+
+### Filter out samples with less than 2000 sequences
+
+```{r}
+barplot(sort(sample_sums(d_pq_interm2)))
+barplot(sort(sample_sums(d_pq_interm2))[1:25])
+abline(h=2000, col="red")
+d_pq_interm2@sam_data$type_ech |> table()
+d_pq <- subset_samples_pq(d_pq_interm2, sample_sums(d_pq_interm2)>2000)
+d_pq@sam_data$type_ech |> table()
+```
+
+
+```{r}
+d_pq <- subset_samples(d_pq, Position!="")
+d_pq@sam_data$expe <- "Solace_AM"
+```
+
+
+### Summary of the resulting dataset
+
+```{r}
+summary_plot_pq(d_pq)
+```
+
+```{r Visualise target plan, out.width='80%'}
+tar_glimpse(script = here::here("_targets.R"), targets_only = TRUE, callr_arguments = list(show = FALSE))
+```
+
+```{r}
+tar_meta(store = here::here("_targets/"), targets_only = TRUE) |>
+  dplyr::mutate(time = paste0(seconds %/% 3600, ":", seconds %/% 60, ":", floor(seconds %% 60))) |>
+  dplyr::select(name, seconds, bytes, format, time) |>
+  dplyr::mutate(Gb = round(bytes / 10^9, 2)) |>
+  dplyr::arrange(desc(seconds), desc(bytes)) |>
+  kable()
+```
+
+
 ## Sample data
 
 ```{r}
 DT::datatable(d_pq@sam_data)
+table(d_pq@sam_data$type_ech)
+table(d_pq@sam_data$Position, d_pq@sam_data$type_ech)
+
+table(d_pq@sam_data$Bloc)
+table(d_pq@sam_data$Tmt, d_pq@sam_data$Type)
+
+table(d_pq@sam_data$G1_G2)
 ```
 
 ## Sequences, samples and clusters across the pipeline
@@ -70,7 +138,7 @@ DT::datatable(d_pq@sam_data)
 ## All samples together
 
 ```{r}
-kable(tar_read(track_sequences_samples_clusters, store=here::here("_targets/")))
+kable(tar_read(track_sequences_samples_clusters, store = here::here("_targets/")))
 ```
 
 ## Per samples
@@ -78,11 +146,11 @@ kable(tar_read(track_sequences_samples_clusters, store=here::here("_targets/")))
 ```{r}
 #| message: false
 #| results: asis
-tab_samp <- tar_read(track_by_samples, store=here::here("_targets/"))
+tab_samp <- tar_read(track_by_samples, store = here::here("_targets/"))
 
 for (li in names(tab_samp)) {
-  print(knitr::kable(tab_samp[[li]], caption = li, format="html"))
-  cat('\n<!-- -->\n\n')
+  print(knitr::kable(tab_samp[[li]], caption = li, format = "html"))
+  cat("\n<!-- -->\n\n")
 }
 ```
 
@@ -93,51 +161,487 @@ for (li in names(tab_samp)) {
 ### Compare taxonomy using either Marjaam or Eukaryome database
 
 ```{r}
-krona(d_asv, file = here::here("data", "data_final", "Marjaam.html"), ranks= 2:7, name="Marjaam")
-krona(d_asv, file = here::here("data", "data_final", "Eukaryome.html"), ranks= 10:15, name="Eukaryome")
+krona(d_pq, file = here::here("data", "data_final", "Marjaam.html"), ranks = 2:7, name = "Marjaam")
+krona(d_pq, file = here::here("data", "data_final", "Eukaryome.html"), ranks = 10:15, name = "Eukaryome")
 
 merge_krona(c(here::here("data", "data_final", "Marjaam.html"), here::here("data", "data_final", "Eukaryome.html")), here::here("data", "data_final", "compare_tax_database.html"))
 ```
 
 ```{r}
-table(d_pq@tax_table[,"Family"])
-table(d_pq@tax_table[,"Family__eukaryome_Glomero"])
+table(d_pq@tax_table[, "Family"])
+table(d_pq@tax_table[, "Family_E"])
 
-table(d_pq@tax_table[,"Genus"])
-table(d_pq@tax_table[,"Genus__eukaryome_Glomero"])
+table(d_pq@tax_table[, "Genus"])
+table(d_pq@tax_table[, "Genus_E"])
 ```
 
 
 ```{r}
 psm <- psmelt(d_pq)
 
-d_pq@sam_data$expe = "Solace_AM"
-
-ggplot(psm, aes(y=Abundance,  x = Type, fill = Genus)) +
-  geom_bar(stat="identity")
-
+ggplot(psm, aes(y = Abundance, x = type_ech, fill = Class_E)) +
+  geom_bar(stat = "identity") + no_legend()
 
 plot_tax_pq(
   d_pq,
-  "Type", 
+  "type_ech",
   type = "nb_taxa",
-  taxa_fill="Class",
+  taxa_fill = "Class_E",
   color_border = rgb(0, 0, 0, 0)
-)  
+)
+```
 
-plot_tax_pq(
+
+## Filter AM based on taxonomy
+
+Let's call AMF the Glomeromycota phylum and putative-MFRE the taxa in Densosporales.
+
+```{r}
+cond_am_eukaryome_AMF <- d_pq@tax_table[,"Phylum_E"]=="Glomeromycota" 
+cond_am_eukaryome_AMF <- as.vector(unclass(cond_am_eukaryome_AMF))
+cond_am_eukaryome_AMF[is.na(cond_am_eukaryome_AMF)] <- FALSE
+sum(cond_am_eukaryome_AMF)
+```
+
+
+```{r}
+sum(d_pq@tax_table[,"Class_E"]=="Endogonomycetes" ,na.rm = T)
+sum(d_pq@tax_table[,"Order_E"]=="Densosporales" ,na.rm = T)
+sum(d_pq@tax_table[,"Family_E"]=="Endogonaceae" ,na.rm = T)
+
+system(paste0("grep -c 'Endogonaceae' ", 
+              here::here("data/data_raw/refseq/DADA2_EUK_SSU_v1.9.fasta")
+              ))
+system(paste0("grep -c 'Densosporales' ", 
+              here::here("data/data_raw/refseq/DADA2_EUK_SSU_v1.9.fasta")
+ ))
+system(paste0("grep -c 'Endogonomycetes' ", 
+              here::here("data/data_raw/refseq/DADA2_EUK_SSU_v1.9.fasta")
+ ))
+```
+
+
+```{r}
+d_pq2 <- add_new_taxonomy_pq(
   d_pq,
-  "Type", 
-  type = "nb_taxa",
-  taxa_fill="Class__eukaryome_Glomero",
-  color_border = rgb(0, 0, 0, 0)
-)  
+  method = "sintax", 
+  ref_fasta = "data/data_raw/refseq/EUK_SSU_v1_9_3.fasta",
+  suffix = "_E_sintax")
+
+sum(as.data.frame(as.matrix(d_pq@tax_table))$Order_E_sintax=="Densosporales", na.rm=T)
+sum(as.data.frame(as.matrix(d_pq@tax_table))$Family_E_sintax=="Endogonaceae", na.rm=T)
+
+cond_am_eukaryome_mfre <- d_pq@tax_table[,"Family_E"]=="Endogonaceae" | d_pq@tax_table[,"Order_E"]=="Densosporales"
+cond_am_eukaryome_mfre <- as.vector(unclass(cond_am_eukaryome_mfre))
+cond_am_eukaryome_mfre[is.na(cond_am_eukaryome_mfre)] <- FALSE
+sum(cond_am_eukaryome_mfre)
+```
+
+
+
+```{r}
+d_pq <- add_new_taxonomy_pq(
+  d_pq2,
+  method = "blastn", 
+  method_algo = "top-hit",
+  ref_fasta = "data/data_raw/refseq/sintax_ref_seq_Mucoromycotina.fasta",
+  suffix = "_minimuco_blast_95"
+  )
+
+d_pq <- add_new_taxonomy_pq(
+  d_pq,
+  method = "blastn", 
+  min_id = 97,
+  method_algo = "top-hit",
+  ref_fasta = "data/data_raw/refseq/sintax_ref_seq_Mucoromycotina.fasta",
+  suffix = "_minimuco_blast_97"
+  )
+
+
+cond_mfre_miniDB_species <- !is.na(d_pq@tax_table[,"Taxa_name_db_minimuco_blast_95"])
+cond_mfre_miniDB_species <- as.vector(unclass(cond_mfre_miniDB_species))
+sum(cond_mfre_miniDB_species)
+
+cond_mfre_miniDB_species_97 <- !is.na(d_pq@tax_table[,"Taxa_name_db_minimuco_blast_97"])
+cond_mfre_miniDB_species_97 <- as.vector(unclass(cond_mfre_miniDB_species_97))
+sum(cond_mfre_miniDB_species_97)
+
+table(cond_mfre_miniDB_species_97, cond_mfre_miniDB_species)
+
+table(cond_am_eukaryome_mfre, cond_mfre_miniDB_species_97)
+table(cond_am_eukaryome_AMF, cond_mfre_miniDB_species_97)
+table(cond_am_eukaryome_AMF, cond_am_eukaryome_mfre)
+
+ggVennDiagram::ggVennDiagram(list("mfre_euk"=taxa_names(d_pq)[cond_am_eukaryome_mfre],
+                                  "mfre_miniDB_97"=taxa_names(d_pq)[cond_mfre_miniDB_species_97],
+                                  "mfre_miniDB_95"=taxa_names(d_pq)[cond_mfre_miniDB_species])) +
+  scale_x_continuous(expand = expansion(mult = .2))
+```
+
+
+```{r}
+# Add an information status of mfre in the tax_table slot
+d_pq@tax_table <- tax_table(as.matrix(cbind(d_pq@tax_table, 
+                                            "mfre"=cond_am_eukaryome_mfre, 
+                                            "amf"=cond_am_eukaryome_AMF)))
+```
+
+
+
+
+
+```{r}
+d_am <- clean_pq(subset_taxa(d_pq, amf==TRUE))
+d_mfre <- clean_pq(subset_taxa(d_pq, mfre==TRUE))
+
+# Verify that their is no overlap between mfre and amf 
+sum(d_am@tax_table[,"mfre"]=="TRUE")
+sum(d_mfre@tax_table[,"amf"]=="TRUE")
+```
+
+
+```{r}
+table(d_am@tax_table[,"Species_muco_miniDB"])
+gtsummary::tbl_summary(dplyr::select(as.data.frame(unclass(d_am@tax_table)), -NA.))
+
+gtsummary::tbl_cross(dplyr::select(as.data.frame(unclass(d_am@tax_table)), c("Genus_E", "Genus")))
+gtsummary::tbl_cross(dplyr::select(as.data.frame(unclass(d_mfre@tax_table)), c("Genus_E", "Genus")))
+```
+
+
+
+
+## Build a phylogenetic tree
+
+### Using Mafft and fasttree2
+
+#### Only refseq Muco
+
+```{sh}
+cd /home/adrien/Bureau/bioinfo.starter_am_taschen/data/data_raw/refseq
+mafft --auto --adjustdirection --reorder ref_seq_Mucoromycotina.fasta > ref_seq_Muco_MAFFT.fasta
+./FastTreeDbl -gamma -gtr -log fasttree.log ref_seq_Muco_MAFFT.fasta > ref_seq_Muco_MAFFT.tree 
+```
+
+
+```{r}
+tree_maft <- ape::read.tree("data/data_raw/refseq/ref_seq_Muco_MAFFT.tree")
+plot(tree_maft)
+```
+
+#### Outgroup + refseq Muco
+
+
+```{sh}
+cd /home/adrien/Bureau/bioinfo.starter_am_taschen/data/data_raw/refseq
+mafft --auto --adjustdirection --reorder ref_seq_Muco_outgroup.fasta > ref_seq_Muco_OG_MAFFT.fasta
+./FastTreeDbl -gamma -gtr -log fasttree_OG.log ref_seq_Muco_OG_MAFFT.fasta > ref_seq_Muco_OG_MAFFT.tree 
+./raxml-ng_v1.2.2_linux_x86_64/raxml-ng --all --msa ref_seq_Muco_OG_MAFFT.fasta --model GTR+G --tree pars{10} --bs-trees 200 --prefix muco_og_ --bsconverge 
+```
+
+```{r}
+tree_raxml_muco_og <- read.tree("data/data_raw/refseq/muco_og_.raxml.support")
+outgroups <- tree_raxml_muco_og$tip.label[grep("OUT_", tree_raxml_muco_og$tip.label)]
+tree_raxml_muco_og <- root(tree_raxml_muco_og, outgroup=outgroups)
+plot(tree_raxml_muco_og, show.node.label = TRUE)
+```
+
+
+```{r}
+tree_og_maft <- ape::read.tree("data/data_raw/refseq/ref_seq_Muco_OG_MAFFT.tree")
+outgroups <- tree_og_maft$tip.label[grep("OUT_", tree_og_maft$tip.label)]
+tree_og_maft <- root(tree_og_maft, outgroup=outgroups)
+plot(tree_og_maft)
+```
+
+
+
+#### Outgroup + refseq MFRE + OTU mfre
+
+```{r}
+refseq_og <- Biostrings::readDNAStringSet("data/data_raw/refseq/ref_seq_Muco_outgroup.fasta")
+seqs_edna_mfre <- Biostrings::DNAStringSet(d_mfre@refseq)
+
+Biostrings::writeXStringSet(c(refseq_og, seqs_edna_mfre), "data/data_intermediate/seqs_mfre_for_mafft.fasta")
+Biostrings::writeXStringSet(seqs_edna_mfre, "data/data_intermediate/otu_mfre.fasta")
+```
+
+
+```{sh}
+cd /home/adrien/Bureau/bioinfo.starter_am_taschen/data/data_intermediate
+mafft --auto --adjustdirection --reorder seqs_mfre_for_mafft.fasta > seqs_mfre_for_mafft_MAFFTED.fasta
+
+/home/adrien/Bureau/bioinfo.starter_am_taschen/data/data_raw/refseq/FastTreeDbl -gamma -gtr -log fasttree_OG.log seqs_mfre_for_mafft_MAFFTED.fasta > seqs_mfre_MAFFTED.tree 
+
+/home/adrien/Bureau/bioinfo.starter_am_taschen/data/data_raw/refseq/raxml-ng_v1.2.2_linux_x86_64/raxml-ng --all --msa seqs_mfre_for_mafft_MAFFTED.fasta --model GTR+G --tree pars{10} --bs-trees 200 --prefix raxml_otu_mfre_og
+```
+
+
+```{r}
+library(ape)
+tree_raxml_muco_og <- read.tree("data/data_intermediate/raxml_otu_mfre_og.raxml.support")
+outgroups <- tree_raxml_muco_og$tip.label[grep("OUT_", tree_raxml_muco_og$tip.label)]
+tree_raxml_muco_og <- root(tree_raxml_muco_og, outgroup=outgroups)
+
+nodes_color <- rep("green", length(tree_raxml_muco_og$tip.label))
+names(nodes_color) <- tree_raxml_muco_og$tip.label
+nodes_color[grepl("Taxa",names(nodes_color))] <- "gray20"
+nodes_color[grepl("OUT_",names(nodes_color))] <- "red"
+
+plot(tree_raxml_muco_og, show.node.label = TRUE, tip.color = nodes_color)
+```
+
+
+```{r}
+tree_maft <- ape::read.tree("data/data_intermediate/seqs_MAFFTED.tree")
+outgroups <- tree_maft$tip.label[grep("OUT_", tree_maft$tip.label)]
+tree_maft <- root(tree_maft, outgroup=outgroups)
+plot(tree_maft)
+```
+
+
+
+#### EPA-NG
+
+```{r}
+alignment_mafft <-  Biostrings::readDNAStringSet("data/data_intermediate/seqs_mfre_for_mafft_MAFFTED.fasta")
+names(alignment_mafft) <- gsub(" .*","",names(alignment_mafft))
+Biostrings::writeXStringSet(alignment_mafft[grepl("Taxa",names(alignment_mafft))], "data/data_intermediate/otu_refseq_MAFFTED_with_refseq.fasta")
+Biostrings::writeXStringSet(alignment_mafft[!grepl("Taxa",names(alignment_mafft))], "data/data_intermediate/refseq_MAFFTED_with_otu.fasta")
+```
+
+```{sh}
+cd /home/adrien/Bureau/bioinfo.starter_am_taschen/data/data_raw/refseq
+
+epa-ng --ref-msa /home/adrien/Bureau/bioinfo.starter_am_taschen/data/data_intermediate/refseq_MAFFTED_with_otu.fasta --tree muco_og_.raxml.bestTree --query /home/adrien/Bureau/bioinfo.starter_am_taschen/data/data_intermediate/otu_refseq_MAFFTED_with_refseq.fasta --model muco_og_.raxml.bestModel 
+```
+
+```{r}
+jplace_tree <- treeio::read.jplace("/home/adrien/Bureau/bioinfo.starter_am_taschen/data/data_raw/refseq/epa_result.jplace")
+
+hist(jplace_tree@placements$like_weight_ratio)
+```
+
+```{r}
+best_placement <- jplace_tree@placements |> 
+  group_by(name) |>
+  arrange(desc(like_weight_ratio)) |>
+  filter(row_number()==1) 
+
+hist(best_placement$like_weight_ratio)
+
+# outgroups <- c("OUT_X54866.1", "OUT_AY665772.1")
+# jplace_tree@phylo <- root(jplace_tree@phylo, outgroup=outgroups)
 
 ```
 
 ```{r}
+library(ggtree)
+ggtree(jplace_tree) + geom_tiplab() + ggtree::geom_point(aes(size=ifelse(nplace==0, NA, nplace)))
+```
+
+```{r}
+epa_res <- jplace_tree@placements |>
+  group_by(name) |>
+  filter(row_number()==1) |>
+ # filter(like_weight_ratio>0.2) |>
+  left_join(as_tibble(jplace_tree), by=join_by(node==node)) |> 
+  left_join(data.frame(name=names(taxa_sums(d_pq)), n_seq=taxa_sums(d_pq), n_samples=taxa_sums(as_binary_otu_table(d_pq))), by=join_by(name==name))
+
+epa_res |> pull(label) |> table()
+
+epa_res_by_node <- epa_res |>
+  group_by(node) |>
+  summarise(lwr=mean(like_weight_ratio), taxa=paste(name,collapse = ";"), n_seq=mean(n_seq), n_samples=mean(n_samples), n_otu=n())
+
+jplace_tree2 <- jplace_tree
+jplace_tree2@data <- full_join(jplace_tree@data, epa_res_by_node, join_by(node==node))
+ggtree(jplace_tree2) + 
+  geom_tiplab() + 
+  ggtree::geom_point(aes(size=n_otu))
+```
+
+
+
+```{r}
+epa_res2 <- jplace_tree@placements |>
+  left_join(as_tibble(jplace_tree), by=join_by(node==node)) |> 
+  left_join(data.frame(name=names(taxa_sums(d_pq)), n_seq=taxa_sums(d_pq), n_samples=taxa_sums(as_binary_otu_table(d_pq))), by=join_by(name==name))
+
+epa_res_by_node_2 <- epa_res2 |>
+  group_by(node) |>
+  summarise(lwr_mean=mean(like_weight_ratio),lwr_sum=sum(like_weight_ratio), taxa=paste(name,collapse = ";"), n_seq=mean(n_seq), n_samples=mean(n_samples), n_otu=n())
+
+jplace_tree3 <- jplace_tree
+jplace_tree3@data <- full_join(jplace_tree@data, epa_res_by_node_2, join_by(node==node))
+ggtree(jplace_tree3) + 
+  geom_tiplab() + 
+  ggtree::geom_point(aes(size=lwr_sum, alpha=0.5))
+```
+
+
+```{r}
+jplace_tree4 <- jplace_tree
+jplace_tree4@data <- left_join(jplace_tree@data, epa_res2, join_by(node==node))
+
+for(taxa_i in taxa_names(d_mfre)) {
+p <- ggtree(jplace_tree4) + 
+    geom_tiplab(data=jplace_tree4@phylo) + 
+    ggtree::geom_point2(aes(size=like_weight_ratio, alpha=0.5, subset = name==taxa_i & !is.na(name)), color="red") +
+    labs(title =paste0("Phylogenetic placement for: ", taxa_i, " - (total LWR:" , round(sum(pull(filter(jplace_tree4@data,name==taxa_i & !is.na(name) ), like_weight_ratio)),digits = 3) , ")")) 
+print(p)
+ }
+```
+
+
+```{r}
+jplace_tree@placements |> 
+  group_by(name) |>
+  summarise(LWR=sum(like_weight_ratio))  |>
+  arrange(LWR) |> 
+  mutate(mfre_using_euk=name %in% taxa_names(d_pq)[cond_am_eukaryome_mfre],
+         mfre_using_blast_95=name %in% taxa_names(d_pq)[cond_mfre_miniDB_species],
+         mfre_using_blast_97=name %in% taxa_names(d_pq)[cond_mfre_miniDB_species_97])
+  
+```
+
+
+```{r}
+venn_data <- list("mfre_euk"=taxa_names(d_pq)[cond_am_eukaryome_mfre],
+                                  "mfre_miniDB_97"=taxa_names(d_pq)[cond_mfre_miniDB_species_97],
+                                  #"mfre_miniDB_95"=taxa_names(d_pq)[cond_mfre_miniDB_species],
+                                  "EPA"=pull(filter(best_placement, like_weight_ratio>0.9), name))
+res_venn <- ggVennDiagram::ggVennDiagram(venn_data) +
+  scale_x_continuous(expand = expansion(mult = .2))
+res_venn
+
+# interactive version
+ggVennDiagram::ggVennDiagram(venn_data, names(venn_data), 
+              show_intersect = TRUE) 
 
 ```
+
+
+
+
+## Trying ASAP (Puillandre et al. 2021) on ASV
+
+```{r}
+# load(here("data/data_final/phyloseq_objects.Rdata"))
+d_asv <- clean_pq(tar_read("d_asv", store = here::here("_targets/")))
+d_asv <- subset_taxa_pq(d_asv, taxa_sums(d_asv)>1000 | taxa_names(d_asv)%in%taxa_names(d_am_mfre))
+alignment <- msa::msa(d_asv@refseq, method = "ClustalOmega")
+
+# Save alignement for ASAP software
+writeXStringSet(alignment@unmasked, "data/data_intermediate/asv_1000_amf_mfre.fas")
+
+```
+
+
+
+```{sh}
+cd ~/Bureau/ASAP
+./asap ~/Bureau/bioinfo.starter_am_taschen/data/data_intermediate/seqs_for_mafft_MAFFTED.fas -a -o outputs
+```
+
+
+
+
+
+
+
+
+
+
+
+
+### Using DECIPHER and phangorn
+
+```{r}
+seqs_edna <- Biostrings::DNAStringSet(d_mfre@refseq)
+refseq_MUCO <- Biostrings::readDNAStringSet("data/data_raw/refseq/ref_seq_Mucoromycotina.fasta")
+outgroup <- Biostrings::readDNAStringSet("data/data_raw/refseq/ref_seq_Outgroups.fasta")
+names(outgroup) <- paste("OUT_", names(outgroup))
+
+# alignment <-  DECIPHER::AlignSeqs(c(seqs_edna, refseq_MUCO, outgroup), anchor = NA)
+# phang.align <- phangorn::phyDat(as(alignment, "matrix"), type = "DNA")
+
+alignment <- msa::msa(c(seqs_edna, refseq_MUCO, outgroup), method = "ClustalW")@unmasked
+phang.align <- phangorn::phyDat(as(alignment, "matrix"), type = "DNA")
+
+```
+
+
+```{r}
+dm <- phangorn::dist.ml(phang.align)
+treeNJ <- phangorn::NJ(dm) # Note, tip order != sequence order
+outgroups <- treeNJ$tip.label[grep("OUT_", treeNJ$tip.label)]
+treeNJ <- root(treeNJ, outgroup=outgroups)
+
+fit <- phangorn::pml(treeNJ, data = phang.align)
+
+fitGTR <- update(fit, k = 4, inv = 0.2)
+tree_ML <-
+  phangorn::optim.pml(
+    fitGTR,
+    model = "GTR",
+    optInv = TRUE,
+    optGamma = TRUE,
+    rearrangement = "NNI",
+    control = phangorn::pml.control(trace = 0),
+    optNni = TRUE
+  )
+
+tree_ML_bs <- phangorn::bootstrap.pml(
+        tree_ML,
+        bs = 100,
+        multicore = TRUE,
+        rearrangement = "NNI"
+      )
+
+```
+
+
+```{r}
+nodes_color <- rep(NA, length(alignment))
+names(nodes_color) <- names(alignment)
+nodes_color[names(nodes_color) %in% names(seqs_edna)] <- "gray20"
+nodes_color[names(nodes_color) %in% names(refseq_MUCO)] <- "green"
+nodes_color[names(nodes_color) %in% names(outgroup)] <- "red"
+
+phangorn::plotBS(tree_ML, tree_ML_bs, "phylogram", tip.color=nodes_color)
+phangorn::densiTree(tree_ML_bs, type="cladogram", col="blue", alpha = 0.1)
+```
+
+
+
+```{r}
+d_am_mfre <- clean_pq(subset_taxa(d_pq, amf==TRUE | mfre==TRUE))
+track_wkflow(list("All sequences" = d_pq, "AMF_MFRE" = d_am_mfre, "AMF" = clean_pq(d_am), "MFRE"=clean_pq(d_mfre)))
+```
+
+```{r}
+save(d_pq, d_am_mfre, d_am, d_mfre, file=here::here("data/data_final/phyloseq_objects.Rdata"))
+```
+
+
+
+```{r}
+l_pq <- list("OTU vs"=d_pq_interm, 
+             "OTU with at least 11 sequences and 2 occurences" = d_pq_interm2,
+             "Samples with more than 2000 sequences" = clean_pq(d_pq),
+             "AM"= clean_pq(d_am), 
+             "MFRE"=clean_pq(d_mfre), 
+             "AM and MFRE"=clean_pq(d_am_mfre))
+
+cbind(rbind(tar_read(track_sequences_samples_clusters), 
+      "---" =c("---", "---", "---"),
+      track_wkflow(l_pq)), 
+      "Sol samples" = unlist(c(rep(NA, 7), "---", as.numeric(lapply(l_pq, function(x) {sum(x@sam_data$type_ech=="sol")}) ))), 
+      "Hyphes samples" = unlist(c(rep(NA, 7), "---", as.numeric(lapply(l_pq, function(x) {sum(x@sam_data$type_ech=="hyphes")}) ))),
+      "Root samples"= unlist(c(rep(NA, 7), "---", as.numeric(lapply(l_pq, function(x) {sum(x@sam_data$type_ech=="ADN_Racines")}) ))))
+```
+
 
 
 {{< include _session_info.qmd >}}

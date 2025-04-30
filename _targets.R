@@ -178,8 +178,16 @@ tar_plan(
     ))
   )),
 
-  tar_target(d_asv, 
-    add_new_taxonomy_pq(data_phyloseq, ref_fasta = "data/data_raw/refseq/DADA2_EUK_SSU_v1.9_Glomeromycota.fasta", suffix = "_eukaryome_Glomero")
+  tar_target(d_asv_e,
+    add_new_taxonomy_pq(data_phyloseq,
+      ref_fasta = "data/data_raw/refseq/DADA2_EUK_SSU_v1.9.fasta",
+       suffix = "_E")
+  ),
+
+  tar_target(d_asv,
+    add_new_taxonomy_pq(d_asv_e,
+      ref_fasta = "data/data_raw/refseq/DADA2_ref_seq_Mucoromycotina.fasta",
+       suffix = "_muco_miniDB")
   ),
 
   ##> Create post-clustering ASV into OTU using vsearch
@@ -198,7 +206,7 @@ tar_plan(
       "Paired sequences without chimera" = seqtab_wo_chimera,
       "Paired sequences without chimera and longer than 200bp" = seqtab,
       "ASV denoising" = d_asv,
-      "OTU after vsearch reclustering at 97%" = d_vs,
+      "OTU after vsearch reclustering at 97%" =  ,
       "OTU vs after mumu cleaning algorithm" = d_vs_mumu,
       "OTU vs + mumu + rarefaction by sequencing depth" = d_vs_mumu_rarefy
     )
@@ -211,7 +219,7 @@ tar_plan(
       "OTU vs + mumu + rarefaction by sequencing depth" = d_vs_mumu_rarefy
     )
   )),
- 
+
   ##> Build fastq quality report across the pipeline
   ### With raw sequences
   tar_target(
@@ -232,7 +240,7 @@ tar_plan(
     quality_seq_filtered_trimmed_REV,
     fastqc_agg(here(filtered[[1]]), qc.dir = here("data/data_final/quality_fastqc/filterAndTrim_rev/"))
   ),
-  
+
   ##>  Build bioinformatic quarto report
   tar_target(bioinfo_report, {
     track_sequences_samples_clusters

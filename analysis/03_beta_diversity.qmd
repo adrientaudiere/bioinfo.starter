@@ -9,7 +9,7 @@ author:
     affiliation-url: https://orcid.org/my-orcid?orcid=0000-0003-1088-1182
     citation: true
 params:
-  factor_of_interest: "Type"
+  factor_of_interest: "type_ech"
 # bibliography: bibliography.bib
 # link-citations: true
 ---
@@ -32,51 +32,52 @@ source(here::here("R/styles.R"))
 ```
 
 ```{r}
-d_pq <- clean_pq(tar_read("d_vs", store=here::here("_targets/")))
+d_mfre <- clean_pq(d_mfre)
+```
+
+
+```{r}
+d_mfre@sam_data$type_ech_tmt <- paste(d_mfre@sam_data$type_ech, d_mfre@sam_data$Tmt, sep="_")
+formattable_pq(
+    d_mfre,
+    "type_ech_tmt",
+    min_nb_seq_taxa = 0, 
+    lev_col_taxa = "Family",
+    taxonomic_levels=c("Order_E", "Family_E", "Genus_E"),
+    log10trans = FALSE
+  )
+
+formattable_pq(
+    as_binary_otu_table(d_mfre),
+    "type_ech_tmt",
+    min_nb_seq_taxa = 0, 
+    lev_col_taxa = "Family",
+    taxonomic_levels=c("Order_E", "Family_E", "Genus_E"),
+    log10trans = FALSE
+  )
 ```
 
 
 ```{r}
 #| error: true
-formattable_pq(
-    subset_samples(d_pq, Type %in% c("Mix", "Mono")),
-    factor_of_interest,
-    min_nb_seq_taxa = 1000, 
-    lev_col_taxa = "Family",
-    taxonomic_levels=c("Order", "Family", "Genus"),
-    log10trans = TRUE,
-
-  )
-```
-
-```{r}
-library("vegan")
-plot_ordination(d_pq, vegan::decorana(vegdist(as(otu_table(d_pq), "matrix"),
-    method = "robust.aitchison"
-  )), color = factor_of_interest) +
-  geom_point(size = 3) +
-  stat_ellipse(inherit.aes = F, aes(x = DCA1, y = DCA2, linetype = .data[[factor_of_interest]], col = .data[[factor_of_interest]])) + theme_idest() + scale_color_manual(values=idest_pal$dark_color_idest[[1]][c(5,4,2)])
+adonis_pq(d_mfre, "Tmt+type_ech+Type", na_remove = TRUE, correction_for_sample_size = TRUE, by = "terms")
 ```
 
 
 ```{r}
-adonis_pq(subset_samples(d_pq, Type %in% c("Mix", "Mono")), factor_of_interest, na_remove = TRUE, correction_for_sample_size = TRUE, by = "terms")
+#| error: true
+d_mfre |>
+  biplot_pq(merge_sample_by = "Tmt", rarefy_after_merging = T, )
 ```
 
 
 ```{r}
-d_pq |>
-  subset_samples(Type %in% c("Mix", "Mono")) |>
-biplot_pq(merge_sample_by = factor_of_interest, rarefy_after_merging = T)
-```
-
-
-```{r}
+#| error: true
 res_var <- var_par_rarperm_pq(
-    subset_samples(d_pq, Type %in% c("Mix", "Mono")),
+   d_mfre,
     list_component = list(
       "Tmt" = c("Tmt"),
-      "Bloc" = c("Bloc"),
+      "type_ech" = c("type_ech"),
       "Type" = c("Type")
     ),
     nperm = 9,
@@ -84,7 +85,7 @@ res_var <- var_par_rarperm_pq(
   )
 
 plot_var_part_pq(res_var)
-`````````
+```
 
 
 {{< include _session_info.qmd >}}
