@@ -11,7 +11,7 @@ The goal of bioinfo.starter is to [...]
 ### Clone from github
 
 ```sh
-git clone https://github.com/adrientaudiere/bioinfo.starter.git
+git clone git@github.com:adrientaudiere/bioinfo.starter.git
 git checkout -b name_analyse
 ```
 
@@ -20,7 +20,8 @@ git checkout -b name_analyse
 - Replace `data/data_raw/metadata/sam_data.csv` with good metadata file
 - Copy fastq files in `data/data_raw/rawseq`
 - Add references database in `data/data_raw/refseq`
-- Modify the `_targets.R` files (at least modify primers sequences and name of the reference database) 
+- Modify the `_targets.R` files (at least modify primers sequences and name of the reference database)
+- Modify (if necessary) params `pattern_remove_sam_data` and `pattern_remove_fastq_files` to make matching fastq files and sample names in metadata
 
 ### Install R packages and run targets pipeline
 

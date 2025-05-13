@@ -26,7 +26,8 @@ Suggests:
   sessioninfo,
   qs2,
   autometric,
-  fastqcr
+  fastqcr,
+  rstantools
 BugReports: https://github.com/adrientaudiere/bioinfo.starter/issues
 Imports: 
     conflicted

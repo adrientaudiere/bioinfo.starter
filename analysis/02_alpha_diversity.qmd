@@ -9,7 +9,7 @@ author:
     affiliation-url: https://orcid.org/my-orcid?orcid=0000-0003-1088-1182
 citation: true
 params:
-  factor_of_interest: "Type"
+  factor_of_interest: "XXX"
 # bibliography: bibliography.bib
 # link-citations: true
 ---
@@ -41,7 +41,7 @@ d_pq <- clean_pq(tar_read("d_vs", store=here::here("_targets/")))
 
 ```{r}
 #| error: true
-hill_pq(subset_samples(d_pq, Type %in% c("Mix", "Mono")), factor_of_interest, one_plot = TRUE) &
+hill_pq(d_pq, factor_of_interest, one_plot = TRUE) &
   (
     theme_idest(
       subtitle_size = 8,
@@ -51,12 +51,6 @@ hill_pq(subset_samples(d_pq, Type %in% c("Mix", "Mono")), factor_of_interest, on
       axis_text_size = 8
     ) + theme(legend.position = "none")
   ) 
-```
-
-
-```{r}
-#| error: true
-MiscMetabar::accu_plot_balanced_modality(d_pq, factor_of_interest, nperm=20) + theme_idest()
 ```
 
 

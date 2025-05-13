@@ -346,3 +346,17 @@ ggplot(psm_treat4, aes(y = Treatment, x = Prop_ASV, fill = Treatment)) +
   geom_bar(stat = "identity") + facet_wrap(~Function)
 ```
 :::
+
+
+
+## Remove n nucleotides at the left or right end
+
+You may want to use the trimLeft and/or trimRight arguments of filter_trim function.
+
+```{r}
+filter_trim(
+#      [...],
+      trimLeft = 1,
+      trimRight = 1
+)
+```

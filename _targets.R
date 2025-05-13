@@ -52,7 +52,8 @@ tar_plan(
       path_sam_data = file_sam_data_csv,
       path_raw_seq =  fastq_files_folder,
       sample_col_name = sample_col_name,
-      pattern_remove_fastq_files = "_L001.*",
+      #pattern_remove_sam_data = "XXX",
+      #pattern_remove_fastq_files = "_L001.*",
       prefix = "samp_"
     )
   ),
