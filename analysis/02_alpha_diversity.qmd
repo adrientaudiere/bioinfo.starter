@@ -14,7 +14,11 @@ params:
 # link-citations: true
 ---
 
+```{r child="R/styles.qmd"}
+```
+
 See the documentation of the `MiscMetabar` package for example of [alpha diversity analysis](https://adrientaudiere.github.io/MiscMetabar/articles/alpha-div.html). 
+
 
 ```{r}
 if(base::interactive()) {
@@ -31,7 +35,6 @@ library(knitr)
 library(targets)
 library(MiscMetabar)
 here::i_am("analysis/02_alpha_diversity.qmd")
-source(here::here("R/styles.R"))
 ```
 
 ```{r}

@@ -14,6 +14,9 @@ params:
 # link-citations: true
 ---
 
+```{r child="R/styles.qmd"}
+```
+
 See the documentation of the `MiscMetabar` package for example of [beta-diversity analysis](https://adrientaudiere.github.io/MiscMetabar/articles/beta-div.html). 
 
 ```{r}
@@ -28,7 +31,6 @@ library(knitr)
 library(targets)
 library(MiscMetabar)
 here::i_am("analysis/03_beta_diversity.qmd")
-source(here::here("R/styles.R"))
 ```
 
 ```{r}

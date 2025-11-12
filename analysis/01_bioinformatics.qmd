@@ -14,12 +14,14 @@ citation: true
 
 # Summary of the bioinformatic pipeline
 
+```{r child="R/styles.qmd"}
+```
+
 ```{r, message=FALSE, warning=FALSE}
 library(knitr)
 library(targets)
 library(MiscMetabar)
 here::i_am("analysis/01_bioinformatics.qmd")
-source(here::here("R/styles.R"))
 source(here::here("R/functions.R"))
 ```
 
