@@ -20,7 +20,8 @@ Suggests:
   formattable,
   viridis,
   patchwork,
-  ggstatsplot
+  ggstatsplot,
+  fastqcr
 BugReports: https://github.com/adrientaudiere/bioinfo.starter/issues
 Imports: 
     conflicted

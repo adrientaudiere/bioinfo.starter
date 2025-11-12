@@ -37,7 +37,7 @@ fastqc_plot <- function(qc.dir,
                           "Sequence Length Distribution",
                           "Adapter Content"
                         )) {
-  p <- fastqcr::qc_plot_collection(qc_read_collection(
+  p <- fastqcr::qc_plot_collection(fastqcr::qc_read_collection(
     list.files(qc.dir, pattern = "*.zip", full.names = TRUE),
     list.files(qc.dir, pattern = "*.zip"),
     modules = modules

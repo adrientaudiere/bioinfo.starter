@@ -12,12 +12,13 @@ fw_primer_sequences <- ""
 rev_primer_sequences <- ""
 n_threads <- 4
 refseq_file_name <- ""
+sam_data_file_name <- "sam_data.csv"
 
 tar_plan(
   #> Place for file input
   tar_target(
     name = file_sam_data_csv,
-    command = here("data/data_raw/metadata/sam_data.csv"),
+    command = here("data/data_raw/metadata", sam_data_file_name),
     format = "file"
   ),
 
