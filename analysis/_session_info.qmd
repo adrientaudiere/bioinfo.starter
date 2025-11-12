@@ -1,0 +1,37 @@
+
+## Session Information
+
+Session information are detailed below. More information about the machine, the system, as well as python and R packages, are available in the file <a href="data_final/information_run.txt" title="Download the information about the hardware and softwfare used to run these analysis" class="inline-btn"> data/data_final/information_run.txt </a>.
+
+<button style="width:100%" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" class="button-collapse">
+
+Session Information
+
+</button>
+
+:::: {#collapseOne .accordion-collapse .collapse}
+<div>
+
+```{r}
+sessionInfo()
+```
+
+```{r}
+#| include: false
+information_report <- list(
+  "date" = Sys.Date(), 
+  "platform_info" = sessioninfo::platform_info(),
+  "external_info" = sessioninfo::external_info(),
+  "session_info" = sessioninfo::session_info(),
+  "env_info" = Sys.getenv(),
+  "system_locale" = Sys.getlocale(),
+  "machine_info" = .Machine,
+  "conda_info" = system("export PATH='/home/adrien/miniforge3/bin:$PATH'; conda list -n cutadaptenv"),
+  "vsearch_version" = system2("vsearch", "--version", stdout = TRUE)
+  )
+
+capture.output(information_report, file=here::here("data/data_final/information_run.txt"))
+```
+
+</div>
+::::

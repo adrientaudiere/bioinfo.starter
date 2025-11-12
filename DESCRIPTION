@@ -21,7 +21,13 @@ Suggests:
   viridis,
   patchwork,
   ggstatsplot,
-  fastqcr
+  qs,
+  quarto,
+  sessioninfo,
+  qs2,
+  autometric,
+  fastqcr,
+  rstantools
 BugReports: https://github.com/adrientaudiere/bioinfo.starter/issues
 Imports: 
     conflicted

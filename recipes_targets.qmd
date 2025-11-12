@@ -12,6 +12,32 @@ format:
 # link-citations: true
 ---
 
+See also [Easy16S](https://github.com/YongxinLiu/EasyAmplicon/blob/master/pipeline_en.sh) for inspiration in bash. 
+
+## Change the parameter to merged forward and reverse sequences 
+
+1. Play with option min Overlap (default to 12) and maxMismach (default to 0). For example, replace the `merged_seq` 
+targets with the following code to allow 1 mismatch and a minimum overlap of 8.
+
+```{r, eval=FALSE}
+tar_target(
+    merged_seq,
+    mergePairs(
+      dadaF = ddF,
+      dadaR = ddR,
+      derepF = derep_fs,
+      derepR = derep_rs,
+      minOverlap = 8,
+      maxMismatch = 1)
+    ),
+    format = "qs"
+  )
+)
+
+```
+
+
+
 ## Forward only pipeline
 
 
@@ -320,3 +346,17 @@ ggplot(psm_treat4, aes(y = Treatment, x = Prop_ASV, fill = Treatment)) +
   geom_bar(stat = "identity") + facet_wrap(~Function)
 ```
 :::
+
+
+
+## Remove n nucleotides at the left or right end
+
+You may want to use the trimLeft and/or trimRight arguments of filter_trim function.
+
+```{r}
+filter_trim(
+#      [...],
+      trimLeft = 1,
+      trimRight = 1
+)
+```
