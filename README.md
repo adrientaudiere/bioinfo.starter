@@ -34,6 +34,7 @@ targets::tar_make()
 
 bioinfo.starter is inspired by:
 - {[rrtools]()} developed by Ben Marwick et al.
+- {[lumo](https://github.com/holtzy/lumo)} developed by Yan Holtz.
 - {[rcompendium](https://frbcesab.github.io/rcompendium/)} developed by Nicolas Casajus.
 - The [Turing way](https://the-turing-way.netlify.app/) recommendation
 
