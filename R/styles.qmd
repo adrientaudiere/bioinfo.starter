@@ -84,7 +84,7 @@ knitr::knit_hooks$set(
     if (icons_html != "") {
       result <- paste0(
         "<div class='chunk-with-popups' style='position: relative; margin: 0; padding: 0;'>\n",
-        "<div class='popup-icons' style='position: absolute; top: 5px; right: 5px; z-index: 10; background: rgba(255,255,255,0.9); padding: 2px 6px; border-radius: 4px;'>",
+        "<div class='popup-icons' style='position: absolute; bottom: 5px; right: 5px; z-index: 10; background: rgba(255,255,255,0.9); padding: 2px 6px; border-radius: 4px;'>",
         icons_html,
         "</div>\n",
         popups_html,
@@ -99,9 +99,15 @@ knitr::knit_hooks$set(
 ```
 
 ```{css, echo=FALSE}
+.chunk-with-popups div.sourceCode {
+ min-height: 2.5em;
+   padding-bottom: 0.3em;
+}
+
 .popup-icons .popup-toggle {
   cursor: pointer;
   margin-left: 8px;
+  margin-bottom: 8px;
   font-size: 18px;
   line-height: 1;
   display: inline-block;
@@ -114,7 +120,13 @@ knitr::knit_hooks$set(
 /* Warning color */
 .popup-toggle[data-target^="warn-popup-"] {
   color: #aa4c26;          
-  font-weight: bold;
+  text-stroke: 0.5px #aa4c26;
+  -webkit-text-stroke: 0.5px #aa4c26;
+}
+
+/* Add space between message and warning icons only when both are present */
+.popup-toggle[data-target^="msg-popup-"] + .popup-toggle[data-target^="warn-popup-"] {
+  margin-left: 12px;
 }
 
 /* Tint pop-up borders to match icon color */
@@ -133,7 +145,7 @@ div[id^="warn-popup-"] .popup-header strong { color: #aa4c26; }
 .popup {
   display: none; /* toggled by JS */
   position: absolute;
-  top: 30px;
+  bottom: 30px;
   right: 5px;
   background: #fff;
   border: 1px solid #333;
@@ -141,8 +153,8 @@ div[id^="warn-popup-"] .popup-header strong { color: #aa4c26; }
   padding: 8px;
   box-shadow: 0 6px 18px rgba(0,0,0,0.18);
   z-index: 1000;
-  max-width: 520px;
-  max-height: 420px;
+  max-width: 720px;
+  max-height: 320px;
   overflow: auto;
   width: auto;
   box-sizing: border-box;
@@ -174,11 +186,11 @@ div[id^="warn-popup-"] .popup-header strong { color: #aa4c26; }
   overflow-x: auto;
 }
 
-  .sourceCode pre {
-    margin: 0 !important;
-    padding: 0.1em !important;
-    line-height: 1.2 !important;
-  }
+.sourceCode pre {
+  margin: 0 !important;
+  /* padding: 0.1em !important; */
+  line-height: 1.2 !important;
+}
 
 .sourceCode code {
   line-height: 1.2 !important;
@@ -275,7 +287,6 @@ div[style*="position: relative"] > pre {
   });
 })();
 ```
-
 
 
 ```{r}
