@@ -11,7 +11,8 @@ The goal of bioinfo.starter is to [...]
 ### Clone from github
 
 ```sh
-git clone git@github.com:adrientaudiere/bioinfo.starter.git
+git clone git@github.com:adrientaudiere/bioinfo.starter.git name_analyse
+cd name_analyse
 git checkout -b name_analyse
 ```
 
