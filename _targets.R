@@ -28,7 +28,6 @@ tar_plan(
   tar_target(
     name = file_sam_data_csv,
     command = here("data/data_raw/metadata", sam_data_file_name),
-    command = here("data/data_raw/metadata", sam_data_file_name),
     format = "file"
   ),
 
