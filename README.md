@@ -18,7 +18,9 @@ git checkout -b name_analyse
 
 ### Adapt to your pipeline
 
-- Replace `data/data_raw/metadata/sam_data.csv` with good metadata file
+- Replace `data/data_raw/metadata/sam_data.csv` with good metadata file. 
+  - Must be a true comma separated csv. If you prefer tabulation or ; you may want to add parameter to function `sam_data_matching_names()`.
+  - The name of the file and the the column names indicating the samples are defined at the start of the `_targets.R` file
 - Copy fastq files in `data/data_raw/rawseq`
 - Add references database in `data/data_raw/refseq`
 - Modify the `_targets.R` files (at least modify primers sequences and name of the reference database)
