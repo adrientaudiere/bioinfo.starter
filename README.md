@@ -31,6 +31,10 @@ git checkout -b name_analyse
 ```r
 install.packages("pak")
 pak::local_install_deps(dependencies = TRUE)
+fastqcr::fastqc_install() # install fastqc for UNIX system (Linux and macOS)
+```
+
+```r
 targets::tar_make()
 ```
 
