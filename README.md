@@ -26,6 +26,16 @@ git checkout -b name_analyse
 - Modify the `_targets.R` files (at least modify primers sequences and name of the reference database)
 - Modify (if necessary) params `pattern_remove_sam_data` and `pattern_remove_fastq_files` to make matching fastq files and sample names in metadata
 
+### Install mumu if you want to use mumu_pq
+
+```sh
+git clone https://github.com/frederic-mahe/mumu.git
+cd ./mumu/
+make
+make check
+make install  # as root or sudo
+```
+
 ### Install R packages and run targets pipeline
 
 ```r
