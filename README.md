@@ -26,9 +26,15 @@ git checkout -b name_analyse
 ### Install R packages and run targets pipeline
 
 ```r
-renv::install()
+install.packages("pak")
+pak::local_install_deps(dependencies = TRUE)
+fastqcr::fastqc_install()
+```
+
+```r
 targets::tar_make()
 ```
+
 
 ## Colophon
 

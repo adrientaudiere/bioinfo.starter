@@ -16,18 +16,21 @@ here::i_am("_targets.R")
 source(here("R/functions.R"))
 lapply(list.files("~/Nextcloud/IdEst/Projets/MiscMetabar/R/", full.names = TRUE), source)
 
+
 seq_len_min <- 200
-fw_primer_sequences <- XXXX
-rev_primer_sequences <- XXXX
+fw_primer_sequences <- "GCATCGATGAAGAACGCAGC"
+rev_primer_sequences <- "TCCTCCGCTTATTGATATGC"
 n_threads <- 4
-refseq_file_name <- ""
+refseq_file_name <- "sh_general_release_dynamic_19.02.2025.fasta"
 sam_data_file_name <- "sam_data.csv"
+sample_col_name <- "samples_names"
+set.seed(22)
+
 
 tar_plan(
   #> Place for file input
   tar_target(
     name = file_sam_data_csv,
-    command = here("data/data_raw/metadata", sam_data_file_name),
     command = here("data/data_raw/metadata", sam_data_file_name),
     format = "file"
   ),
@@ -177,11 +180,17 @@ tar_plan(
   ###   (iv) references sequences
 
 
-  tar_target(d_asv, add_dna_to_phyloseq(
+  tar_target(data_phyloseq, add_dna_to_phyloseq(
     phyloseq(asv_tab, sam_tab, tax_table(
       as.matrix(tax_tab, dimnames = rownames(tax_tab))
     ))
   )),
+
+  tar_target(d_asv, 
+    add_new_taxonomy_pq(data_phyloseq, 
+      ref_fasta = "data/data_raw/refseq/DADA2_EUK_SSU_v2.0.fasta", 
+      suffix = "Eukaryome")
+  ),
 
   ##> Create post-clustering ASV into OTU using vsearch
   tar_target(d_vs, asv2otu(
