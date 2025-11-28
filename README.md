@@ -45,6 +45,14 @@ fastqcr::fastqc_install() # install fastqc for UNIX system (Linux and macOS)
 ```
 
 ```r
+if (!require("devtools", quietly = TRUE)) {
+  install.packages("devtools")
+}
+devtools::install_github("adrientaudiere/greenAlgoR")
+```
+
+
+```r
 targets::tar_make()
 ```
 
