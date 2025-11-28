@@ -12,11 +12,6 @@ citation: true
 # link-citations: true
 ---
 
-# Summary of the bioinformatic pipeline
-
-```{r child="R/styles.qmd"}
-```
-
 ```{r, message=FALSE, warning=FALSE}
 library(knitr)
 library(targets)
@@ -24,6 +19,11 @@ library(MiscMetabar)
 here::i_am("analysis/01_bioinformatics.qmd")
 source(here::here("R/functions.R"))
 ```
+
+```{r child="../R/styles.qmd"}
+```
+
+# Summary of the bioinformatic pipeline
 
 ## Carbon footprint
 
