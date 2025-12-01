@@ -27,8 +27,7 @@ Suggests:
   qs2,
   autometric,
   fastqcr,
-  rstantools,
-  emojifont
+  rstantools
 BugReports: https://github.com/adrientaudiere/bioinfo.starter/issues
 Imports: 
     conflicted
