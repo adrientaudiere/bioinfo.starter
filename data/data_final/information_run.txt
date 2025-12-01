@@ -1,0 +1,482 @@
+$date
+[1] "2025-12-01"
+
+$platform_info
+ setting  value
+ version  R version 4.5.1 (2025-06-13)
+ os       Kali GNU/Linux Rolling
+ system   x86_64, linux-gnu
+ ui       X11
+ language
+ collate  fr_FR.UTF-8
+ ctype    fr_FR.UTF-8
+ tz       Europe/Paris
+ date     2025-12-01
+ pandoc   3.6.3 @ /usr/share/positron/resources/app/quarto/bin/tools/x86_64/ (via rmarkdown)
+ quarto   1.7.31 @ /opt/quarto/bin/quarto
+
+$external_info
+ setting        value
+ cairo          1.18.4
+ cairoFT
+ pango          1.56.3
+ png            1.6.50
+ jpeg           6.2
+ tiff           LIBTIFF, Version 4.7.0
+ tcl            8.6.17
+ curl           8.15.0
+ zlib           1.3.1
+ bzlib          1.0.8, 13-Jul-2019
+ xz             5.8.1
+ deflate        1.23
+ PCRE           10.45 2025-02-05
+ ICU            76.1
+ TRE            TRE 0.8.0 R_fixes (BSD)
+ iconv          glibc 2.41
+ readline       8.2
+ BLAS           /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3
+ lapack         /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.29.so
+ lapack_version 3.12.0
+
+$session_info
+─ Session info ───────────────────────────────────────────────────────────────
+ setting  value
+ version  R version 4.5.1 (2025-06-13)
+ os       Kali GNU/Linux Rolling
+ system   x86_64, linux-gnu
+ ui       X11
+ language
+ collate  fr_FR.UTF-8
+ ctype    fr_FR.UTF-8
+ tz       Europe/Paris
+ date     2025-12-01
+ pandoc   3.6.3 @ /usr/share/positron/resources/app/quarto/bin/tools/x86_64/ (via rmarkdown)
+ quarto   1.7.31 @ /opt/quarto/bin/quarto
+
+─ Packages ───────────────────────────────────────────────────────────────────
+ ! package              * version  date (UTC) lib source
+   abind                  1.4-8    2024-09-12 [1] CRAN (R 4.5.1)
+   ade4                   1.7-23   2025-02-14 [1] CRAN (R 4.5.1)
+   ape                    5.8-1    2024-12-16 [1] CRAN (R 4.5.1)
+   autometric             0.1.2    2024-11-15 [1] CRAN (R 4.5.1)
+   backports              1.5.0    2024-05-23 [1] CRAN (R 4.5.1)
+   base64url              1.4      2018-05-14 [1] CRAN (R 4.5.1)
+   benchmarkme            1.0.8    2022-06-12 [1] CRAN (R 4.5.1)
+   benchmarkmeData        1.0.4    2020-04-23 [1] CRAN (R 4.5.1)
+   Biobase                2.70.0   2025-10-29 [1] Bioconduc~
+   BiocGenerics           0.56.0   2025-10-29 [1] Bioconduc~
+ P BiocManager            1.30.27  2025-11-14 [?] CRAN (R 4.5.1)
+   BiocParallel           1.44.0   2025-10-29 [1] Bioconduc~
+   biomformat             1.38.0   2025-10-29 [1] Bioconduc~
+   Biostrings             2.78.0   2025-10-29 [1] Bioconduc~
+   bitops                 1.0-9    2024-10-03 [1] CRAN (R 4.5.1)
+   bslib                  0.9.0    2025-01-30 [1] CRAN (R 4.5.1)
+   cachem                 1.1.0    2024-05-16 [1] CRAN (R 4.5.1)
+   callr                  3.7.6    2024-03-25 [1] CRAN (R 4.5.1)
+   cigarillo              1.0.0    2025-10-29 [1] Bioconduc~
+   cli                    3.6.5    2025-04-23 [1] CRAN (R 4.5.1)
+ P cluster                2.1.8.1  2025-03-12 [?] CRAN (R 4.4.3)
+ P codetools              0.2-20   2024-03-31 [?] CRAN (R 4.3.3)
+   crayon                 1.5.3    2024-06-20 [1] CRAN (R 4.5.1)
+   crosstalk              1.2.2    2025-08-26 [1] CRAN (R 4.5.1)
+   dada2                * 1.38.0   2025-10-29 [1] Bioconduc~
+   data.table             1.17.8   2025-07-10 [1] CRAN (R 4.5.1)
+   DelayedArray           0.36.0   2025-10-29 [1] Bioconduc~
+   deldir                 2.0-4    2024-02-28 [1] CRAN (R 4.5.1)
+   digest                 0.6.39   2025-11-19 [1] CRAN (R 4.5.1)
+   doParallel             1.0.17   2022-02-07 [1] CRAN (R 4.5.1)
+   dplyr                * 1.1.4    2023-11-17 [1] CRAN (R 4.5.1)
+   DT                     0.34.0   2025-09-02 [1] CRAN (R 4.5.1)
+   evaluate               1.0.5    2025-08-27 [1] CRAN (R 4.5.1)
+   farver                 2.1.2    2024-05-13 [1] CRAN (R 4.5.1)
+   fastmap                1.2.0    2024-05-15 [1] CRAN (R 4.5.1)
+   foreach                1.5.2    2022-02-02 [1] CRAN (R 4.5.1)
+   generics               0.1.4    2025-05-09 [1] CRAN (R 4.5.1)
+   GenomicAlignments      1.46.0   2025-10-29 [1] Bioconduc~
+   GenomicRanges          1.62.0   2025-10-29 [1] Bioconduc~
+   ggplot2              * 4.0.1    2025-11-14 [1] CRAN (R 4.5.1)
+   glue                   1.8.0    2024-09-30 [1] CRAN (R 4.5.1)
+   greenAlgoR             0.1.2    2025-11-28 [1] Github (adrientaudiere/greenAlgoR@09acb64)
+   gtable                 0.3.6    2024-10-25 [1] CRAN (R 4.5.1)
+   here                   1.0.2    2025-09-15 [1] CRAN (R 4.5.1)
+   htmltools              0.5.8.1  2024-04-04 [1] CRAN (R 4.5.1)
+   htmlwidgets            1.6.4    2023-12-06 [1] CRAN (R 4.5.1)
+   httr                   1.4.7    2023-08-15 [1] CRAN (R 4.5.1)
+   hwriter                1.3.2.1  2022-04-08 [1] CRAN (R 4.5.1)
+   igraph                 2.2.1    2025-10-27 [1] CRAN (R 4.5.1)
+   interp                 1.1-6    2024-01-26 [1] CRAN (R 4.5.1)
+   IRanges                2.44.0   2025-10-29 [1] Bioconduc~
+   iterators              1.0.14   2022-02-05 [1] CRAN (R 4.5.1)
+   jpeg                   0.1-11   2025-03-21 [1] CRAN (R 4.5.1)
+   jquerylib              0.1.4    2021-04-26 [1] CRAN (R 4.5.1)
+   jsonlite               2.0.0    2025-03-27 [1] CRAN (R 4.5.1)
+   knitr                * 1.50     2025-03-16 [1] CRAN (R 4.5.1)
+   labeling               0.4.3    2023-08-29 [1] CRAN (R 4.5.1)
+ P lattice                0.22-7   2025-04-02 [?] CRAN (R 4.4.3)
+   latticeExtra           0.6-31   2025-09-10 [1] CRAN (R 4.5.1)
+   lifecycle              1.0.4    2023-11-07 [1] CRAN (R 4.5.1)
+   magrittr               2.0.4    2025-09-12 [1] CRAN (R 4.5.1)
+ P MASS                   7.3-65   2025-02-28 [?] CRAN (R 4.4.3)
+   Matrix                 1.7-4    2025-08-28 [1] CRAN (R 4.5.1)
+   MatrixGenerics         1.22.0   2025-10-29 [1] Bioconduc~
+   matrixStats            1.5.0    2025-01-07 [1] CRAN (R 4.5.1)
+   mgcv                   1.9-4    2025-11-07 [1] CRAN (R 4.5.1)
+   MiscMetabar          * 0.14.4   2025-09-30 [1] CRAN (R 4.5.1)
+   multtest               2.66.0   2025-10-29 [1] Bioconduc~
+ P nlme                   3.1-168  2025-03-31 [?] CRAN (R 4.4.3)
+   permute                0.9-8    2025-06-25 [1] CRAN (R 4.5.1)
+   phyloseq             * 1.54.0   2025-10-29 [1] Bioconduc~
+   pillar                 1.11.1   2025-09-17 [1] CRAN (R 4.5.1)
+   pkgconfig              2.0.3    2019-09-22 [1] CRAN (R 4.5.1)
+   plyr                   1.8.9    2023-10-02 [1] CRAN (R 4.5.1)
+   png                    0.1-8    2022-11-29 [1] CRAN (R 4.5.1)
+   prettyunits            1.2.0    2023-09-24 [1] CRAN (R 4.5.1)
+   processx               3.8.6    2025-02-21 [1] CRAN (R 4.5.1)
+   ps                     1.9.1    2025-04-12 [1] CRAN (R 4.5.1)
+   purrr                * 1.2.0    2025-11-04 [1] CRAN (R 4.5.1)
+   pwalign                1.6.0    2025-10-29 [1] Bioconduc~
+   R6                     2.6.1    2025-02-15 [1] CRAN (R 4.5.1)
+   RColorBrewer           1.1-3    2022-04-03 [1] CRAN (R 4.5.1)
+   Rcpp                 * 1.1.0    2025-07-02 [1] CRAN (R 4.5.1)
+   RcppParallel           5.1.11-1 2025-08-27 [1] CRAN (R 4.5.1)
+   renv                   1.0.11   2024-10-12 [1] CRAN (R 4.5.1)
+   reshape2               1.4.5    2025-11-12 [1] CRAN (R 4.5.1)
+   rhdf5                  2.54.0   2025-10-29 [1] Bioconduc~
+   rhdf5filters           1.22.0   2025-10-29 [1] Bioconduc~
+   Rhdf5lib               1.32.0   2025-10-29 [1] Bioconduc~
+   rlang                  1.1.6    2025-04-11 [1] CRAN (R 4.5.1)
+   rmarkdown              2.30     2025-09-28 [1] CRAN (R 4.5.1)
+   rprojroot              2.1.1    2025-08-26 [1] CRAN (R 4.5.1)
+   Rsamtools              2.26.0   2025-10-29 [1] Bioconduc~
+   rstudioapi             0.17.1   2024-10-22 [1] CRAN (R 4.5.1)
+   S4Arrays               1.10.0   2025-10-29 [1] Bioconduc~
+   S4Vectors              0.48.0   2025-10-29 [1] Bioconduc~
+   S7                     0.2.1    2025-11-14 [1] CRAN (R 4.5.1)
+   sass                   0.4.10   2025-04-11 [1] CRAN (R 4.5.1)
+   scales                 1.4.0    2025-04-24 [1] CRAN (R 4.5.1)
+   secretbase             1.0.5    2025-03-04 [1] CRAN (R 4.5.1)
+   Seqinfo                1.0.0    2025-10-29 [1] Bioconduc~
+   sessioninfo            1.2.3    2025-02-05 [1] CRAN (R 4.5.1)
+   ShortRead              1.68.0   2025-10-29 [1] Bioconduc~
+   SparseArray            1.10.3   2025-11-25 [1] Bioconduc~
+   stringi                1.8.7    2025-03-27 [1] CRAN (R 4.5.1)
+   stringr                1.6.0    2025-11-04 [1] CRAN (R 4.5.1)
+   SummarizedExperiment   1.40.0   2025-10-29 [1] Bioconduc~
+ P survival               3.8-3    2024-12-17 [?] CRAN (R 4.4.2)
+   targets              * 1.11.4   2025-09-13 [1] CRAN (R 4.5.1)
+   tibble                 3.3.0    2025-06-08 [1] CRAN (R 4.5.1)
+   tidyselect             1.2.1    2024-03-11 [1] CRAN (R 4.5.1)
+   vctrs                  0.6.5    2023-12-01 [1] CRAN (R 4.5.1)
+   vegan                  2.7-2    2025-10-08 [1] CRAN (R 4.5.1)
+   viridisLite            0.4.2    2023-05-02 [1] CRAN (R 4.5.1)
+   visNetwork             2.1.4    2025-09-04 [1] CRAN (R 4.5.1)
+   withr                  3.0.2    2024-10-28 [1] CRAN (R 4.5.1)
+   xfun                   0.54     2025-10-30 [1] CRAN (R 4.5.1)
+   XVector                0.50.0   2025-10-29 [1] Bioconduc~
+   yaml                   2.3.10   2024-07-26 [1] CRAN (R 4.5.1)
+
+ [1] /home/adrien/.cache/R/renv/library/casta_corse-743ddaee/linux-kali-kali-rolling/R-4.5/x86_64-pc-linux-gnu
+ [2] /home/adrien/.cache/R/renv/sandbox/linux-kali-kali-rolling/R-4.5/x86_64-pc-linux-gnu/9a444a72
+
+ * ── Packages attached to the search path.
+ P ── Loaded and on-disk path mismatch.
+
+──────────────────────────────────────────────────────────────────────────────
+
+$env_info
+_CE_CONDA               
+_CE_M                   
+_CONDA_EXE              /home/adrien/miniforge3/bin/conda
+_CONDA_ROOT             /home/adrien/miniforge3
+_P9K_SSH_TTY            
+_R_CHECK_COMPILATION_FLAGS_KNOWN_
+                        -Wformat -Werror=format-security -Wdate-time
+CALLR_IS_RUNNING        true
+CHROME_DESKTOP          positron.desktop
+CLI_TICK_TIME           1000
+CLUTTER_IM_MODULE       ibus
+COLORTERM               truecolor
+COMMAND_NOT_FOUND_INSTALL_PROMPT
+                        1
+CONDA_DEFAULT_ENV       base
+CONDA_EXE               /home/adrien/miniforge3/bin/conda
+CONDA_PREFIX            /home/adrien/miniforge3
+CONDA_PROMPT_MODIFIER   (base)
+CONDA_PYTHON_EXE        /home/adrien/miniforge3/bin/python
+CONDA_SHLVL             1
+CYGWIN                  nodosfilewarning
+DBUS_SESSION_BUS_ADDRESS
+                        unix:path=/run/user/1000/bus
+DENO_DOM_PLUGIN         /opt/quarto/bin/tools/x86_64/deno_dom/libplugin.so
+DENO_NO_UPDATE_CHECK    1
+DENO_TLS_CA_STORE       system,mozilla
+DESKTOP_SESSION         plasmax11
+DISPLAY                 :0
+DOTNET_CLI_TELEMETRY_OPTOUT
+                        1
+EDITOR                  vi
+GDK_BACKEND             x11
+GIT_ASKPASS             /usr/share/positron/resources/app/extensions/git/dist/askpass.sh
+GPG_AGENT_INFO          /run/user/1000/gnupg/S.gpg-agent:0:1
+GTK_IM_MODULE           ibus
+GTK_RC_FILES            /etc/gtk/gtkrc:/home/adrien/.gtkrc:/home/adrien/.config/gtkrc
+GTK2_RC_FILES           /etc/gtk-2.0/gtkrc:/home/adrien/.gtkrc-2.0:/home/adrien/.config/gtkrc-2.0
+GUILE_LOAD_COMPILED_PATH
+                        /home/adrien/.config/guix/current/lib/guile/3.0/site-ccache:/home/adrien/.config/guix/current/lib/guile/3.0/site-ccache:/home/adrien/.config/guix/current/lib/guile/3.0/site-ccache
+GUILE_LOAD_PATH         /home/adrien/.config/guix/current/share/guile/site/3.0:/home/adrien/.config/guix/current/share/guile/site/3.0:/home/adrien/.config/guix/current/share/guile/site/3.0
+HOME                    /home/adrien
+ICEAUTHORITY            /run/user/1000/iceauth_BgTikt
+IM_CONFIG_PHASE         1
+INFOPATH                /home/adrien/.config/guix/current/share/info:/home/adrien/.config/guix/current/share/info:/home/adrien/.config/guix/current/share/info:/home/adrien/.config/guix/current/share/info:/home/adrien/.config/guix/current/share/info:/home/adrien/.config/guix/current/share/info:
+INVOCATION_ID           af7dd39ea75f4c1ebcfc17a162866d11
+JOURNAL_STREAM          9:13679
+KDE_APPLICATIONS_AS_SCOPE
+                        1
+KDE_FULL_SESSION        true
+KDE_SESSION_UID         1000
+KDE_SESSION_VERSION     6
+LANG                    fr_FR.UTF-8
+LANGUAGE                
+LD_LIBRARY_PATH         /usr/lib/R/lib:/usr/lib/x86_64-linux-gnu:/usr/lib/jvm/default-java/lib/server:/usr/lib/R/lib:/usr/lib/x86_64-linux-gnu:/usr/lib/jvm/default-java/lib/server:/usr/lib/R/lib
+LESS                    -R
+LN_S                    ln -s
+LOGNAME                 adrien
+LS_COLORS               
+LSCOLORS                Gxfxcxdxbxegedabagacad
+MAKE                    make
+MAMBA_EXE               /home/adrien/miniforge3/bin/mamba
+MAMBA_ROOT_PREFIX       /home/adrien/miniforge3
+MANAGERPID              970
+MANPATH                 /home/adrien/.config/guix/current/share/man:/home/adrien/.config/guix/current/share/man:/home/adrien/.config/guix/current/share/man:
+MEMORY_PRESSURE_WATCH   /sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/app-org.kde.plasma\x2dfallback\x2dsession\x2drestore@autostart.service/memory.pressure
+MEMORY_PRESSURE_WRITE   c29tZSAyMDAwMDAgMjAwMDAwMAA=
+NMAP_PRIVILEGED         
+OLDPWD                  /home/adrien
+ORIGINAL_XDG_CURRENT_DESKTOP
+                        KDE
+P9K_SSH                 0
+PAGER                   less
+PAM_KWALLET5_LOGIN      /run/user/1000/kwallet5.socket
+PATH                    /opt/quarto/bin:/home/adrien/.config/guix/current/bin:/usr/local/sbin:/usr/sbin:/sbin:/home/adrien/.config/guix/current/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/home/adrien/.dotnet/tools:/home/adrien/bin/FastQC
+POSITRON                1
+POSITRON_LONG_VERSION   2025.09.0+139
+POSITRON_MODE           desktop
+POSITRON_VERSION        2025.09.0
+POWERSHELL_TELEMETRY_OPTOUT
+                        1
+POWERSHELL_UPDATECHECK
+                        Off
+PROCESSX_NOTIFY_OLD_SIGCHLD
+                        true
+PROCESSX_PS2f092fe39040_1764586792
+                        YES
+PROCESSX_PSd4b3e348a41_1764586783
+                        YES
+PWD                     /home/adrien/Bureau/casta_corse
+QT_ACCESSIBILITY        1
+QT_AUTO_SCREEN_SCALE_FACTOR
+                        0
+QT_IM_MODULE            ibus
+QUARTO_BIN_PATH         /opt/quarto/bin
+QUARTO_DENO             /opt/quarto/bin/tools/x86_64/deno
+QUARTO_DOCUMENT_FILE    01_bioinformatics.qmd
+QUARTO_DOCUMENT_PATH    /home/adrien/Bureau/casta_corse/analysis
+QUARTO_PROFILE          
+QUARTO_PROJECT_DIR      /home/adrien/Bureau/casta_corse
+QUARTO_PROJECT_ROOT     /home/adrien/Bureau/casta_corse
+QUARTO_R                /usr/lib/R/bin
+QUARTO_ROOT             /
+QUARTO_SHARE_PATH       /opt/quarto/share
+R_ARCH                  
+R_BROWSER               false
+R_BZIPCMD               /bin/bzip2
+R_DOC_DIR               /usr/share/R/doc
+R_GZIPCMD               /bin/gzip -n
+R_HOME                  /usr/lib/R
+R_INCLUDE_DIR           /usr/share/R/include
+R_LIBS_SITE             /usr/local/lib/R/site-library/:/usr/local/lib/R/site-library/:/usr/local/lib/R/site-library:/usr/lib/R/site-library:/usr/lib/R/library:/usr/lib/R/library
+R_LIBS_USER             /home/adrien/.cache/R/renv/library/casta_corse-743ddaee/linux-kali-kali-rolling/R-4.5/x86_64-pc-linux-gnu
+R_PAPERSIZE             letter
+R_PAPERSIZE_USER        letter
+R_PDFVIEWER             false
+R_PLATFORM              x86_64-pc-linux-gnu
+R_PRINTCMD              /usr/bin/lpr
+R_RD4PDF                times,inconsolata,hyper
+R_SESSION_TMPDIR        /tmp/Rtmpx21M5D
+R_SHARE_DIR             /usr/share/R/share
+R_STRIP_SHARED_LIB      strip --strip-unneeded
+R_STRIP_STATIC_LIB      strip --strip-debug
+R_TESTS                 
+R_TEXI2DVICMD           /usr/bin/texi2dvi
+R_UNZIPCMD              /usr/bin/unzip
+R_ZIPCMD                /usr/bin/zip
+RENV_DEFAULT_R_ENVIRON
+                        <NA>
+RENV_DEFAULT_R_ENVIRON_USER
+                        <NA>
+RENV_DEFAULT_R_LIBS     <NA>
+RENV_DEFAULT_R_LIBS_SITE
+                        /usr/local/lib/R/site-library/:/usr/local/lib/R/site-library:/usr/lib/R/site-library:/usr/lib/R/library
+RENV_DEFAULT_R_LIBS_USER
+                        /home/adrien/R/x86_64-pc-linux-gnu-library/4.5
+RENV_DEFAULT_R_PROFILE
+                        <NA>
+RENV_DEFAULT_R_PROFILE_USER
+                        <NA>
+RENV_PROJECT            /home/adrien/Bureau/casta_corse
+RETICULATE_MINICONDA_PYTHON_ENVPATH
+                        /home/adrien/Bureau/casta_corse/renv/python/r-reticulate
+RSTUDIO_PANDOC          /usr/share/positron/resources/app/quarto/bin/tools/x86_64
+RUST_BACKTRACE          1
+RUST_LOG                warn,ark=warn
+SED                     /bin/sed
+SESSION_MANAGER         local/leGarsBelou:@/tmp/.ICE-unix/1244,unix/leGarsBelou:/tmp/.ICE-unix/1244
+SF_PARTNER              posit_positron
+SHELL                   /usr/bin/zsh
+SHLVL                   3
+SPARK_CONNECT_USER_AGENT
+                        posit-positron
+SSH_AGENT_PID           1092
+SSH_AUTH_SOCK           /tmp/ssh-zUBkYSEFf4Wz/agent.1027
+SYSTEMD_EXEC_PID        1475
+TAR                     /bin/tar
+TERM                    xterm-256color
+TERM_PROGRAM            vscode
+TERM_PROGRAM_VERSION    1.103.0
+TZDIR                   /home/adrien/miniforge3/share/zoneinfo
+USER                    adrien
+VSCODE_GIT_ASKPASS_EXTRA_ARGS
+                        
+VSCODE_GIT_ASKPASS_MAIN
+                        /usr/share/positron/resources/app/extensions/git/dist/askpass-main.js
+VSCODE_GIT_ASKPASS_NODE
+                        /usr/share/positron/positron
+VSCODE_GIT_IPC_HANDLE   /run/user/1000/vscode-git-87cb2c6787.sock
+XAUTHORITY              /tmp/xauth_JWKpGh
+XCURSOR_PATH            /usr/local/share/icons:/usr/share/icons
+XDG_CACHE_HOME          /home/adrien/.cache
+XDG_CONFIG_DIRS         /home/adrien/.config/kdedefaults:/etc/xdg
+XDG_CONFIG_HOME         /home/adrien/.config
+XDG_CURRENT_DESKTOP     KDE
+XDG_DATA_DIRS           /home/adrien/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share:/usr/local/share:/usr/share
+XDG_DATA_HOME           /home/adrien/.local/share
+XDG_MENU_PREFIX         plasma-
+XDG_RUNTIME_DIR         /run/user/1000
+XDG_SEAT                seat0
+XDG_SEAT_PATH           /org/freedesktop/DisplayManager/Seat0
+XDG_SESSION_CLASS       user
+XDG_SESSION_DESKTOP     KDE
+XDG_SESSION_ID          4
+XDG_SESSION_PATH        /org/freedesktop/DisplayManager/Session1
+XDG_SESSION_TYPE        x11
+XDG_STATE_HOME          /home/adrien/.local/state
+XDG_VTNR                2
+XML_CATALOG_FILES       file:///home/adrien/miniforge3/etc/xml/catalog
+                        file:///etc/xml/catalog
+XMODIFIERS              @im=ibus
+ZSH                     /home/adrien/.oh-my-zsh
+
+$system_locale
+[1] "LC_CTYPE=fr_FR.UTF-8;LC_NUMERIC=C;LC_TIME=fr_FR.UTF-8;LC_COLLATE=fr_FR.UTF-8;LC_MONETARY=fr_FR.UTF-8;LC_MESSAGES=fr_FR.UTF-8;LC_PAPER=fr_FR.UTF-8;LC_NAME=C;LC_ADDRESS=C;LC_TELEPHONE=C;LC_MEASUREMENT=fr_FR.UTF-8;LC_IDENTIFICATION=C"
+
+$machine_info
+$machine_info$double.eps
+[1] 2.220446e-16
+
+$machine_info$double.neg.eps
+[1] 1.110223e-16
+
+$machine_info$double.xmin
+[1] 2.225074e-308
+
+$machine_info$double.xmax
+[1] 1.797693e+308
+
+$machine_info$double.base
+[1] 2
+
+$machine_info$double.digits
+[1] 53
+
+$machine_info$double.rounding
+[1] 5
+
+$machine_info$double.guard
+[1] 0
+
+$machine_info$double.ulp.digits
+[1] -52
+
+$machine_info$double.neg.ulp.digits
+[1] -53
+
+$machine_info$double.exponent
+[1] 11
+
+$machine_info$double.min.exp
+[1] -1022
+
+$machine_info$double.max.exp
+[1] 1024
+
+$machine_info$integer.max
+[1] 2147483647
+
+$machine_info$sizeof.long
+[1] 8
+
+$machine_info$sizeof.longlong
+[1] 8
+
+$machine_info$sizeof.longdouble
+[1] 16
+
+$machine_info$sizeof.pointer
+[1] 8
+
+$machine_info$sizeof.time_t
+[1] 8
+
+$machine_info$longdouble.eps
+[1] 1.084202e-19
+
+$machine_info$longdouble.neg.eps
+[1] 5.421011e-20
+
+$machine_info$longdouble.digits
+[1] 64
+
+$machine_info$longdouble.rounding
+[1] 5
+
+$machine_info$longdouble.guard
+[1] 0
+
+$machine_info$longdouble.ulp.digits
+[1] -63
+
+$machine_info$longdouble.neg.ulp.digits
+[1] -64
+
+$machine_info$longdouble.exponent
+[1] 15
+
+$machine_info$longdouble.min.exp
+[1] -16382
+
+$machine_info$longdouble.max.exp
+[1] 16384
+
+
+$conda_info
+[1] 0
+
+$vsearch_version
+[1] "Rognes T, Flouri T, Nichols B, Quince C, Mahe F (2016)"                      
+[2] "VSEARCH: a versatile open source tool for metagenomics"                      
+[3] "PeerJ 4:e2584 doi: 10.7717/peerj.2584 https://doi.org/10.7717/peerj.2584"    
+[4] ""                                                                            
+[5] "Compiled with support for gzip-compressed files, and the library is loaded." 
+[6] "zlib version 1.3.1, compile flags a9"                                        
+[7] "Compiled with support for bzip2-compressed files, and the library is loaded."
+

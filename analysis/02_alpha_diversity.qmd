@@ -14,7 +14,7 @@ params:
 # link-citations: true
 ---
 
-```{r child="R/styles.qmd"}
+```{r child="../R/styles.qmd"}
 ```
 
 See the documentation of the `MiscMetabar` package for example of [alpha diversity analysis](https://adrientaudiere.github.io/MiscMetabar/articles/alpha-div.html). 
