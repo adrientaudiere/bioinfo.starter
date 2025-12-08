@@ -180,7 +180,7 @@ tar_plan(
 
   tar_target(d_asv_e,
     add_new_taxonomy_pq(data_phyloseq,
-      ref_fasta = "data/data_raw/refseq/DADA2_EUK_SSU_v1.9.fasta",
+      ref_fasta = "data/data_raw/refseq/DADA2_EUK_SSU_v1_9_3.fasta",
        suffix = "_E")
   ),
 
@@ -206,7 +206,7 @@ tar_plan(
       "Paired sequences without chimera" = seqtab_wo_chimera,
       "Paired sequences without chimera and longer than 200bp" = seqtab,
       "ASV denoising" = d_asv,
-      "OTU after vsearch reclustering at 97%" =  ,
+      "OTU after vsearch reclustering at 97%" = d_vs,
       "OTU vs after mumu cleaning algorithm" = d_vs_mumu,
       "OTU vs + mumu + rarefaction by sequencing depth" = d_vs_mumu_rarefy
     )
@@ -218,35 +218,35 @@ tar_plan(
       "OTU vs after mumu cleaning algorithm" = d_vs_mumu,
       "OTU vs + mumu + rarefaction by sequencing depth" = d_vs_mumu_rarefy
     )
-  )),
+  ))#,
 
   ##> Build fastq quality report across the pipeline
   ### With raw sequences
-  tar_target(
-    quality_raw_seq,
-    fastqc_agg(fastq_files_folder, qc.dir = here("data/data_final/quality_fastqc/raw_seq/"), multiqc=TRUE)
-  ),
-  ### After cutadapt
-  tar_target(
-    quality_seq_wo_primers,
-    fastqc_agg(here("data/data_intermediate/seq_wo_primers/"), qc.dir = here("data/data_final/quality_fastqc/seq_wo_primers/"))
-  ),
-  ### After filtering and trimming (separate report for forward and reverse)
-  tar_target(
-    quality_seq_filtered_trimmed_FW,
-    fastqc_agg(here(filtered[[1]]), qc.dir = here("data/data_final/quality_fastqc/filterAndTrim_fwd/"))
-  ),
-  tar_target(
-    quality_seq_filtered_trimmed_REV,
-    fastqc_agg(here(filtered[[1]]), qc.dir = here("data/data_final/quality_fastqc/filterAndTrim_rev/"))
-  ),
-
-  ##>  Build bioinformatic quarto report
-  tar_target(bioinfo_report, {
-    track_sequences_samples_clusters
-    quarto::quarto_render(here::here("analysis", "01_bioinformatics.qmd"))
-  }
-  )#,
+  # tar_target(
+  #   quality_raw_seq,
+  #   fastqc_agg(fastq_files_folder, qc.dir = here("data/data_final/quality_fastqc/raw_seq/"), multiqc=TRUE)
+  # ),
+  # ### After cutadapt
+  # tar_target(
+  #   quality_seq_wo_primers,
+  #   fastqc_agg(here("data/data_intermediate/seq_wo_primers/"), qc.dir = here("data/data_final/quality_fastqc/seq_wo_primers/"))
+  # ),
+  # ### After filtering and trimming (separate report for forward and reverse)
+  # tar_target(
+  #   quality_seq_filtered_trimmed_FW,
+  #   fastqc_agg(here(filtered[[1]]), qc.dir = here("data/data_final/quality_fastqc/filterAndTrim_fwd/"))
+  # ),
+  # tar_target(
+  #   quality_seq_filtered_trimmed_REV,
+  #   fastqc_agg(here(filtered[[1]]), qc.dir = here("data/data_final/quality_fastqc/filterAndTrim_rev/"))
+  # ),
+  #
+  # ##>  Build bioinformatic quarto report
+  # tar_target(bioinfo_report, {
+  #   track_sequences_samples_clusters
+  #   quarto::quarto_render(here::here("analysis", "01_bioinformatics.qmd"))
+  # }
+  # )#,
   # tar_target(build_website, {
   #   track_sequences_samples_clusters
   #   quarto::quarto_render(here::here())

@@ -10,6 +10,8 @@ author:
 citation: true
 # bibliography: bibliography.bib
 # link-citations: true
+editor_options: 
+  chunk_output_type: console
 ---
 
 # Summary of the bioinformatic pipeline
@@ -18,6 +20,7 @@ citation: true
 library(knitr)
 library(targets)
 library(MiscMetabar)
+library(ape)
 devtools::load_all("~/Nextcloud/IdEst/Projets/MiscMetabar/")
 here::i_am("analysis/01_bioinformatics.qmd")
 ```
@@ -31,52 +34,13 @@ The {targets} package store ... *targets* in a folder and can load (`tar_load()`
 :::
 
 
-
-```{r}
-list.files(tar_read(fastq_files_folder))[!list.files(tar_read(fastq_files_folder))%in%list.files(tar_read(cutadapt))]
-```
-
-
-22MET-01206_S49_L001_R1_001.fastq.gz
-22MET-01218_S61_L001_R1_001.fastq.gz 
-22MET00155_S5_L001_R1_001.fastq.gz 
-22MET00182_S32_L001_R1_001.fastq.gz 
-22MET00262_S104_L001_R2_001.fastq.gz 
-22MET00268_S110_L001_R2_001.fastq.gz 
-22MET00283_S54_L001_R1_001.fastq.gz
-22MET00300_S71_L001_R2_001.fastq.gz 
-22MET00301_S72_L001_R1_001.fastq.gz 
-22MET00353_S83_L001_R2_001.fastq.gz 
-22MET01265_S12_L001_R1_001.fastq.gz
-22MET01273_S20_L001_R2_001.fastq.gz 
-22MET01275_S22_L001_R1_001.fastq.gz
-22MET01311_S58_L001_R1_001.fastq.gz 
-22MET01336_S83_L001_R1_001.fastq.gz 
-22MET01533_S20_L001_R1_001.fastq.gz
-
-22MET1561_S138_L001_R1_001.fastq.gz 
-22MET1561_S138_L001_R2_001.fastq.gz 
-22MET1562_S139_L001_R1_001.fastq.gz 
-22MET1562_S139_L001_R2_001.fastq.gz 
-Blanc-22LIBTaschen3_S88_L001_R1_001.fastq.gz 
-Blanc-22LIBTaschen3_S88_L001_R2_001.fastq.gz 
-Blanc-22LIBTaschen4_S113_L001_R1_001.fastq.gz
-Blanc-22LIBTaschen4_S113_L001_R2_001.fastq.gz 
-Blanc-Hyphes_S47_L001_R1_001.fastq.gz 
-Blanc-Hyphes_S47_L001_R2_001.fastq.gz 
-Blanc-Racine_S49_L001_R1_001.fastq.gz
-Blanc-Racine_S49_L001_R2_001.fastq.gz
-
-
-
-
 ### Load dataset and filter out taxa with less than 10 sequences and present in less than 2 samples 
 
 ```{r}
 # d_asv (ASV) or d_vs (OTU using vsearch)
 d_pq_interm <- tar_read("d_vs", store = here::here("_targets/"))
-d_pq_interm2 <- subset_taxa_pq(d_pq_interm, taxa_sums(as_binary_otu_table(d_pq_interm))>1)
-d_pq_interm2 <- subset_taxa_pq(d_pq_interm2, taxa_sums(d_pq_interm2)>10)
+d_pq_interm1 <- subset_taxa_pq(d_pq_interm, taxa_sums(as_binary_otu_table(d_pq_interm))>1)
+d_pq_interm2 <- subset_taxa_pq(d_pq_interm1, taxa_sums(d_pq_interm1)>10)
 ```
 
 
@@ -115,6 +79,12 @@ tar_meta(store = here::here("_targets/"), targets_only = TRUE) |>
   dplyr::mutate(Gb = round(bytes / 10^9, 2)) |>
   dplyr::arrange(desc(seconds), desc(bytes)) |>
   kable()
+```
+
+```{r}
+green_algo <- greenAlgoR::ga_targets(PSF=5)
+green_algo$carbon_footprint_total_gCO2
+green_algo$energy_needed_kWh
 ```
 
 
@@ -210,13 +180,13 @@ sum(d_pq@tax_table[,"Order_E"]=="Densosporales" ,na.rm = T)
 sum(d_pq@tax_table[,"Family_E"]=="Endogonaceae" ,na.rm = T)
 
 system(paste0("grep -c 'Endogonaceae' ", 
-              here::here("data/data_raw/refseq/DADA2_EUK_SSU_v1.9.fasta")
+              here::here("data/data_raw/refseq/DADA2_EUK_SSU_v1_9_3.fasta")
               ))
 system(paste0("grep -c 'Densosporales' ", 
-              here::here("data/data_raw/refseq/DADA2_EUK_SSU_v1.9.fasta")
+              here::here("data/data_raw/refseq/DADA2_EUK_SSU_v1_9_3.fasta")
  ))
 system(paste0("grep -c 'Endogonomycetes' ", 
-              here::here("data/data_raw/refseq/DADA2_EUK_SSU_v1.9.fasta")
+              here::here("data/data_raw/refseq/DADA2_EUK_SSU_v1_9_3.fasta")
  ))
 ```
 
@@ -228,8 +198,8 @@ d_pq2 <- add_new_taxonomy_pq(
   ref_fasta = "data/data_raw/refseq/EUK_SSU_v1_9_3.fasta",
   suffix = "_E_sintax")
 
-sum(as.data.frame(as.matrix(d_pq@tax_table))$Order_E_sintax=="Densosporales", na.rm=T)
-sum(as.data.frame(as.matrix(d_pq@tax_table))$Family_E_sintax=="Endogonaceae", na.rm=T)
+sum(as.data.frame(as.matrix(d_pq2@tax_table))$Order_E_sintax=="Densosporales", na.rm=T)
+sum(as.data.frame(as.matrix(d_pq2@tax_table))$Family_E_sintax=="Endogonaceae", na.rm=T)
 
 cond_am_eukaryome_mfre <- d_pq@tax_table[,"Family_E"]=="Endogonaceae" | d_pq@tax_table[,"Order_E"]=="Densosporales"
 cond_am_eukaryome_mfre <- as.vector(unclass(cond_am_eukaryome_mfre))
@@ -240,9 +210,33 @@ sum(cond_am_eukaryome_mfre)
 
 
 ```{r}
-d_pq <- add_new_taxonomy_pq(
+# Silva trained for fungi from https://zenodo.org/records/15044434
+d_pq_silva <- add_new_taxonomy_pq(
   d_pq2,
+  method = "dada2", 
+  ref_fasta = "data/data_raw/refseq/SILVA_SSUfungi_nr99_v138_2_toGenus_trainset.fasta",
+  suffix = "_Silva")
+
+d_pq_silva@tax_table[,"Family_Silva"] |>
+  table()
+
+cond_am_silva_mfre <- d_pq_silva@tax_table[,"Family_Silva"] == "Endogonaceae"
+cond_am_silva_mfre <- as.vector(unclass(cond_am_silva_mfre))
+cond_am_silva_mfre[is.na(cond_am_silva_mfre)] <- FALSE
+sum(cond_am_silva_mfre)
+
+cond_am_silva_mfre_class <- d_pq_silva@tax_table[,"Class_Silva"] == "Mucoromycotina_Incertae_Sedis"
+
+cond_am_silva_mfre_class <- as.vector(unclass(cond_am_silva_mfre_class))
+cond_am_silva_mfre_class[is.na(cond_am_silva_mfre_class)] <- FALSE
+sum(cond_am_silva_mfre_class)
+```
+
+```{r}
+d_pq <- add_new_taxonomy_pq(
+  d_pq_silva,
   method = "blastn", 
+  min_id = 95,
   method_algo = "top-hit",
   ref_fasta = "data/data_raw/refseq/sintax_ref_seq_Mucoromycotina.fasta",
   suffix = "_minimuco_blast_95"
@@ -257,12 +251,15 @@ d_pq <- add_new_taxonomy_pq(
   suffix = "_minimuco_blast_97"
   )
 
-
-cond_mfre_miniDB_species <- !is.na(d_pq@tax_table[,"Taxa_name_db_minimuco_blast_95"])
+cond_mfre_miniDB_species <- !is.na(d_pq@tax_table[,"Species_minimuco_blast_95"])
 cond_mfre_miniDB_species <- as.vector(unclass(cond_mfre_miniDB_species))
 sum(cond_mfre_miniDB_species)
 
-cond_mfre_miniDB_species_97 <- !is.na(d_pq@tax_table[,"Taxa_name_db_minimuco_blast_97"])
+# cond_mfre_miniDB_dada2_species <- !is.na(d_pq@tax_table[, "Species_muco_miniDB"])
+# cond_mfre_miniDB_dada2_species <- as.vector(unclass(cond_mfre_miniDB_dada2_species))
+# sum(cond_mfre_miniDB_dada2_species)
+
+cond_mfre_miniDB_species_97 <- !is.na(d_pq@tax_table[,"Species_minimuco_blast_97"])
 cond_mfre_miniDB_species_97 <- as.vector(unclass(cond_mfre_miniDB_species_97))
 sum(cond_mfre_miniDB_species_97)
 
@@ -272,17 +269,32 @@ table(cond_am_eukaryome_mfre, cond_mfre_miniDB_species_97)
 table(cond_am_eukaryome_AMF, cond_mfre_miniDB_species_97)
 table(cond_am_eukaryome_AMF, cond_am_eukaryome_mfre)
 
-ggVennDiagram::ggVennDiagram(list("mfre_euk"=taxa_names(d_pq)[cond_am_eukaryome_mfre],
-                                  "mfre_miniDB_97"=taxa_names(d_pq)[cond_mfre_miniDB_species_97],
-                                  "mfre_miniDB_95"=taxa_names(d_pq)[cond_mfre_miniDB_species])) +
+table(cond_am_eukaryome_AMF, cond_am_eukaryome_mfre)
+```
+
+
+```{r}
+library(ggVennDiagram)
+list_venn <- list("mfre_euk"=taxa_names(d_pq)[cond_am_eukaryome_mfre],
+#"mfre_silva"=taxa_names(d_pq)[cond_am_silva_mfre],    
+"mfre_silva_class"=taxa_names(d_pq)[cond_am_silva_mfre_class],    "mfre_miniDB_97"=taxa_names(d_pq)[cond_mfre_miniDB_species_97],                                  "mfre_miniDB_95"=taxa_names(d_pq)[cond_mfre_miniDB_species]
+) 
+
+ggVennDiagram(list_venn)+
   scale_x_continuous(expand = expansion(mult = .2))
+
+discern(Venn(list_venn), "mfre_silva_class")
+as.character(d_pq@refseq[discern(Venn(list_venn), "mfre_silva_class"),])
+d_pq@tax_table[discern(Venn(list_venn), "mfre_silva_class"),]
+rowSums(d_pq@otu_table[discern(Venn(list_venn), "mfre_silva_class"),])
+rowSums(d_pq@otu_table[discern(Venn(list_venn), "mfre_silva_class"),]>0)
 ```
 
 
 ```{r}
 # Add an information status of mfre in the tax_table slot
 d_pq@tax_table <- tax_table(as.matrix(cbind(d_pq@tax_table, 
-                                            "mfre"=cond_am_eukaryome_mfre, 
+                                            "mfre"=cond_am_silva_mfre_class, 
                                             "amf"=cond_am_eukaryome_AMF)))
 ```
 
@@ -293,22 +305,130 @@ d_pq@tax_table <- tax_table(as.matrix(cbind(d_pq@tax_table,
 ```{r}
 d_am <- clean_pq(subset_taxa(d_pq, amf==TRUE))
 d_mfre <- clean_pq(subset_taxa(d_pq, mfre==TRUE))
+d_mfre_am <- clean_pq(subset_taxa(d_pq, mfre==TRUE | amf==TRUE))
 
 # Verify that their is no overlap between mfre and amf 
-sum(d_am@tax_table[,"mfre"]=="TRUE")
-sum(d_mfre@tax_table[,"amf"]=="TRUE")
+if(sum(d_am@tax_table[,"mfre"]=="TRUE")!=0 | sum(d_mfre@tax_table[,"amf"]=="TRUE")!=0){
+  stop("At least one ASV is present in both mfre and amf phyloseq dataset")
+}
 ```
 
 
 ```{r}
 table(d_am@tax_table[,"Species_muco_miniDB"])
-gtsummary::tbl_summary(dplyr::select(as.data.frame(unclass(d_am@tax_table)), -NA.))
-
 gtsummary::tbl_cross(dplyr::select(as.data.frame(unclass(d_am@tax_table)), c("Genus_E", "Genus")))
 gtsummary::tbl_cross(dplyr::select(as.data.frame(unclass(d_mfre@tax_table)), c("Genus_E", "Genus")))
 ```
 
 
+
+## Differencial abundancy analysis
+
+### AM
+
+```{r}
+library("DESeq2")
+diagdds = phyloseq_to_deseq2(d_am, ~ Tmt)
+# calculate geometric means prior to estimate size factors
+gm_mean = function(x, na.rm=TRUE){
+  exp(sum(log(x[x > 0]), na.rm=na.rm) / length(x))
+}
+geoMeans = apply(counts(diagdds), 1, gm_mean)
+diagdds = estimateSizeFactors(diagdds, geoMeans = geoMeans)
+diagdds = DESeq(diagdds, fitType="local")
+
+res <- results(diagdds)
+res <- res[order(res$padj, na.last=NA), ]
+
+sigtab <- res[(res$padj < 0.05), ]
+sigtab <- cbind(as(sigtab, "data.frame"), as(tax_table(d_am)[rownames(sigtab), ], "matrix"))
+head(sigtab)
+
+
+x <- sort(tapply(sigtab$log2FoldChange, sigtab$Family_E_sintax, function(x) max(x)), decreasing = TRUE)
+sigtab$Family_E_sintax = factor(as.character(sigtab$Family_E_sintax), levels=names(x))
+
+x <- sort(tapply(sigtab$log2FoldChange, sigtab$Genus_E_sintax, function(x) max(x)), decreasing = TRUE)
+sigtab$Genus_E_sintax = factor(as.character(sigtab$Genus_E_sintax), levels=names(x))
+
+sigtab |> tibble::rownames_to_column("taxa") |>
+ggplot(aes(y=Genus_E_sintax, x=log2FoldChange, color=Family_E_sintax)) + 
+  geom_vline(xintercept = 0.0, color = "gray", size = 0.5) +
+  geom_point(size=6) + 
+  geom_label(aes(label = taxa), nudge_y = 0.3, size=2.5) +
+  theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5)) +
+  xlab("log2FoldChange: (left = more in no-Stress, right is more in case of Stress)")
+```
+
+```{r}
+res_ancombc_am_tmt <- ancombc_pq(
+  d_am,
+  fact = "Tmt",
+  tax_level = NULL,
+  levels_fact = c("NoStress", "Stress"),
+  verbose = TRUE
+)
+
+plot_ancombc_pq(d_am, res_ancombc_am_tmt, tax_col = "Family_E", tax_label = "Genus_E")
+```
+
+```{r}
+multipatt_pq(d_am, "Tmt", pval = 0.01)
+```
+
+
+
+### MFRE
+
+```{r}
+library("DESeq2")
+diagdds = phyloseq_to_deseq2(d_mfre, ~ Tmt)
+# calculate geometric means prior to estimate size factors
+gm_mean = function(x, na.rm=TRUE){
+  exp(sum(log(x[x > 0]), na.rm=na.rm) / length(x))
+}
+geoMeans = apply(counts(diagdds), 1, gm_mean)
+diagdds = estimateSizeFactors(diagdds, geoMeans = geoMeans)
+diagdds = DESeq(diagdds, fitType="local")
+
+res <- results(diagdds)
+res <- res[order(res$padj, na.last=NA), ]
+
+sigtab <- res[(res$padj < 0.05), ]
+sigtab <- cbind(as(sigtab, "data.frame"), as(tax_table(d_mfre)[rownames(sigtab), ], "matrix"))
+head(sigtab)
+
+
+x <- sort(tapply(sigtab$log2FoldChange, sigtab$Family_E_sintax, function(x) max(x)), decreasing = TRUE)
+sigtab$Family_E_sintax = factor(as.character(sigtab$Family_E_sintax), levels=names(x))
+
+x <- sort(tapply(sigtab$log2FoldChange, sigtab$Genus_E_sintax, function(x) max(x)), decreasing = TRUE)
+sigtab$Genus_E_sintax = factor(as.character(sigtab$Genus_E_sintax), levels=names(x))
+
+sigtab |> tibble::rownames_to_column("taxa") |>
+ggplot(aes(y=Genus_E_sintax, x=log2FoldChange, color=Family_E_sintax)) + 
+  geom_vline(xintercept = 0.0, color = "gray", size = 0.5) +
+  geom_point(size=6) + 
+  geom_label(aes(label = taxa), nudge_y = 0.3, size=2.5) +
+  theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5)) +
+  xlab("log2FoldChange: (left = more in no-Stress, right is more in case of Stress)")
+```
+
+```{r}
+res_ancombc_mfre_tmt <- ancombc_pq(
+  d_mfre,
+  fact = "Tmt",
+  tax_level = NULL,
+  levels_fact = c("NoStress", "Stress"),
+  verbose = TRUE
+)
+
+plot_ancombc_pq(d_mfre, res_ancombc_mfre_tmt, tax_col = "Family_E", tax_label = "Genus_E")
+```
+
+```{r}
+multipatt_pq(d_mfre, "Tmt", pval = 0.01)
+```
 
 
 ## Build a phylogenetic tree
@@ -318,11 +438,14 @@ gtsummary::tbl_cross(dplyr::select(as.data.frame(unclass(d_mfre@tax_table)), c("
 #### Only refseq Muco
 
 ```{sh}
-cd /home/adrien/Bureau/bioinfo.starter_am_taschen/data/data_raw/refseq
+cd /home/adrien/Bureau/bioinfo.starter_solace/data/data_raw/refseq
 mafft --auto --adjustdirection --reorder ref_seq_Mucoromycotina.fasta > ref_seq_Muco_MAFFT.fasta
 ./FastTreeDbl -gamma -gtr -log fasttree.log ref_seq_Muco_MAFFT.fasta > ref_seq_Muco_MAFFT.tree 
+
+sed -i s/AM;AM;AM;AM;AM;AM;//g ref_seq_Muco_MAFFT.tree 
 ```
 
+Remove  in
 
 ```{r}
 tree_maft <- ape::read.tree("data/data_raw/refseq/ref_seq_Muco_MAFFT.tree")
@@ -333,10 +456,12 @@ plot(tree_maft)
 
 
 ```{sh}
-cd /home/adrien/Bureau/bioinfo.starter_am_taschen/data/data_raw/refseq
+cd /home/adrien/Bureau/bioinfo.starter_solace/data/data_raw/refseq
 mafft --auto --adjustdirection --reorder ref_seq_Muco_outgroup.fasta > ref_seq_Muco_OG_MAFFT.fasta
+
 ./FastTreeDbl -gamma -gtr -log fasttree_OG.log ref_seq_Muco_OG_MAFFT.fasta > ref_seq_Muco_OG_MAFFT.tree 
-./raxml-ng_v1.2.2_linux_x86_64/raxml-ng --all --msa ref_seq_Muco_OG_MAFFT.fasta --model GTR+G --tree pars{10} --bs-trees 200 --prefix muco_og_ --bsconverge 
+
+./raxml-ng --all --msa ref_seq_Muco_OG_MAFFT.fasta --model GTR+G --tree pars{10} --bs-trees 200 --prefix muco_og_
 ```
 
 ```{r}
@@ -363,32 +488,44 @@ refseq_og <- Biostrings::readDNAStringSet("data/data_raw/refseq/ref_seq_Muco_out
 seqs_edna_mfre <- Biostrings::DNAStringSet(d_mfre@refseq)
 
 Biostrings::writeXStringSet(c(refseq_og, seqs_edna_mfre), "data/data_intermediate/seqs_mfre_for_mafft.fasta")
+
 Biostrings::writeXStringSet(seqs_edna_mfre, "data/data_intermediate/otu_mfre.fasta")
 ```
 
 
 ```{sh}
-cd /home/adrien/Bureau/bioinfo.starter_am_taschen/data/data_intermediate
+cd /home/adrien/Bureau/bioinfo.starter_solace/data/data_intermediate
 mafft --auto --adjustdirection --reorder seqs_mfre_for_mafft.fasta > seqs_mfre_for_mafft_MAFFTED.fasta
 
-/home/adrien/Bureau/bioinfo.starter_am_taschen/data/data_raw/refseq/FastTreeDbl -gamma -gtr -log fasttree_OG.log seqs_mfre_for_mafft_MAFFTED.fasta > seqs_mfre_MAFFTED.tree 
+# /home/adrien/Bureau/bioinfo.starter_solace/data/data_raw/refseq/FastTreeDbl -gamma -gtr -log fasttree_OG.log seqs_mfre_for_mafft_MAFFTED.fasta > seqs_mfre_MAFFTED.tree 
 
-/home/adrien/Bureau/bioinfo.starter_am_taschen/data/data_raw/refseq/raxml-ng_v1.2.2_linux_x86_64/raxml-ng --all --msa seqs_mfre_for_mafft_MAFFTED.fasta --model GTR+G --tree pars{10} --bs-trees 200 --prefix raxml_otu_mfre_og
+/home/adrien/Bureau/bioinfo.starter_solace/data/data_raw/refseq/raxml-ng --all --msa seqs_mfre_for_mafft_MAFFTED.fasta --model GTR+G --tree pars{10} --bs-trees 1000 --prefix raxml_otu_mfre_og
 ```
 
 
 ```{r}
 library(ape)
 tree_raxml_muco_og <- read.tree("data/data_intermediate/raxml_otu_mfre_og.raxml.support")
-outgroups <- tree_raxml_muco_og$tip.label[grep("OUT_", tree_raxml_muco_og$tip.label)]
+outgroups <- tree_raxml_muco_og$tip.label[c(grep("JX301", tree_raxml_muco_og$tip.label), grep("OUT_", tree_raxml_muco_og$tip.label))]
 tree_raxml_muco_og <- root(tree_raxml_muco_og, outgroup=outgroups)
 
 nodes_color <- rep("green", length(tree_raxml_muco_og$tip.label))
 names(nodes_color) <- tree_raxml_muco_og$tip.label
 nodes_color[grepl("Taxa",names(nodes_color))] <- "gray20"
-nodes_color[grepl("OUT_",names(nodes_color))] <- "red"
+nodes_color[names(nodes_color) %in% outgroups] <- "red"
 
 plot(tree_raxml_muco_og, show.node.label = TRUE, tip.color = nodes_color)
+```
+
+
+```{r}
+ggtree(tree_raxml_muco_og) + 
+  geom_tiplab(aes(color=case_when(grepl("Taxa",label) ~ "mfre",
+                                  grepl("OUT",label) ~ "outgroup",
+                                  grepl("JX",label) ~ "outgroup",
+                                  .default = "refseq")),
+              size=3) + scale_color_manual(values=c("green", "black", "gray20")) + geom_nodelab(aes(label=ifelse(as.numeric(label)<80, label, "")),size=2,  hjust=2, vjust=-1) +
+  no_legend()
 ```
 
 
@@ -411,13 +548,13 @@ Biostrings::writeXStringSet(alignment_mafft[!grepl("Taxa",names(alignment_mafft)
 ```
 
 ```{sh}
-cd /home/adrien/Bureau/bioinfo.starter_am_taschen/data/data_raw/refseq
+cd /home/adrien/Bureau/bioinfo.starter_solace/data/data_raw/refseq
 
-epa-ng --ref-msa /home/adrien/Bureau/bioinfo.starter_am_taschen/data/data_intermediate/refseq_MAFFTED_with_otu.fasta --tree muco_og_.raxml.bestTree --query /home/adrien/Bureau/bioinfo.starter_am_taschen/data/data_intermediate/otu_refseq_MAFFTED_with_refseq.fasta --model muco_og_.raxml.bestModel 
+epa-ng --ref-msa /home/adrien/Bureau/bioinfo.starter_solace/data/data_intermediate/refseq_MAFFTED_with_otu.fasta --tree muco_og_.raxml.bestTree --query /home/adrien/Bureau/bioinfo.starter_solace/data/data_intermediate/otu_refseq_MAFFTED_with_refseq.fasta --model muco_og_.raxml.bestModel 
 ```
 
 ```{r}
-jplace_tree <- treeio::read.jplace("/home/adrien/Bureau/bioinfo.starter_am_taschen/data/data_raw/refseq/epa_result.jplace")
+jplace_tree <- treeio::read.jplace("/home/adrien/Bureau/bioinfo.starter_solace/data/data_raw/refseq/epa_result.jplace")
 
 hist(jplace_tree@placements$like_weight_ratio)
 ```
@@ -523,6 +660,7 @@ ggVennDiagram::ggVennDiagram(venn_data, names(venn_data),
 
 
 
+# Archives
 
 ## Trying ASAP (Puillandre et al. 2021) on ASV
 
@@ -541,7 +679,7 @@ writeXStringSet(alignment@unmasked, "data/data_intermediate/asv_1000_amf_mfre.fa
 
 ```{sh}
 cd ~/Bureau/ASAP
-./asap ~/Bureau/bioinfo.starter_am_taschen/data/data_intermediate/seqs_for_mafft_MAFFTED.fas -a -o outputs
+./asap ~/Bureau/bioinfo.starter_solace/data/data_intermediate/seqs_for_mafft_MAFFTED.fas -a -o outputs
 ```
 
 
