@@ -31,6 +31,7 @@ source(here::here("R/functions.R"))
 res_ga <- greenAlgoR::ga_targets(store = here::here("_targets/"))
 print(paste0(res_ga$carbon_footprint_total_gCO2, " gCO2 equiv. emitted for the whole pipeline"))
 ```
+
 ## Timeline and cpu usage
 
 ```{r, message=FALSE, warning=FALSE}
