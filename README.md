@@ -12,6 +12,7 @@ The goal of bioinfo.starter is to [...]
 
 ```sh
 git clone git@github.com:adrientaudiere/bioinfo.starter.git
+cd bioinfo.starter
 git checkout -b name_analyse
 ```
 
