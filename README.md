@@ -11,25 +11,46 @@ The goal of bioinfo.starter is to [...]
 ### Clone from github
 
 ```sh
-git clone git@github.com:adrientaudiere/bioinfo.starter.git
+git clone git@github.com:adrientaudiere/bioinfo.starter.git name_analyse
+cd name_analyse
 git checkout -b name_analyse
 ```
 
 ### Adapt to your pipeline
 
-- Replace `data/data_raw/metadata/sam_data.csv` with good metadata file
+- Replace `data/data_raw/metadata/sam_data.csv` with good metadata file. 
+  - Must be a true comma separated csv. If you prefer tabulation or ; you may want to add parameter to function `sam_data_matching_names()`.
+  - The name of the file and the the column names indicating the samples are defined at the start of the `_targets.R` file
 - Copy fastq files in `data/data_raw/rawseq`
 - Add references database in `data/data_raw/refseq`
 - Modify the `_targets.R` files (at least modify primers sequences and name of the reference database)
 - Modify (if necessary) params `pattern_remove_sam_data` and `pattern_remove_fastq_files` to make matching fastq files and sample names in metadata
+
+### Install mumu if you want to use mumu_pq
+
+```sh
+git clone https://github.com/frederic-mahe/mumu.git
+cd ./mumu/
+make
+make check
+make install  # as root or sudo
+```
 
 ### Install R packages and run targets pipeline
 
 ```r
 install.packages("pak")
 pak::local_install_deps(dependencies = TRUE)
-fastqcr::fastqc_install()
+fastqcr::fastqc_install() # install fastqc for UNIX system (Linux and macOS)
 ```
+
+```r
+if (!require("devtools", quietly = TRUE)) {
+  install.packages("devtools")
+}
+devtools::install_github("adrientaudiere/greenAlgoR")
+```
+
 
 ```r
 targets::tar_make()
