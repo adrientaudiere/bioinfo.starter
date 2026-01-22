@@ -21,7 +21,6 @@ Suggests:
   viridis,
   patchwork,
   ggstatsplot,
-  qs,
   quarto,
   sessioninfo,
   qs2,
