@@ -61,7 +61,7 @@ RUN conda config --add channels bioconda \
 
 
 RUN R -e "install.packages('pak', repos = c(CRAN = 'https://cloud.r-project.org'))" \
-  && R -e  "pak::pkg_install(c('DT', 'emojifont', 'flexdashboard', 'forcats','formattable','ggimage', 'ggplot2', 'ggVennDiagram','grid', 'gridExtra','here', 'kableExtra', 'knitr', 'magick', 'networkD3', 'optparse', 'pbapply', 'plotly', 'qs', 'quarto', 'rmarkdown', 'sessioninfo', 'stringr','targets', 'tarchetypes', 'this.path', 'tinytex', 'treemap','vegan','viridis','visNetwork'))" \
+  && R -e  "pak::pkg_install(c('DT', 'emojifont', 'flexdashboard', 'forcats','formattable','ggimage', 'ggplot2', 'ggVennDiagram','grid', 'gridExtra','here', 'kableExtra', 'knitr', 'magick', 'networkD3', 'optparse', 'pbapply', 'plotly', 'quarto', 'rmarkdown', 'sessioninfo', 'stringr','targets', 'tarchetypes', 'this.path', 'tinytex', 'treemap','vegan','viridis','visNetwork'))" \
   && R -e "install.packages('renv', repos = c(CRAN = 'https://cloud.r-project.org'))"
 
 ENV FOLDER="/home/rstudio/"
