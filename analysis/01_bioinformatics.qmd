@@ -500,8 +500,9 @@ mafft --auto --adjustdirection --reorder seqs_mfre_for_mafft.fasta > seqs_mfre_f
 # /home/adrien/Bureau/bioinfo.starter_solace/data/data_raw/refseq/FastTreeDbl -gamma -gtr -log fasttree_OG.log seqs_mfre_for_mafft_MAFFTED.fasta > seqs_mfre_MAFFTED.tree 
 
 /home/adrien/Bureau/bioinfo.starter_solace/data/data_raw/refseq/raxml-ng --all --msa seqs_mfre_for_mafft_MAFFTED.fasta --model GTR+G --tree pars{10} --bs-trees 1000 --prefix raxml_otu_mfre_og
-```
 
+/home/adrien/Bureau/bioinfo.starter_solace/data/data_raw/refseq/raxml-ng2 --all --msa seqs_mfre_for_mafft_MAFFTED.fasta --model DNA --tree pars{10} --bs-trees 1000 --prefix raxml_otu_mfre_og
+```
 
 ```{r}
 library(ape)
@@ -525,7 +526,8 @@ ggtree(tree_raxml_muco_og) +
                                   grepl("JX",label) ~ "outgroup",
                                   .default = "refseq")),
               size=3) + scale_color_manual(values=c("green", "black", "gray20")) + geom_nodelab(aes(label=ifelse(as.numeric(label)<80, label, "")),size=2,  hjust=2, vjust=-1) +
-  no_legend()
+                  geom_treescale(x=0, y=30) +
+  theme(legend.position = "none")
 ```
 
 
@@ -536,6 +538,37 @@ tree_maft <- root(tree_maft, outgroup=outgroups)
 plot(tree_maft)
 ```
 
+#### IQTREE 3
+
+```{sh}
+/home/adrien/Bureau/bioinfo.starter_solace/data/data_raw/refseq/iqtree3/bin/iqtree3 -s /home/adrien/Bureau/bioinfo.starter_solace/data/data_intermediate/seqs_mfre_for_mafft_MAFFTED.fasta -B 1000
+```
+
+```{r}
+library(ape)
+iqtree_muco_og <- read.tree("/home/adrien/Bureau/bioinfo.starter_solace/data/data_intermediate/seqs_mfre_for_mafft_MAFFTED.fasta.contree")
+outgroups <- iqtree_muco_og$tip.label[c(grep("JX301", iqtree_muco_og$tip.label), grep("OUT_", iqtree_muco_og$tip.label))]
+iqtree_muco_og <- root(iqtree_muco_og, outgroup=outgroups)
+
+nodes_color <- rep("green", length(iqtree_muco_og$tip.label))
+names(nodes_color) <- iqtree_muco_og$tip.label
+nodes_color[grepl("Taxa",names(nodes_color))] <- "gray20"
+nodes_color[names(nodes_color) %in% outgroups] <- "red"
+
+plot(iqtree_muco_og, show.node.label = TRUE, tip.color = nodes_color)
+```
+
+
+```{r}
+ggtree(iqtree_muco_og) + 
+  geom_tiplab(aes(color=case_when(grepl("Taxa",label) ~ "mfre",
+                                  grepl("OUT",label) ~ "outgroup",
+                                  grepl("JX",label) ~ "outgroup",
+                                  .default = "refseq")),
+              size=3) + scale_color_manual(values=c("green", "black", "gray20")) + geom_nodelab(aes(label=ifelse(as.numeric(label)<80, label, "")),size=2,  hjust=2, vjust=-1) +
+                                  geom_treescale(x=0, y=30) +
+  theme(legend.position = "none")
+```
 
 
 #### EPA-NG

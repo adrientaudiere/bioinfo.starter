@@ -1,0 +1,33 @@
+
+RAxML-NG v. 1.2.2-master released on 30.04.2024 by The Exelixis Lab.
+Developed by: Alexey M. Kozlov and Alexandros Stamatakis.
+Contributors: Diego Darriba, Tomas Flouri, Benoit Morel, Sarah Lutteropp, Ben Bettisworth, Julia Haag, Anastasis Togkousidis.
+Latest version: https://github.com/amkozlov/raxml-ng
+Questions/problems/suggestions? Please visit: https://groups.google.com/forum/#!forum/raxml
+
+System: Intel(R) Core(TM) i5-9600K CPU @ 3.70GHz, 6 cores, 62 GB RAM (allocated: 3 physical cores)
+
+RAxML-NG was called at 21-Jan-2026 16:10:12 as follows:
+
+/home/adrien/Bureau/bioinfo.starter_solace/data/data_raw/refseq/raxml-ng --all --msa seqs_mfre_for_mafft_MAFFTED.fasta --model DNA--tree pars{10} --bs-trees 1000 --prefix raxml_otu_mfre_og
+
+Analysis options:
+  run mode: ML tree search + bootstrapping (Felsenstein Bootstrap)
+  start tree(s): random (10) + parsimony (10)
+  bootstrap replicates: parsimony (1000)
+  random seed: 1769008212
+  tip-inner: OFF
+  pattern compression: ON
+  per-rate scalers: OFF
+  site repeats: ON
+  logLH epsilon: general: 10.000000, brlen-triplet: 1000.000000
+  fast spr radius: AUTO
+  spr subtree cutoff: 1.000000
+  fast CLV updates: ON
+  branch lengths: proportional (ML estimate, algorithm: NR-FAST)
+  SIMD kernels: AVX2
+  parallelization: coarse-grained (auto), PTHREADS (auto)
+
+
+ERROR: Alignment file not found: seqs_mfre_for_mafft_MAFFTED.fasta
+
