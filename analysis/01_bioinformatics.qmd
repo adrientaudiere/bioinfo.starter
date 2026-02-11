@@ -21,7 +21,6 @@ source(here::here("R/functions.R"))
 ```
 
 ```{r child="../R/styles.qmd"}
-
 ```
 
 # Summary of the bioinformatic pipeline
