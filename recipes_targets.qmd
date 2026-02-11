@@ -132,6 +132,56 @@ tar_target(
 ```
 
 
+## Replace dada2 by another algorithm for taxonomic assignation
+
+
+
+Replace 
+
+```{r}
+tar_target(
+    tax_tab,
+    assignTaxonomy(
+      seqtab,
+      refFasta = file_refseq_taxo,
+      taxLevels
+      = c(
+        "Kingdom",
+        "Phyla",
+        "Class",
+        "Order",
+        "Family",
+        "Genus",
+        "Species"
+      ),
+      multithread = n_threads
+    )
+  ),
+```
+
+by 
+
+```{r}
+  tar_target(
+    tax_tab,
+    taxa_names(asv_tab) |>
+      as.data.frame() |>
+      setNames("Taxa_name")
+  ),
+```
+
+and after the creation of the phyloseq object, add a new target with the following code to assign taxonomy with another algorithm (e.g. sintax) and database (e.g. Unite for Fungi)
+
+```{r}
+
+  tar_target(d_asv, 
+    add_new_taxonomy_pq(data_phyloseq, 
+      method = "sintax",
+      ref_fasta = file_refseq_taxo, 
+      suffix = "Unite")
+  ),
+```
+
 ## Filter by % sequence (whith blast)
 
 ```{r, eval=FALSE}

@@ -155,21 +155,9 @@ tar_plan(
 
   tar_target(
     tax_tab,
-    assignTaxonomy(
-      seqtab,
-      refFasta = file_refseq_taxo,
-      taxLevels
-      = c(
-        "Kingdom",
-        "Phyla",
-        "Class",
-        "Order",
-        "Family",
-        "Genus",
-        "Species"
-      ),
-      multithread = n_threads
-    )
+    taxa_names(asv_tab) |>
+      as.data.frame() |>
+      setNames("Taxa_name")
   ),
 
   ##> Create the phyloseq object 'data_asv' with
@@ -177,7 +165,6 @@ tar_plan(
   ###   ii) taxonomic table,
   ###   (iii) sample data and
   ###   (iv) references sequences
-
 
   tar_target(data_phyloseq, add_dna_to_phyloseq(
     phyloseq(asv_tab, sam_tab, tax_table(
@@ -187,6 +174,14 @@ tar_plan(
 
   tar_target(d_asv, 
     add_new_taxonomy_pq(data_phyloseq, 
+      method = "sintax",
+      ref_fasta = file_refseq_taxo, 
+      suffix = "Unite")
+  ),
+
+  tar_target(d_asv, 
+    add_new_taxonomy_pq(data_phyloseq, 
+      method = "sintax",
       ref_fasta = "data/data_raw/refseq/DADA2_EUK_SSU_v2.0.fasta", 
       suffix = "Eukaryome")
   ),
