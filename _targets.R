@@ -18,10 +18,10 @@ lapply(list.files("~/Nextcloud/IdEst/Projets/MiscMetabar/R/", full.names = TRUE)
 
 
 seq_len_min <- 200
-fw_primer_sequences <- "XXX"
-rev_primer_sequences <- "XXX"
+fw_primer_sequences <- "GCATCGATGAAGAACGCAGC"
+rev_primer_sequences <- "TCCTCCGCTTATTGATATGC"
 n_threads <- 4
-refseq_file_name <- "XXX"
+refseq_file_name <- "sh_general_release_dynamic_19.02.2025.fasta"
 sam_data_file_name <- "sam_data.csv"
 sample_col_name <- "samples_names"
 set.seed(22)
@@ -54,7 +54,6 @@ tar_plan(
       path_sam_data = here("data/data_raw/metadata", sam_data_file_name),
       path_raw_seq =  fastq_files_folder,
       sample_col_name = sample_col_name,
-      #pattern_remove_sam_data = "XXX",
       pattern_remove_fastq_files = "_L001.*",
       prefix = "samp_"
     )
