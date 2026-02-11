@@ -8,6 +8,25 @@ The goal of bioinfo.starter is to [...]
 
 ## Installation
 
+### Possible local requirements
+
+Some tools need to be installed locally before running the pipeline for some functions (not all are mandatory, depending on your analysis):
+
+
+- Probably neccessary for most analysis:
+    - [cutadapt](https://cutadapt.readthedocs.io/en/stable/installation.html)
+    - [vsearch](https://github.com/torognes/vsearch)
+
+- May be necessary depending on your analysis:
+    - [fastqc](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/) is installed automatically with `fastqcr::fastqc_install()`
+    - [blastn](https://blast.ncbi.nlm.nih.gov/doc/blast-help/downloadblastdata.html)
+    - [mumu](https://github.com/frederic-mahe/mumu)
+    - [multiqc](https://github.com/MultiQC/MultiQC) (`pip install multiqc`)
+    - [swarm](https://github.com/torognes/swarm)
+    - [falco](https://github.com/smithlabcode/falco) 
+ 
+`MiscMetabar` functions can test for the presence of some of this tools (`MiscMetabar::is_cutadapt_installed()`, `MiscMetabar::is_vsearch_installed()`, ...). 
+
 ### Clone from github
 
 ```sh
