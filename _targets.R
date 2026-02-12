@@ -155,9 +155,17 @@ tar_plan(
 
   tar_target(
     tax_tab,
-    taxa_names(asv_tab) |>
+    {
+      tt <- taxa_names(asv_tab) |>
       as.data.frame() |>
-      setNames("Taxa_name")
+      setNames("Taxa_name") |>
+      as.matrix() |>
+      tax_table()
+      
+      taxa_names(tt) <- taxa_names(asv_tab)
+
+      tt
+    }
   ),
 
   ##> Create the phyloseq object 'data_asv' with
@@ -168,11 +176,11 @@ tar_plan(
 
   tar_target(data_phyloseq, add_dna_to_phyloseq(
     phyloseq(asv_tab, sam_tab, tax_table(
-      as.matrix(tax_tab, dimnames = rownames(tax_tab))
+      as.matrix(tax_tab)
     ))
-  )),
+      )),
 
-  tar_target(d_asv, 
+  tar_target(d_asv_Unite, 
     add_new_taxonomy_pq(data_phyloseq, 
       method = "sintax",
       ref_fasta = file_refseq_taxo, 
@@ -180,7 +188,7 @@ tar_plan(
   ),
 
   tar_target(d_asv, 
-    add_new_taxonomy_pq(data_phyloseq, 
+    add_new_taxonomy_pq(d_asv_Unite, 
       method = "sintax",
       ref_fasta = "data/data_raw/refseq/DADA2_EUK_SSU_v2.0.fasta", 
       suffix = "Eukaryome")
@@ -200,11 +208,10 @@ tar_plan(
     list(
       "Raw Forward sequences" = unlist(list_fastq_files(fastq_files_folder, paired_end = FALSE)),
       "Forward wo primers" = unlist(list_fastq_files(here::here("data/data_intermediate/seq_wo_primers/"), paired_end = FALSE)),
-      "Forward sequences" = ddF,
-      "Paired sequences" = seq_tab_Pairs,
-      "Paired sequences without chimera" = seqtab_wo_chimera,
-      "Paired sequences without chimera and longer than 200bp" = seqtab,
-      "ASV denoising" = d_asv,
+      "Forward denoised" = ddF,
+      "Paired sequences denoised" = seq_tab_Pairs,
+      "Paired denoised without chimera" = seqtab_wo_chimera,
+      paste("Paired denoised wo chim < ", seq_len_min, "bp") = seqtab,
       "OTU after vsearch reclustering at 97%" = d_vs,
       "OTU vs after mumu cleaning algorithm" = d_vs_mumu,
       "OTU vs + mumu + rarefaction by sequencing depth" = d_vs_mumu_rarefy
@@ -212,10 +219,14 @@ tar_plan(
   )),
   tar_target(track_by_samples, track_wkflow_samples(
     list(
-      "ASV denoising" = d_asv,
+      "Raw Forward sequences" = unlist(list_fastq_files(fastq_files_folder, paired_end = FALSE)),
+      "Forward wo primers" = unlist(list_fastq_files(here::here("data/data_intermediate/seq_wo_primers/"), paired_end = FALSE)),
+      "Forward denoised" = ddF,
+      "Paired sequences denoised" = seq_tab_Pairs,
+      "Paired denoised without chimera" = seqtab_wo_chimera,
+      paste0("Paired denoised wo chim < ", seq_len_min, "bp") = seqtab,
       "OTU after vsearch reclustering at 97%" = d_vs,
       "OTU vs after mumu cleaning algorithm" = d_vs_mumu,
-      "OTU vs + mumu + rarefaction by sequencing depth" = d_vs_mumu_rarefy
     )
   )),
  

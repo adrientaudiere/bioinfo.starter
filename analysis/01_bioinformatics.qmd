@@ -37,7 +37,6 @@ print(paste0(res_ga$carbon_footprint_total_gCO2, " gCO2 equiv. emitted for the w
 ```{r, message=FALSE, warning=FALSE}
 log_data <- autometric::log_read(
   here::here("data/data_final/autometric_log.txt"),
-  units_time = "hours",
   units_memory = "gigabytes"
 )
 
@@ -45,11 +44,23 @@ log_data |>
   filter(!grepl("conclude:", phase)) |>
   filter(!grepl("prepare:", phase)) |>
   filter(!grepl("__DEFAULT__", phase)) |>
-  ggplot(aes(x = time, y = reorder(phase, desc(time)), color = resident)) +
-  geom_line(aes(linewidth = cpu)) +
+  group_by(pid, phase) |>
+  summarise(
+    time = last(time) - first(time),
+    cpu = mean(core),
+    resident = mean(resident),
+    .groups = "drop"
+  ) |>
+  group_by(phase) |>
+  slice_max(time, n = 1, with_ties = FALSE) |>
+  ungroup() |>
+  ggplot(aes(x = time, y = reorder(phase, time), color = resident)) +
+  geom_segment(aes(linewidth = cpu, xend = time, x = 0)) +
   scale_color_viridis_b("Memory (Gb)", end = 0.9, direction = -1) +
+  geom_text(aes(label = paste0(round(time), "s/ ",round(resident), "Gb/",round(cpu), " cpu")), hjust = -0.1, size = 3, color="gray20") +
   theme_idest() +
-  xlab("Time (in hours)") +
+  scale_x_log10() +
+  xlab("Time (in seconds)") +
   ylab("")
 
 ```
@@ -107,8 +118,34 @@ DT::datatable(d_pq@sam_data)
 ## All samples together
 
 ```{r}
-kable(tar_read(track_sequences_samples_clusters, store=here::here("_targets/")))
+track_sequences_samples_clusters <- tar_read(track_sequences_samples_clusters, store=here::here("_targets/"))
+kable(track_sequences_samples_clusters)
 ```
+
+
+```{r}
+track_sequences_samples_clusters$step <- factor(rownames(track_sequences_samples_clusters), levels = rownames(track_sequences_samples_clusters))
+
+scale_factor <- max(track_sequences_samples_clusters$nb_sequences) / max(track_sequences_samples_clusters$nb_clusters, na.rm = TRUE)
+
+ggplot(track_sequences_samples_clusters, aes(x = step)) +
+  geom_bar(aes(y = nb_sequences), stat = "identity", fill = "steelblue", alpha = 0.7) +
+  geom_line(aes(y = nb_clusters * scale_factor, group = 1), color = "firebrick", linewidth = 1) +
+  geom_point(aes(y = nb_clusters * scale_factor), color = "firebrick", size = 2) +
+  scale_y_continuous(
+    name = "Number of sequences",
+    sec.axis = sec_axis(~ . / scale_factor, name = "Number of clusters")
+  ) +
+  theme_idest() +
+  geom_text(aes(y = nb_sequences, label = paste0(nb_samples, " samp.")), vjust = -0.5, color = "grey20", size = 3) +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    axis.title.y.left = element_text(color = "steelblue"),
+    axis.title.y.right = element_text(color = "firebrick")
+  ) +
+  xlab("")
+```
+
 
 ## Per samples
 
@@ -121,6 +158,46 @@ for (li in names(tab_samp)) {
   print(knitr::kable(tab_samp[[li]], caption = li, format="html"))
   cat('\n<!-- -->\n\n')
 }
+```
+
+## Violin plots
+
+```{r}
+#| message: false
+#| warning: false
+tab_all <- bind_rows(tab_samp, .id = "samples") |>
+    tibble() 
+
+tab_all$step <- factor(rep(rownames(tab_samp[[1]]), nrow(tab_all)/nrow(tab_samp[[1]])), levels=rownames(tab_samp[[1]]))
+
+tab_all <- tab_all |>
+  left_join(d_pq@sam_data, by = c("samples" = "samples_names_common"))
+
+ggplot(tab_all, aes(x = step, y = log10(nb_sequences))) +
+  geom_violin(fill = "grey80") +
+  geom_jitter(width = 0.15, alpha = 0.4, size = 1) +
+  geom_line(aes(group = samples), color = "grey50", alpha = 0.1) +
+  theme_idest() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  xlab("Number of sequences (Log10)") +
+  ylab("")
+
+
+tab_all |>
+  filter(nb_clusters > 0 & nb_clusters <1000) |>
+ggplot(aes(x = step, y = nb_clusters)) +
+  geom_violin(fill = "grey80") +
+  geom_jitter(aes(color=sample_type),width = 0.15, alpha = 0.4, size = 1) +
+  geom_line(aes(group = samples, color=sample_type), alpha = 0.1) +
+  stat_summary(
+    fun.data = mean_cl_boot,
+    geom = "pointrange",
+    color = "grey20"
+  ) +
+  theme_idest() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  xlab("Number of clusters") +
+  ylab("")
 ```
 
 :::

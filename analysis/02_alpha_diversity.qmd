@@ -8,8 +8,6 @@ author:
     affiliation: IdEst
     affiliation-url: https://orcid.org/my-orcid?orcid=0000-0003-1088-1182
 citation: true
-params:
-  factor_of_interest: "XXX"
 # bibliography: bibliography.bib
 # link-citations: true
 ---
@@ -24,7 +22,6 @@ See the documentation of the `MiscMetabar` package for example of [alpha diversi
 if(base::interactive()) {
   params <- rmarkdown::yaml_front_matter(here::here("analysis/03_beta_diversity.qmd"))$params
 }
-factor_of_interest <- params$factor_of_interest
 ```
 
 
@@ -41,10 +38,60 @@ here::i_am("analysis/02_alpha_diversity.qmd")
 d_pq <- clean_pq(tar_read("d_vs", store=here::here("_targets/")))
 ```
 
+```{r}
+#| message: false
+# Split animal_wandering into: wandering (yes/none/unknown) + one boolean column per animal
+animals <- c("boars", "cows", "pigs", "donkeys", "goats", "sheeps")
+
+sam_df <- data.frame(d_pq@sam_data) |>
+  mutate(
+    fence = grepl("fence", animal_wandering),
+    wandering = case_when(
+      grepl("^yes", animal_wandering) ~ "yes",
+      grepl("^none", animal_wandering) ~ "none",
+      animal_wandering == "NC" ~ NA_character_,
+      TRUE ~ animal_wandering
+    )
+  )
+
+for (a in animals) {
+  sam_df[[a]] <- grepl(a, sam_df$animal_wandering)
+}
+
+# Split associated_vegetation into: vegetation_purity + one boolean column per species
+species <- c("castaneasativa", "quercusilex", "quercusalba", "quercuspubescens",
+             "arbutusunedo", "ostryacarpinifolia", "alnuscordata", "ilexaquifolium",
+             "fagussylvatica", "erica", "fraxinus", "prunusspinosa",
+             "pinusnigracorsicana", "corylusavellana")
+
+sam_df <- sam_df |>
+  mutate(
+    vegetation_purity = case_when(
+      grepl("^pure", associated_vegetation) ~ "pure",
+      grepl("^almostpure", associated_vegetation) ~ "almostpure",
+      grepl("^mix", associated_vegetation) ~ "mix",
+      associated_vegetation == "NC" ~ NA_character_,
+      TRUE ~ associated_vegetation
+    )
+  )
+
+for (sp in species) {
+  sam_df[[sp]] <- grepl(sp, sam_df$associated_vegetation)
+}
+
+# Also extract "oaks" and "pines" which are generic groups
+sam_df$oaks <- grepl("oaks", sam_df$associated_vegetation)
+sam_df$pines <- grepl("pines", sam_df$associated_vegetation)
+
+sam_df <- sam_df |> select(-animal_wandering, -associated_vegetation)
+
+d_pq@sam_data <- sample_data(sam_df)
+```
+
 
 ```{r}
 #| error: true
-hill_pq(d_pq, factor_of_interest, one_plot = TRUE) &
+hill_pq(d_pq, "vegetation_purity", one_plot = TRUE) &
   (
     theme_idest(
       subtitle_size = 8,
@@ -59,7 +106,7 @@ hill_pq(d_pq, factor_of_interest, one_plot = TRUE) &
 
 ```{r}
 #| error: true
-ggbetween_pq(d_pq, factor_of_interest)
+ggbetween_pq(d_pq, "vegetation_purity")
 ```
 
 

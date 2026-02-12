@@ -8,8 +8,6 @@ author:
     affiliation: IdEst
     affiliation-url: https://orcid.org/my-orcid?orcid=0000-0003-1088-1182
     citation: true
-params:
-  factor_of_interest: "XXX"
 # bibliography: bibliography.bib
 # link-citations: true
 ---
@@ -23,7 +21,6 @@ See the documentation of the `MiscMetabar` package for example of [beta-diversit
 if(base::interactive()) {
   params <- rmarkdown::yaml_front_matter(here::here("analysis/03_beta_diversity.qmd"))$params
 }
-factor_of_interest <- params$factor_of_interest
 ```
 
 ```{r,  message=FALSE, warning=FALSE}
@@ -42,7 +39,7 @@ d_pq <- clean_pq(tar_read("d_vs", store=here::here("_targets/")))
 #| error: true
 formattable_pq(
     d_pq,
-    factor_of_interest,
+    vegetation_purity,
     min_nb_seq_taxa = 1000, 
     lev_col_taxa = "Family",
     taxonomic_levels=c("Order", "Family", "Genus"),
@@ -56,9 +53,9 @@ formattable_pq(
 library("vegan")
 plot_ordination(d_pq, vegan::decorana(vegdist(as(otu_table(d_pq), "matrix"),
     method = "robust.aitchison"
-  )), color = factor_of_interest) +
+  )), color = vegetation_purity) +
   geom_point(size = 3) +
-  stat_ellipse(inherit.aes = F, aes(x = DCA1, y = DCA2, linetype = .data[[factor_of_interest]], col = .data[[factor_of_interest]])) + 
+  stat_ellipse(inherit.aes = F, aes(x = DCA1, y = DCA2, linetype = .data[[vegetation_purity]], col = .data[[vegetation_purity]])) + 
   theme_idest() +
   scale_color_manual(values=idest_pal$dark_color_idest[[1]][c(5,4,2)])
 ```
@@ -66,15 +63,15 @@ plot_ordination(d_pq, vegan::decorana(vegdist(as(otu_table(d_pq), "matrix"),
 
 ```{r}
 #| error: true
-adonis_pq(d_pq, factor_of_interest, na_remove = TRUE, correction_for_sample_size = TRUE, by = "terms")
+adonis_pq(d_pq, vegetation_purity, na_remove = TRUE, correction_for_sample_size = TRUE, by = "terms")
 ```
 
 
 ```{r}
 #| error: true
 d_pq |>
-  subset_samples(factor_of_interest %in% d_pq@sam_data[factor_of_interest,c(1,2]) |>
-biplot_pq(merge_sample_by = factor_of_interest, rarefy_after_merging = T)
+  subset_samples(vegetation_purity %in% d_pq@sam_data[vegetation_purity,c(1,2]) |>
+biplot_pq(merge_sample_by = vegetation_purity, rarefy_after_merging = T)
 ```
 
 

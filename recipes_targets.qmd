@@ -162,11 +162,19 @@ tar_target(
 by 
 
 ```{r}
-  tar_target(
+tar_target(
     tax_tab,
-    taxa_names(asv_tab) |>
+    { 
+      tt <- taxa_names(asv_tab) |>
       as.data.frame() |>
-      setNames("Taxa_name")
+      setNames("Taxa_name") |>
+      as.matrix() |>
+      tax_table()
+      
+      taxa_names(tt) <- taxa_names(asv_tab)
+
+      tt
+    }
   ),
 ```
 

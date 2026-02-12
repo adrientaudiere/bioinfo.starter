@@ -13,3 +13,4 @@
 /data/data_intermediate/filterAndTrim_rev
 /data/data_final/quality_fastqc
 _targets/
+**/*.quarto_ipynb
