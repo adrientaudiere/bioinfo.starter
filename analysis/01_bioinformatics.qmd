@@ -18,6 +18,7 @@ library(targets)
 library(MiscMetabar)
 here::i_am("analysis/01_bioinformatics.qmd")
 source(here::here("R/functions.R"))
+source(here::here("R/contamination.R"))
 ```
 
 ```{r child="../R/styles.qmd"}
@@ -216,6 +217,76 @@ krona(
   file =  here::here("data/data_final/krona_nb_taxa.html")
 )
 ```
+
+
+## Verify controls
+
+```{r}
+d_pq |>
+   subset_samples(sample_type%in% c("blanc")) |>
+   clean_pq() |>
+   otu_table() |> data.frame() |> (\(x) log1p(x))() |>  pheatmap::pheatmap(cluster_rows = TRUE, cluster_cols = TRUE, show_rownames = TRUE, show_colnames = FALSE, color = colorRampPalette(c("white", "firebrick3"))(100)) 
+
+d_pq@sam_data$neg_control <-
+   d_pq@sam_data$sample_type %in% c("blanc") 
+   
+hill_pq(clean_pq(d_pq), fact = "neg_control", one_plot = TRUE) + theme_idest()
+```
+
+```{r}
+devtools::load_all("~/Nextcloud/IdEst/Projets/arround_MiscMetabar/comparpq/")
+devtools::load_all("~/Nextcloud/IdEst/Projets/arround_MiscMetabar/tidypq/")
+
+
+estim_diff_pq(clean_pq(d_pq), fact = "neg_control")
+```
+
+
+#TODO c'est quoi sample_type = "ink"
+Quels sont les taxons présents dans les blancs ?
+
+```{r}
+ggvenn_pq(d_pq, fact="neg_control")
+```
+
+### Classification des contaminations
+
+```{r}
+neg_ctrl_results <- classify_neg_control_taxa(
+  d_pq,
+  neg_control = d_pq@sam_data$sample_type %in% c("blanc")
+)
+```
+
+```{r}
+knitr::kable(neg_ctrl_results$classification |>
+  dplyr::select(taxon, category, total_reads, reads_in_neg, reads_in_samples,
+                n_neg_samples, n_non_neg_samples, ratio_non_neg_to_neg))
+```
+
+```{r}
+neg_ctrl_results$summary_plot
+```
+
+```{r}
+neg_ctrl_results$distribution_plot
+```
+
+```{r}
+neg_ctrl_results$heatmap_by_category
+```
+
+```{r}
+source("R/contamination.R")
+classif_neg_control_taxa <- classify_neg_control_taxa(clean_pq(d_pq), neg_control = clean_pq(d_pq)@sam_data$sample_type %in% c("blanc"))
+
+classif_neg_control_taxa$classification
+classif_neg_control_taxa$summary_plot
+classif_neg_control_taxa$distribution_plot 
+classif_neg_control_taxa$heatmap_by_category
+```
+
+
 
 
 

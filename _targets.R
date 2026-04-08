@@ -205,26 +205,26 @@ tar_plan(
 
   ##> Create the phyloseq object 'd_asv' with
   tar_target(track_sequences_samples_clusters, track_wkflow(
-    list(
+    rlang::list2(
       "Raw Forward sequences" = unlist(list_fastq_files(fastq_files_folder, paired_end = FALSE)),
       "Forward wo primers" = unlist(list_fastq_files(here::here("data/data_intermediate/seq_wo_primers/"), paired_end = FALSE)),
       "Forward denoised" = ddF,
       "Paired sequences denoised" = seq_tab_Pairs,
       "Paired denoised without chimera" = seqtab_wo_chimera,
-      paste("Paired denoised wo chim < ", seq_len_min, "bp") = seqtab,
+      !!paste("Paired denoised wo chim < ", seq_len_min, "bp") := seqtab,
       "OTU after vsearch reclustering at 97%" = d_vs,
       "OTU vs after mumu cleaning algorithm" = d_vs_mumu,
       "OTU vs + mumu + rarefaction by sequencing depth" = d_vs_mumu_rarefy
     )
   )),
   tar_target(track_by_samples, track_wkflow_samples(
-    list(
+     rlang::list2(
       "Raw Forward sequences" = unlist(list_fastq_files(fastq_files_folder, paired_end = FALSE)),
       "Forward wo primers" = unlist(list_fastq_files(here::here("data/data_intermediate/seq_wo_primers/"), paired_end = FALSE)),
       "Forward denoised" = ddF,
       "Paired sequences denoised" = seq_tab_Pairs,
       "Paired denoised without chimera" = seqtab_wo_chimera,
-      paste0("Paired denoised wo chim < ", seq_len_min, "bp") = seqtab,
+      !!paste0("Paired denoised wo chim < ", seq_len_min, "bp") := seqtab,
       "OTU after vsearch reclustering at 97%" = d_vs,
       "OTU vs after mumu cleaning algorithm" = d_vs_mumu,
     )
