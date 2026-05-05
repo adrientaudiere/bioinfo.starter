@@ -14,7 +14,7 @@ if (tar_active()) {
 
 here::i_am("_targets.R")
 source(here("R/functions.R"))
-lapply(list.files("~/Nextcloud/IdEst/Projets/MiscMetabar/R/", full.names = TRUE), source)
+lapply(list.files("~/Nextcloud/IdEst/Projets/pqverse/pqverse_pkg/MiscMetabar/R/", full.names = TRUE), source)
 
 # pmoA marker: A189F (GGNGACTGGGACTTCTGG) and mb661R (CCGGMGCAACGTCYTTACC)
 seq_len_min <- 200
@@ -62,6 +62,7 @@ tar_plan(
       path_to_fastq = fastq_files_folder,
       primer_fw = fw_primer_sequences,
       primer_rev = rev_primer_sequences,
+      cutadapt_args = "-e 0.01",
       folder_output = here("data/data_intermediate/pmoA_seq_wo_primers/"),
       nproc = n_threads,
       return_file_path = TRUE,
@@ -169,10 +170,8 @@ tar_plan(
   tar_target(d_vs, asv2otu(
     data_phyloseq, method = "vsearch", tax_adjust = 0
   )),
-  ##> Clean post-clustering OTU using mumu
-  tar_target(d_vs_mumu, mumu_pq(d_vs)$new_physeq),
-  ##> Make a rarefied dataset
-  tar_target(d_vs_mumu_rarefy, rarefy_even_depth(d_vs_mumu, sample.size = 2000)),
+   ##> Make a rarefied dataset
+  tar_target(d_vs_rarefy, rarefy_even_depth(d_vs, sample.size = 2000)),
 
   ##> Track sequences through the pipeline
   tar_target(track_sequences_samples_clusters, track_wkflow(
@@ -182,19 +181,17 @@ tar_plan(
       "Forward sequences" = ddF,
       "Paired sequences" = seq_tab_Pairs,
       "Forward sequences without chimera" = seqtab_wo_chimera,
-      "Forward sequences without chimera and longer than 350bp" = seqtab,
+      "Forward sequences wo chimera (+200 bp)" = seqtab,
       "ASV table" = data_phyloseq,
       "OTU after vsearch reclustering at 97%" = d_vs,
-      "OTU vs after mumu cleaning algorithm" = d_vs_mumu,
-      "OTU vs + mumu + rarefaction by sequencing depth" = d_vs_mumu_rarefy
+      "OTU vs + rarefaction by sequencing depth" = d_vs_rarefy
     )
   )),
   tar_target(track_by_samples, track_wkflow_samples(
     list(
       "ASV table" = data_phyloseq,
       "OTU after vsearch reclustering at 97%" = d_vs,
-      "OTU vs after mumu cleaning algorithm" = d_vs_mumu,
-      "OTU vs + mumu + rarefaction by sequencing depth" = d_vs_mumu_rarefy
+      "OTU vs + rarefaction by sequencing depth" = d_vs_rarefy
     )
   )),
 

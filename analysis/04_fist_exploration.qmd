@@ -30,6 +30,9 @@ library(knitr)
 library(targets)
 library(MiscMetabar)
 here::i_am("analysis/02_alpha_diversity.qmd")
+devtools::load_all("~/Nextcloud/IdEst/Projets/pqverse/pqverse_pkg/MiscMetabar")
+devtools::load_all("~/Nextcloud/IdEst/Projets/pqverse/pqverse_pkg/comparpq")
+devtools::load_all("~/Nextcloud/IdEst/Projets/pqverse/pqverse_pkg/tidypq")
 ```
 
 ```{r}

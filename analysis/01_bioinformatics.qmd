@@ -24,7 +24,9 @@ source(here::here("R/functions.R"))
 
 ```
 
-# Summary of the bioinformatic pipeline
+# Archaea 16S
+
+Marker: Archaea 16S rRNA gene (primers Arch349F / Arch806R). Targets store: `_targets/`.
 
 ## Carbon footprint
 
@@ -52,63 +54,49 @@ log_data |>
   theme_idest() +
   xlab("Time (in hours)") +
   ylab("")
-
 ```
 
-## Main phyloseq object
+## Targets plan
 
-You may want to select another targets such as d_asv or d_vs_mumu for example. 
+```{r Visualise target plan archaea, out.width='80%'}
+tar_glimpse(script = here::here("_targets.R"), targets_only = TRUE, callr_arguments = list(show = FALSE))
+```
+
+## Phyloseq object
 
 ```{r}
-d_pq <- clean_pq(tar_read("d_vs_mumu", store=here::here("_targets/")))
-```
-
-```{r}
-summary_plot_pq(d_pq)
-```
-
-```{r Visualise target plan, out.width='80%'}
-tar_glimpse(script=here::here("_targets.R"), targets_only = TRUE, callr_arguments = list(show = FALSE))
+d_pq_archaea <- clean_pq(tar_read("d_vs_mumu", store = here::here("_targets/")))
 ```
 
 ```{r}
-tar_meta(store=here::here("_targets/"), targets_only = TRUE) |> 
-  dplyr::mutate(time = paste0(seconds %/% 3600,":",seconds %/% 60,":",floor(seconds %% 60)))|>
+summary_plot_pq(d_pq_archaea)
+```
+
+## Targets metadata
+
+```{r}
+tar_meta(store = here::here("_targets/"), targets_only = TRUE) |>
+  dplyr::mutate(time = paste0(seconds %/% 3600, ":", seconds %/% 60, ":", floor(seconds %% 60))) |>
   dplyr::select(name, seconds, bytes, format, time) |>
-  dplyr::mutate(Gb=round(bytes/10^9,2)) |>
-  dplyr::arrange(desc(seconds), desc(bytes))  |> 
+  dplyr::mutate(Gb = round(bytes / 10^9, 2)) |>
+  dplyr::arrange(desc(seconds), desc(bytes)) |>
   kable()
 ```
-
-
-## Load phyloseq object from targets store
-
-```{r}
-d_pq <- tar_read("d_vs_mumu", store=here::here("_targets/"))
-```
-
-<hr/>
-
-The {targets} package is at the core of this project. Please read the intro of the [user manual](https://books.ropensci.org/targets/) if you don't know {targets}.
-
-::: {.cell .page-columns .page-full .column-screen .grey-section}
-The {targets} package store ... *targets* in a folder and can load (`tar_load()`) and read (`tar_read`) object from this folder.
-:::
 
 ## Sample data
 
 ```{r}
-DT::datatable(d_pq@sam_data)
+DT::datatable(d_pq_archaea@sam_data)
 ```
 
 ## Sequences, samples and clusters across the pipeline
-
 
 ::: {.panel-tabset .nav-pills}
 ## All samples together
 
 ```{r}
-kable(tar_read(track_sequences_samples_clusters, store=here::here("_targets/")))
+track_16S <- tar_read(track_sequences_samples_clusters, store = here::here("_targets/"))
+kable(track_16S)
 ```
 
 ## Per samples
@@ -116,31 +104,321 @@ kable(tar_read(track_sequences_samples_clusters, store=here::here("_targets/")))
 ```{r}
 #| message: false
 #| results: asis
-tab_samp <- tar_read(track_by_samples, store=here::here("_targets/"))
+tab_samp <- tar_read(track_by_samples, store = here::here("_targets/"))
 
 for (li in names(tab_samp)) {
-  print(knitr::kable(tab_samp[[li]], caption = li, format="html"))
+  print(knitr::kable(tab_samp[[li]], caption = li, format = "html"))
   cat('\n<!-- -->\n\n')
 }
 ```
 
 :::
 
-
-## Make krona html files
+## Krona charts
 
 ```{r}
 krona(
-  clean_pq(d_pq, simplify_taxo = TRUE),
-  file = here::here("data/data_final/krona_nb_seq.html")
+  clean_pq(d_pq_archaea, simplify_taxo = TRUE),
+  file = here::here("data/data_final/krona_archaea_nb_seq.html")
 )
 krona(
-  clean_pq(d_pq, simplify_taxo = TRUE),
+  clean_pq(d_pq_archaea, simplify_taxo = TRUE),
   nb_seq = FALSE,
-  file =  here::here("data/data_final/krona_nb_taxa.html")
+  file = here::here("data/data_final/krona_archaea_nb_taxa.html")
 )
 ```
 
+<hr/>
 
+# mcrA — Methane production
+
+Marker: mcrA gene (methyl-coenzyme M reductase, primers GGTGGTGTMGGDTTCACMCARTA / CGTTCATBGCGTAGTTVGGRTAGT). No taxonomic assignment for this marker. Targets store: `_targets_mcrA/`.
+
+## Carbon footprint
+
+```{r, message=FALSE, warning=FALSE}
+res_ga_mcrA <- greenAlgoR::ga_targets(store = here::here("_targets_mcrA/"))
+print(paste0(res_ga_mcrA$carbon_footprint_total_gCO2, " gCO2 equiv. emitted for the whole pipeline"))
+```
+
+## Timeline and cpu usage
+
+```{r, message=FALSE, warning=FALSE}
+log_data_mcrA <- autometric::log_read(
+  here::here("data/data_final/autometric_log_mcrA.txt"),
+  units_time = "hours",
+  units_memory = "gigabytes"
+)
+
+log_data_mcrA |>
+  filter(!grepl("conclude:", phase)) |>
+  filter(!grepl("prepare:", phase)) |>
+  filter(!grepl("__DEFAULT__", phase)) |>
+  ggplot(aes(x = time, y = reorder(phase, desc(time)), color = resident)) +
+  geom_line(aes(linewidth = cpu)) +
+  scale_color_viridis_b("Memory (Gb)", end = 0.9, direction = -1) +
+  theme_idest() +
+  xlab("Time (in hours)") +
+  ylab("")
+```
+
+## Targets plan
+
+```{r Visualise target plan mcrA, out.width='80%'}
+tar_glimpse(script = here::here("_targets_mcrA.R"), targets_only = TRUE, callr_arguments = list(show = FALSE))
+```
+
+## Phyloseq object
+
+```{r}
+d_pq_mcrA <- clean_pq(tar_read("d_vs", store = here::here("_targets_mcrA/")))
+```
+
+```{r}
+summary_plot_pq(d_pq_mcrA)
+```
+
+## Targets metadata
+
+```{r}
+tar_meta(store = here::here("_targets_mcrA/"), targets_only = TRUE) |>
+  dplyr::mutate(time = paste0(seconds %/% 3600, ":", seconds %/% 60, ":", floor(seconds %% 60))) |>
+  dplyr::select(name, seconds, bytes, format, time) |>
+  dplyr::mutate(Gb = round(bytes / 10^9, 2)) |>
+  dplyr::arrange(desc(seconds), desc(bytes)) |>
+  kable()
+```
+
+## Sample data
+
+```{r}
+DT::datatable(d_pq_mcrA@sam_data)
+```
+
+## Sequences, samples and clusters across the pipeline
+
+::: {.panel-tabset .nav-pills}
+## All samples together
+
+```{r}
+track_mcrA <- tar_read(track_sequences_samples_clusters, store = here::here("_targets_mcrA/"))
+kable(track_mcrA)
+```
+
+## Per samples
+
+```{r}
+#| message: false
+#| results: asis
+tab_samp_mcrA <- tar_read(track_by_samples, store = here::here("_targets_mcrA/"))
+
+for (li in names(tab_samp_mcrA)) {
+  print(knitr::kable(tab_samp_mcrA[[li]], caption = li, format = "html"))
+  cat('\n<!-- -->\n\n')
+}
+```
+
+:::
+
+<hr/>
+
+# pmoA — Methane oxidation
+
+Marker: pmoA gene (particulate methane monooxygenase, primers GGNGACTGGGACTTCTGG / CCGGMGCAACGTCYTTACC). No taxonomic assignment for this marker. Targets store: `_targets_pmoA/`.
+
+## Carbon footprint
+
+```{r, message=FALSE, warning=FALSE}
+res_ga_pmoA <- greenAlgoR::ga_targets(store = here::here("_targets_pmoA/"))
+print(paste0(res_ga_pmoA$carbon_footprint_total_gCO2, " gCO2 equiv. emitted for the whole pipeline"))
+```
+
+## Timeline and cpu usage
+
+```{r, message=FALSE, warning=FALSE}
+log_data_pmoA <- autometric::log_read(
+  here::here("data/data_final/autometric_log_pmoA.txt"),
+  units_time = "hours",
+  units_memory = "gigabytes"
+)
+
+log_data_pmoA |>
+  filter(!grepl("conclude:", phase)) |>
+  filter(!grepl("prepare:", phase)) |>
+  filter(!grepl("__DEFAULT__", phase)) |>
+  ggplot(aes(x = time, y = reorder(phase, desc(time)), color = resident)) +
+  geom_line(aes(linewidth = cpu)) +
+  scale_color_viridis_b("Memory (Gb)", end = 0.9, direction = -1) +
+  theme_idest() +
+  xlab("Time (in hours)") +
+  ylab("")
+```
+
+## Targets plan
+
+```{r Visualise target plan pmoA, out.width='80%'}
+tar_glimpse(script = here::here("_targets_pmoA.R"), targets_only = TRUE, callr_arguments = list(show = FALSE))
+```
+
+## Phyloseq object
+
+```{r}
+d_pq_pmoA <- clean_pq(tar_read("d_vs", store = here::here("_targets_pmoA/")))
+```
+
+```{r}
+summary_plot_pq(d_pq_pmoA)
+```
+
+## Targets metadata
+
+```{r}
+tar_meta(store = here::here("_targets_pmoA/"), targets_only = TRUE) |>
+  dplyr::mutate(time = paste0(seconds %/% 3600, ":", seconds %/% 60, ":", floor(seconds %% 60))) |>
+  dplyr::select(name, seconds, bytes, format, time) |>
+  dplyr::mutate(Gb = round(bytes / 10^9, 2)) |>
+  dplyr::arrange(desc(seconds), desc(bytes)) |>
+  kable()
+```
+
+## Sample data
+
+```{r}
+DT::datatable(d_pq_pmoA@sam_data)
+```
+
+## Sequences, samples and clusters across the pipeline
+
+::: {.panel-tabset .nav-pills}
+## All samples together
+
+```{r}
+track_pmoA <- tar_read(track_sequences_samples_clusters, store = here::here("_targets_pmoA/"))
+kable(track_pmoA)
+```
+
+## Per samples
+
+```{r}
+#| message: false
+#| results: asis
+tab_samp_pmoA <- tar_read(track_by_samples, store = here::here("_targets_pmoA/"))
+
+for (li in names(tab_samp_pmoA)) {
+  print(knitr::kable(tab_samp_pmoA[[li]], caption = li, format = "html"))
+  cat('\n<!-- -->\n\n')
+}
+```
+
+:::
+
+<hr/>
+
+# Cross-marker comparison
+
+Summary of read and cluster counts across the three markers at the final pipeline step (OTU vsearch + mumu).
+
+## Raw nb of sequences
+
+```{r}
+df_raw_seq <- t(tibble("Total"= track_16S[1,"nb_sequences"],
+        "16S"= track_16S[2,"nb_sequences"],
+        "mcrA"= track_mcrA[2,"nb_sequences"],
+        "pmoA"= track_pmoA[2,"nb_sequences"],
+        "Unknown"= track_16S[1,"nb_sequences"] - track_16S[2,"nb_sequences"] - track_mcrA[2,"nb_sequences"] - track_pmoA[2,"nb_sequences"]
+        ) ) |>
+          mutate("%_total"= round(Total/Total*100, 2),
+                 "%_16S"= round(16S/Total*100, 2),
+                 "%_mcrA"= round(mcrA/Total*100, 2),
+                 "%_pmoA"= round(pmoA/Total*100, 2),
+                 "%_Unknown"= round(Unknown/Total*100, 2)
+                 ) 
+
+kable(df_raw_seq, caption = "Number of sequences after cutadapt filtering step for each marker")
+```
+
+
+## Sequences and clusters
+
+```{r}
+track_wkflow(list("16S"=d_16S,
+                  "pmoA"=d_pq_pmoA, 
+                  "mcrA"=d_pq_mcrA
+                  ))
+```
+
+## OTU richness per sample
+
+```{r}
+richness_archaea <- data.frame(
+  Marker = "Archaea 16S",
+  Sample = sample_names(d_pq_archaea),
+  OTUs = estimate_richness(d_pq_archaea, measures = "Observed")$Observed
+)
+richness_mcrA <- data.frame(
+  Marker = "mcrA",
+  Sample = sample_names(d_pq_mcrA),
+  OTUs = estimate_richness(d_pq_mcrA, measures = "Observed")$Observed
+)
+richness_pmoA <- data.frame(
+  Marker = "pmoA",
+  Sample = sample_names(d_pq_pmoA),
+  OTUs = estimate_richness(d_pq_pmoA, measures = "Observed")$Observed
+)
+
+richness_all <- rbind(richness_archaea, richness_mcrA, richness_pmoA)
+
+ggplot(richness_all, aes(x = Marker, y = OTUs, fill = Marker)) +
+  geom_boxplot(alpha = 0.7, outlier.shape = NA) +
+  geom_jitter(width = 0.15, size = 1.5, alpha = 0.6) +
+  theme_idest() +
+  xlab("") +
+  ylab("OTU richness per sample") +
+  theme(legend.position = "none")
+```
+
+## Read counts per sample
+
+```{r}
+reads_archaea <- data.frame(
+  Marker = "Archaea 16S",
+  Sample = sample_names(d_pq_archaea),
+  Reads = sample_sums(d_pq_archaea)
+)
+reads_mcrA <- data.frame(
+  Marker = "mcrA",
+  Sample = sample_names(d_pq_mcrA),
+  Reads = sample_sums(d_pq_mcrA)
+)
+reads_pmoA <- data.frame(
+  Marker = "pmoA",
+  Sample = sample_names(d_pq_pmoA),
+  Reads = sample_sums(d_pq_pmoA)
+)
+
+reads_all <- rbind(reads_archaea, reads_mcrA, reads_pmoA)
+
+ggplot(reads_all, aes(x = Marker, y = Reads, fill = Marker)) +
+  geom_boxplot(alpha = 0.7, outlier.shape = NA) +
+  geom_jitter(width = 0.15, size = 1.5, alpha = 0.6) +
+  theme_idest() +
+  xlab("") +
+  ylab("Read count per sample") +
+  theme(legend.position = "none")
+```
+
+## Carbon footprint summary
+
+```{r}
+carbon_table <- data.frame(
+  Marker = c("Archaea 16S", "mcrA", "pmoA"),
+  gCO2_equiv = c(
+    res_ga$carbon_footprint_total_gCO2,
+    res_ga_mcrA$carbon_footprint_total_gCO2,
+    res_ga_pmoA$carbon_footprint_total_gCO2
+  )
+)
+kable(carbon_table, col.names = c("Marker", "Carbon footprint (gCO2 equiv.)"))
+```
 
 {{< include _session_info.qmd >}}

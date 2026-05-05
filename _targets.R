@@ -14,7 +14,7 @@ if (tar_active()) {
 
 here::i_am("_targets.R")
 source(here("R/functions.R"))
-lapply(list.files("~/Nextcloud/IdEst/Projets/MiscMetabar/R/", full.names = TRUE), source)
+lapply(list.files("~/Nextcloud/IdEst/Projets/pqverse/pqverse_pkg/MiscMetabar/R/", full.names = TRUE), source)
 
 # Arch349F (CCC TAC GGG GTG CAS CAG) and Arch806R (GGA CTA CVS GGG TAT CTA AT
 seq_len_min <- 200
@@ -243,9 +243,8 @@ tar_plan(
       "Forward wo primers" = unlist(list_fastq_files(here::here("data/data_intermediate/seq_wo_primers/"), paired_end = FALSE)),
       "Forward sequences" = ddF,
       "Paired sequences" = seq_tab_Pairs,
-      "Forward sequences" = seq_tab_Pairs,
       "Forward sequences without chimera" = seqtab_wo_chimera,
-      "Forward sequences without chimera and longer than 200bp" = seqtab,
+      "Forward sequences wo chimera (+200 bp)" = seqtab,
       "ASV denoising" = d_asv,
       "OTU after vsearch reclustering at 97%" = d_vs,
       "OTU vs after mumu cleaning algorithm" = d_vs_mumu,
