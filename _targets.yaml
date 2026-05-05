@@ -1,0 +1,9 @@
+main:
+  script: _targets.R
+  store: _targets
+mcrA:
+  script: _targets_mcrA.R
+  store: _targets_mcrA
+pmoA:
+  script: _targets_pmoA.R
+  store: _targets_pmoA

@@ -60,7 +60,7 @@ log_data |>
 You may want to select another targets such as d_asv or d_vs_mumu for example. 
 
 ```{r}
-d_pq <- clean_pq(tar_read("d_vs", store=here::here("_targets/")))
+d_pq <- clean_pq(tar_read("d_vs_mumu", store=here::here("_targets/")))
 ```
 
 ```{r}
@@ -84,7 +84,7 @@ tar_meta(store=here::here("_targets/"), targets_only = TRUE) |>
 ## Load phyloseq object from targets store
 
 ```{r}
-d_pq <- tar_read("d_vs", store=here::here("_targets/"))
+d_pq <- tar_read("d_vs_mumu", store=here::here("_targets/"))
 ```
 
 <hr/>

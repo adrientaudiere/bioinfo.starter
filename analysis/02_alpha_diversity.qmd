@@ -9,7 +9,7 @@ author:
     affiliation-url: https://orcid.org/my-orcid?orcid=0000-0003-1088-1182
 citation: true
 params:
-  factor_of_interest: "XXX"
+  factor_of_interest: "Humidity"
 # bibliography: bibliography.bib
 # link-citations: true
 ---
@@ -58,9 +58,70 @@ hill_pq(d_pq, factor_of_interest, one_plot = TRUE) &
 
 
 ```{r}
-#| error: true
-ggbetween_pq(d_pq, factor_of_interest)
+library("dabestr")
+
+Hill_0_humidity <- psmelt_samples_pq(d_pq) |> 
+  load(
+   x = Humidity,
+   y = Hill_0, 
+   idx=list(c("H", "D"))
+ ) %>%
+   mean_diff() |>
+ dabest_plot(swarm_label="Hill_0")
 ```
 
+```{r}
+Hill_1_humidity <- psmelt_samples_pq(d_pq) |> 
+  load(
+   x = Humidity,
+   y = Hill_1, 
+   idx=list(c("H", "D"))
+ ) %>%
+   mean_diff() |>
+ dabest_plot(swarm_label="Hill_1")
+```
+
+```{r}
+Hill_2_humidity <- psmelt_samples_pq(d_pq) |> 
+  load(
+   x = Humidity,
+   y = Hill_2, 
+   idx=list(c("H", "D"))
+ ) %>%
+   mean_diff() |>
+ dabest_plot(swarm_label="Hill_2")
+```
+
+
+```{r}
+library("patchwork")
+
+Hill_0_humidity/Hill_1_humidity/Hill_2_humidity
+```
+
+```{r}
+#| error: true
+ggbetween_pq(d_pq, factor_of_interest, one_plot = TRUE)
+```
+
+
+## Agricultural practices
+
+```{r}
+library("dabestr")
+
+Hill_0_practices <- psmelt_samples_pq(d_pq) |> 
+  filter(Agricultural_practices%in%c("Lab", "Acs"))|> 
+  load(
+   x = Agricultural_practices,
+   y = Hill_0, 
+   idx=list(c("Lab", "Acs"))
+ ) %>%
+   mean_diff() |>
+ dabest_plot(swarm_label="Hill_0")
+
+Hill_0_practices
+```
+```
 
 {{< include _session_info.qmd >}}

@@ -13,3 +13,12 @@
 /data/data_intermediate/filterAndTrim_rev
 /data/data_final/quality_fastqc
 _targets/
+**/*.quarto_ipynb
+
+/data/data_intermediate/mcrA_filterAndTrim_fwd/
+/data/data_intermediate/mcrA_filterAndTrim_rev/
+/data/data_intermediate/mcrA_seq_wo_primers/
+
+/data/data_intermediate/pmoA_filterAndTrim_fwd/
+/data/data_intermediate/pmoA_filterAndTrim_rev/
+/data/data_intermediate/pmoA_seq_wo_primers/

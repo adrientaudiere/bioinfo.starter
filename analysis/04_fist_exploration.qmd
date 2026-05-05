@@ -1,0 +1,50 @@
+---
+title: "Bioinformatics pipeline summary"
+subtitle: "Where we see the pipeline processes"
+date: last-modified
+author:
+  - name: Adrien Taudière
+    url: https://adrientaudiere.github.io/bioinfo.starter/analysis/01_bioinformatics.qmd
+    affiliation: IdEst
+    affiliation-url: https://orcid.org/my-orcid?orcid=0000-0003-1088-1182
+citation: true
+---
+
+```{r, message=FALSE, warning=FALSE}
+library(knitr)
+library(targets)
+library(MiscMetabar)
+here::i_am("analysis/01_bioinformatics.qmd")
+source(here::here("R/functions.R"))
+```
+
+```{r child="../R/styles.qmd"}
+
+```
+
+
+```{r}
+#| message: false
+#| warning: false
+library(knitr)
+library(targets)
+library(MiscMetabar)
+here::i_am("analysis/02_alpha_diversity.qmd")
+```
+
+```{r}
+d_16S <- clean_pq(tar_read("d_vs", store=here::here("_targets/")))
+d_pmoA <- clean_pq(tar_read("d_vs", store=here::here("_targets_pmoA/")))
+d_mcrA <- clean_pq(tar_read("d_vs", store=here::here("_targets_mcrA/")))
+```
+
+
+```{r}
+d_3 <- comparpq::list_phyloseq( list("16S" = d_16S, "pmoA" = d_pmoA, "mcrA" = d_mcrA), compute_dist=FALSE)
+```
+
+
+```{r}
+comparpq::estim_diff_pq(d_16S, "Humidity")
+gg_bubbles_pq(d_16S, facet_by = "Humidity") + no_legend()
+```

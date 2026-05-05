@@ -7,7 +7,7 @@ library("autometric")
 
 if (tar_active()) {
   log_start(
-    path = "data/data_final/autometric_log.txt",
+    path = "data/data_final/autometric_log_mcrA.txt",
     seconds = 1
   )
 }
@@ -16,14 +16,11 @@ here::i_am("_targets.R")
 source(here("R/functions.R"))
 lapply(list.files("~/Nextcloud/IdEst/Projets/MiscMetabar/R/", full.names = TRUE), source)
 
-# Arch349F (CCC TAC GGG GTG CAS CAG) and Arch806R (GGA CTA CVS GGG TAT CTA AT
+# mcrA marker: mlas (GGTGGTGTMGGDTTCACMCARTA) and mcrA-rev (CGTTCATBGCGTAGTTVGGRTAGT)
 seq_len_min <- 200
-fw_primer_sequences <- "CCCTACGGGGTGCASCAG"
-rev_primer_sequences <- "GGACTACVSGGGTATCTAAT"
+fw_primer_sequences <- "GGTGGTGTMGGDTTCACMCARTA"
+rev_primer_sequences <- "CGTTCATBGCGTAGTTVGGRTAGT"
 n_threads <- 3
-refseq_file_name <- "KSGP_v3.1_with_tax.fasta"
-refseq_file_name_lca <- "KSGP_v3.1_with_tax_lca.fasta"
-refseq_file_name_ARCHEAE <- "KSGP_v3.1_with_tax_ARCHEAE.fasta"
 sam_data_file_name <- "sam_data.csv"
 sample_col_name <- "Samples_names"
 set.seed(22)
@@ -36,25 +33,6 @@ tar_plan(
     command = here("data/data_raw/metadata", sam_data_file_name),
     format = "file"
   ),
-
-  tar_target(
-    name = file_refseq_taxo_lca,
-    command = here("data/data_raw/refseq/", refseq_file_name_lca), 
-    format = "file"
-  ),
-
-    tar_target(
-    name = file_refseq_taxo_ARCHEAE,
-    command = here("data/data_raw/refseq/", refseq_file_name_ARCHEAE),
-    format = "file"
-  ),
-
-    tar_target(
-    name = file_refseq_taxo,
-    command = here("data/data_raw/refseq/", refseq_file_name),
-    format = "file"
-  ),
-
 
   tar_target(
     name = fastq_files_folder,
@@ -84,7 +62,7 @@ tar_plan(
       path_to_fastq = fastq_files_folder,
       primer_fw = fw_primer_sequences,
       primer_rev = rev_primer_sequences,
-      folder_output = here("data/data_intermediate/seq_wo_primers/"),
+      folder_output = here("data/data_intermediate/mcrA_seq_wo_primers/"),
       nproc = n_threads,
       return_file_path = TRUE,
       args_before_cutadapt = "source ~/miniforge3/etc/profile.d/conda.sh && conda activate cutadaptenv && "
@@ -93,7 +71,7 @@ tar_plan(
   ),
   tar_target(data_raw, {
     cutadapt
-    list_fastq_files(path = here::here("data/data_intermediate/seq_wo_primers/"))
+    list_fastq_files(path = here::here("data/data_intermediate/mcrA_seq_wo_primers/"))
   }),
 
   ##> Classical dada2 pipeline
@@ -105,12 +83,12 @@ tar_plan(
     filter_trim(
       output_fw = paste(
         getwd(),
-        here("/data/data_intermediate/filterAndTrim_fwd"),
+        here("/data/data_intermediate/mcrA_filterAndTrim_fwd"),
         sep = ""
       ),
       output_rev = paste(
         getwd(),
-        here("/data/data_intermediate/filterAndTrim_rev"),
+        here("/data/data_intermediate/mcrA_filterAndTrim_rev"),
         sep = ""
       ),
       fw = data_fnfs,
@@ -176,77 +154,36 @@ tar_plan(
     taxa_are_rows = FALSE
   )),
 
-  tar_target(
-    tax_tab,
-    assignTaxonomy(
-      seqs = seqtab,
-      refFasta = file_refseq_taxo_ARCHEAE,
-      minBoot = 50,
-      taxLevels
-      = c(
-        "Kingdom",
-        "Phyla",
-        "Class",
-        "Order",
-        "Family",
-        "Genus",
-        "Species"
-      ),
-      multithread = n_threads
+  ##> Create the phyloseq object without taxonomy (no reference database for mcrA)
+  ##> An empty tax_table is added as a placeholder required by downstream functions (e.g. mumu_pq)
+  tar_target(data_phyloseq, {
+    ps <- add_dna_to_phyloseq(phyloseq(asv_tab, sam_tab))
+    tax_table(ps) <- tax_table(
+      matrix(NA_character_, nrow = ntaxa(ps), ncol = 1,
+        dimnames = list(taxa_names(ps), "marker"))
     )
-  ),
-
-  ##> Create the phyloseq object 'data_asv' with
-  ###   (i) table of asv,
-  ###   ii) taxonomic table,
-  ###   (iii) sample data and
-  ###   (iv) references sequences
-
-
-  tar_target(data_phyloseq, add_dna_to_phyloseq(
-    phyloseq(asv_tab, sam_tab, tax_table(
-      as.matrix(tax_tab, dimnames = rownames(tax_tab))
-    ))
-  )),
-
-  tar_target(d_asv_lca, 
-    add_new_taxonomy_pq(data_phyloseq, 
-      ref_fasta = file_refseq_taxo_lca, 
-      method = "sintax",
-      suffix = "_KSGP_lca",
-      min_bootstrap = 0.5,
-      nproc = n_threads)
-  ),
-
-  tar_target(d_asv, 
-    add_new_taxonomy_pq(d_asv_lca, 
-      ref_fasta = file_refseq_taxo, 
-      method = "sintax",
-      suffix = "_KSGP",
-      min_bootstrap = 0.5,
-      nproc = n_threads)
-  ),
+    ps
+  }),
 
   ##> Create post-clustering ASV into OTU using vsearch
   tar_target(d_vs, asv2otu(
-    d_asv, method = "vsearch", tax_adjust = 0
+    data_phyloseq, method = "vsearch", tax_adjust = 0
   )),
   ##> Clean post-clustering OTU using mumu
   tar_target(d_vs_mumu, mumu_pq(d_vs)$new_physeq),
   ##> Make a rarefied dataset
   tar_target(d_vs_mumu_rarefy, rarefy_even_depth(d_vs_mumu, sample.size = 2000)),
 
-  ##> Create the phyloseq object 'd_asv' with
+  ##> Track sequences through the pipeline
   tar_target(track_sequences_samples_clusters, track_wkflow(
     list(
       "Raw Forward sequences" = unlist(list_fastq_files(fastq_files_folder, paired_end = FALSE)),
-      "Forward wo primers" = unlist(list_fastq_files(here::here("data/data_intermediate/seq_wo_primers/"), paired_end = FALSE)),
+      "Forward wo primers (mcrA)" = unlist(list_fastq_files(here::here("data/data_intermediate/mcrA_seq_wo_primers/"), paired_end = FALSE)),
       "Forward sequences" = ddF,
       "Paired sequences" = seq_tab_Pairs,
-      "Forward sequences" = seq_tab_Pairs,
       "Forward sequences without chimera" = seqtab_wo_chimera,
-      "Forward sequences without chimera and longer than 200bp" = seqtab,
-      "ASV denoising" = d_asv,
+      "Forward sequences without chimera and longer than 350bp" = seqtab,
+      "ASV table" = data_phyloseq,
       "OTU after vsearch reclustering at 97%" = d_vs,
       "OTU vs after mumu cleaning algorithm" = d_vs_mumu,
       "OTU vs + mumu + rarefaction by sequencing depth" = d_vs_mumu_rarefy
@@ -254,43 +191,31 @@ tar_plan(
   )),
   tar_target(track_by_samples, track_wkflow_samples(
     list(
-      "ASV denoising" = d_asv,
+      "ASV table" = data_phyloseq,
       "OTU after vsearch reclustering at 97%" = d_vs,
       "OTU vs after mumu cleaning algorithm" = d_vs_mumu,
       "OTU vs + mumu + rarefaction by sequencing depth" = d_vs_mumu_rarefy
     )
   )),
- 
+
   ##> Build fastq quality report across the pipeline
   ### With raw sequences
   tar_target(
     quality_raw_seq,
-    fastqc_agg(fastq_files_folder, qc.dir = here("data/data_final/quality_fastqc/raw_seq/"), multiqc=TRUE)
+    fastqc_agg(fastq_files_folder, qc.dir = here("data/data_final/quality_fastqc/mcrA_raw_seq/"), multiqc=TRUE)
   ),
   ### After cutadapt
   tar_target(
     quality_seq_wo_primers, {cutadapt
-    fastqc_agg(here("data/data_intermediate/seq_wo_primers/"), qc.dir = here("data/data_final/quality_fastqc/seq_wo_primers/"), multiqc=TRUE)
+    fastqc_agg(here("data/data_intermediate/mcrA_seq_wo_primers/"), qc.dir = here("data/data_final/quality_fastqc/mcrA_seq_wo_primers/"), multiqc=TRUE)
   }),
   ### After filtering and trimming (separate report for forward and reverse)
   tar_target(
     quality_seq_filtered_trimmed_FW,
-    fastqc_agg(here(filtered[[1]]), qc.dir = here("data/data_final/quality_fastqc/filterAndTrim_fwd/"), multiqc=TRUE)
+    fastqc_agg(here(filtered[[1]]), qc.dir = here("data/data_final/quality_fastqc/mcrA_filterAndTrim_fwd/"), multiqc=TRUE)
   ),
   tar_target(
     quality_seq_filtered_trimmed_REV,
-    fastqc_agg(here(filtered[[1]]), qc.dir = here("data/data_final/quality_fastqc/filterAndTrim_rev/"), multiqc=TRUE)
-  ),
-  
-  ##>  Build bioinformatic quarto report
-  tar_target(bioinfo_report, {
-    track_sequences_samples_clusters
-    quarto::quarto_render(here::here("analysis", "01_bioinformatics.qmd"))
-  }
-  )#,
-  # tar_target(build_website, {
-  #   track_sequences_samples_clusters
-  #   quarto::quarto_render(here::here())
-  # }
-  # )
+    fastqc_agg(here(filtered[[1]]), qc.dir = here("data/data_final/quality_fastqc/mcrA_filterAndTrim_rev/"), multiqc=TRUE)
+  )
 )
