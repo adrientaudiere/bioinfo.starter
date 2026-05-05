@@ -14,7 +14,7 @@ if (tar_active()) {
 
 here::i_am("_targets.R")
 source(here("R/functions.R"))
-lapply(list.files("~/Nextcloud/IdEst/Projets/MiscMetabar/R/", full.names = TRUE), source)
+lapply(list.files("~/Nextcloud/IdEst/Projets/pqverse/pqverse_pkg/MiscMetabar/R/", full.names = TRUE), source)
 
 
 seq_len_min <- 200
