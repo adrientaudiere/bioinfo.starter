@@ -38,7 +38,7 @@ here::i_am("analysis/02_alpha_diversity.qmd")
 ```
 
 ```{r}
-d_pq <- clean_pq(tar_read("d_vs", store=here::here("_targets/")))
+d_pq <- readRDS(here::here("data/data_final/d_16S.rds"))
 ```
 
 

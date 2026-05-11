@@ -31,8 +31,8 @@ Marker: Archaea 16S rRNA gene (primers Arch349F / Arch806R). Targets store: `_ta
 ## Carbon footprint
 
 ```{r, message=FALSE, warning=FALSE}
-res_ga <- greenAlgoR::ga_targets(store = here::here("_targets/"))
-print(paste0(res_ga$carbon_footprint_total_gCO2, " gCO2 equiv. emitted for the whole pipeline"))
+res_ga <- greenAlgoR::ga_targets(store = here::here("_targets/"), PSF=2)
+print(paste0(round(res_ga$carbon_footprint_total_gCO2, 0), " gCO2 equiv. emitted for the whole pipeline"))
 ```
 
 ## Timeline and cpu usage
@@ -65,11 +65,11 @@ tar_glimpse(script = here::here("_targets.R"), targets_only = TRUE, callr_argume
 ## Phyloseq object
 
 ```{r}
-d_pq_archaea <- clean_pq(tar_read("d_vs_mumu", store = here::here("_targets/")))
+d_16S <- clean_pq(tar_read("d_vs_mumu", store = here::here("_targets/")))
 ```
 
 ```{r}
-summary_plot_pq(d_pq_archaea)
+summary_plot_pq(d_16S)
 ```
 
 ## Targets metadata
@@ -86,8 +86,26 @@ tar_meta(store = here::here("_targets/"), targets_only = TRUE) |>
 ## Sample data
 
 ```{r}
-DT::datatable(d_pq_archaea@sam_data)
+DT::datatable(d_16S@sam_data)
 ```
+
+
+## Denovo chimera removal (second time !)
+
+```{r}
+d_16S <- MiscMetabar::chimera_removal_vs(d_16S)
+```
+
+## Control samples
+
+```{r}
+d_16S@sam_data$is_neg_control <- ifelse(grepl("Control", d_16S@sam_data$Numeric_code), TRUE, FALSE)
+
+neg_control_diag_pq(d_16S, "is_neg_control")
+
+d_16S_wo_neg_control <- neg_control_clean_pq(d_16S, "is_neg_control")
+```
+
 
 ## Sequences, samples and clusters across the pipeline
 
@@ -118,11 +136,11 @@ for (li in names(tab_samp)) {
 
 ```{r}
 krona(
-  clean_pq(d_pq_archaea, simplify_taxo = TRUE),
+  clean_pq(d_16S, simplify_taxo = TRUE),
   file = here::here("data/data_final/krona_archaea_nb_seq.html")
 )
 krona(
-  clean_pq(d_pq_archaea, simplify_taxo = TRUE),
+  clean_pq(d_16S, simplify_taxo = TRUE),
   nb_seq = FALSE,
   file = here::here("data/data_final/krona_archaea_nb_taxa.html")
 )
@@ -137,8 +155,8 @@ Marker: mcrA gene (methyl-coenzyme M reductase, primers GGTGGTGTMGGDTTCACMCARTA 
 ## Carbon footprint
 
 ```{r, message=FALSE, warning=FALSE}
-res_ga_mcrA <- greenAlgoR::ga_targets(store = here::here("_targets_mcrA/"))
-print(paste0(res_ga_mcrA$carbon_footprint_total_gCO2, " gCO2 equiv. emitted for the whole pipeline"))
+res_ga_mcrA <- greenAlgoR::ga_targets(store = here::here("_targets_mcrA/"), PSF=2)
+print(paste0(round(res_ga_mcrA$carbon_footprint_total_gCO2, 0), " gCO2 equiv. emitted for the whole pipeline"))
 ```
 
 ## Timeline and cpu usage
@@ -171,11 +189,11 @@ tar_glimpse(script = here::here("_targets_mcrA.R"), targets_only = TRUE, callr_a
 ## Phyloseq object
 
 ```{r}
-d_pq_mcrA <- clean_pq(tar_read("d_vs", store = here::here("_targets_mcrA/")))
+d_mcrA <- clean_pq(tar_read("d_vs", store = here::here("_targets_mcrA/")))
 ```
 
 ```{r}
-summary_plot_pq(d_pq_mcrA)
+summary_plot_pq(d_mcrA)
 ```
 
 ## Targets metadata
@@ -192,8 +210,25 @@ tar_meta(store = here::here("_targets_mcrA/"), targets_only = TRUE) |>
 ## Sample data
 
 ```{r}
-DT::datatable(d_pq_mcrA@sam_data)
+DT::datatable(d_mcrA@sam_data)
 ```
+
+## Denovo chimera removal (second time !)
+
+```{r}
+d_mcrA <- MiscMetabar::chimera_removal_vs(d_mcrA)
+```
+
+## Control samples
+
+```{r}
+d_mcrA@sam_data$is_neg_control <- ifelse(grepl("Control", d_mcrA@sam_data$Numeric_code), TRUE, FALSE)
+
+neg_control_diag_pq(d_mcrA, "is_neg_control")
+
+d_mcrA_wo_neg_control <- neg_control_clean_pq(d_mcrA, "is_neg_control")
+```
+
 
 ## Sequences, samples and clusters across the pipeline
 
@@ -229,8 +264,8 @@ Marker: pmoA gene (particulate methane monooxygenase, primers GGNGACTGGGACTTCTGG
 ## Carbon footprint
 
 ```{r, message=FALSE, warning=FALSE}
-res_ga_pmoA <- greenAlgoR::ga_targets(store = here::here("_targets_pmoA/"))
-print(paste0(res_ga_pmoA$carbon_footprint_total_gCO2, " gCO2 equiv. emitted for the whole pipeline"))
+res_ga_pmoA <- greenAlgoR::ga_targets(store = here::here("_targets_pmoA/"), PSF=2)
+print(paste0(round(res_ga_pmoA$carbon_footprint_total_gCO2, 0), " gCO2 equiv. emitted for the whole pipeline"))
 ```
 
 ## Timeline and cpu usage
@@ -263,11 +298,11 @@ tar_glimpse(script = here::here("_targets_pmoA.R"), targets_only = TRUE, callr_a
 ## Phyloseq object
 
 ```{r}
-d_pq_pmoA <- clean_pq(tar_read("d_vs", store = here::here("_targets_pmoA/")))
+d_pmoA <- clean_pq(tar_read("d_vs", store = here::here("_targets_pmoA/")))
 ```
 
 ```{r}
-summary_plot_pq(d_pq_pmoA)
+summary_plot_pq(d_pmoA)
 ```
 
 ## Targets metadata
@@ -284,7 +319,24 @@ tar_meta(store = here::here("_targets_pmoA/"), targets_only = TRUE) |>
 ## Sample data
 
 ```{r}
-DT::datatable(d_pq_pmoA@sam_data)
+DT::datatable(d_pmoA@sam_data)
+```
+
+
+## Denovo chimera removal (second time !)
+
+```{r}
+d_pmoA <- MiscMetabar::chimera_removal_vs(d_pmoA)
+```
+
+## Control samples
+
+```{r}
+d_pmoA@sam_data$is_neg_control <- ifelse(grepl("Control", d_pmoA@sam_data$Numeric_code), TRUE, FALSE)
+
+neg_control_diag_pq(d_pmoA, "is_neg_control")
+
+d_pmoA_wo_neg_control <- neg_control_clean_pq(d_pmoA, "is_neg_control")
 ```
 
 ## Sequences, samples and clusters across the pipeline
@@ -321,20 +373,339 @@ Summary of read and cluster counts across the three markers at the final pipelin
 ## Raw nb of sequences
 
 ```{r}
-df_raw_seq <- t(tibble("Total"= track_16S[1,"nb_sequences"],
-        "16S"= track_16S[2,"nb_sequences"],
+df_raw_seq <- tibble(data.frame("Total"= track_16S[1,"nb_sequences"],
+        "mark_16S"= track_16S[2,"nb_sequences"],
         "mcrA"= track_mcrA[2,"nb_sequences"],
         "pmoA"= track_pmoA[2,"nb_sequences"],
         "Unknown"= track_16S[1,"nb_sequences"] - track_16S[2,"nb_sequences"] - track_mcrA[2,"nb_sequences"] - track_pmoA[2,"nb_sequences"]
-        ) ) |>
-          mutate("%_total"= round(Total/Total*100, 2),
-                 "%_16S"= round(16S/Total*100, 2),
-                 "%_mcrA"= round(mcrA/Total*100, 2),
-                 "%_pmoA"= round(pmoA/Total*100, 2),
-                 "%_Unknown"= round(Unknown/Total*100, 2)
-                 ) 
+        )) |>                                                                
+    tidyr::pivot_longer(everything(), names_to = "variable", values_to = "Number") |>       
+          mutate("Percent" = paste0(round(100*Number/Number[1], 2), "%"))
 
-kable(df_raw_seq, caption = "Number of sequences after cutadapt filtering step for each marker")
+kable(df_raw_seq, caption = "Number of sequences after cutadapt filtering step for each marker. Negative percent in Unknown indicate redundant sequences")
+```
+
+## Verify for the presence or other markers in each refseq
+
+| Project | Script | Marker | Primers | Store |
+|---------|--------|--------|---------|-------|
+| `main`  | `_targets.R` | Archaea 16S (Arch349F / Arch806R) | `CCCTACGGGGTGCASCAG` / `GGACTACVSGGGTATCTAAT` | `_targets/` |
+| `mcrA`  | `_targets_mcrA.R` | mcrA — methane production | `GGTGGTGTMGGDTTCACMCARTA` / `CGTTCATBGCGTAGTTVGGRTAGT` | `_targets_mcrA/` |
+| `pmoA`  | `_targets_pmoA.R` | pmoA — methane oxidation | `GGNGACTGGGACTTCTGG` / `CCGGMGCAACGTCYTTACC` | `_targets_pmoA/` |
+
+```{r}
+#| cache: true
+primers_cross <- c(
+  mcrA_fwd = "GGTGGTGTMGGDTTCACMCARTA",
+  mcrA_rev = "CGTTCATBGCGTAGTTVGGRTAGT",
+  pmoA_fwd = "GGNGACTGGGACTTCTGG",
+  pmoA_rev = "CCGGMGCAACGTCYTTACC"
+)
+
+check_primers_in_refseq <- function(primers, ps_list) {
+  do.call(rbind, lapply(names(ps_list), function(ps_name) {
+    refseq <- ps_list[[ps_name]]@refseq
+    do.call(rbind, lapply(names(primers), function(p_name) {
+      p <- Biostrings::DNAString(primers[[p_name]])
+      rc_p <- Biostrings::reverseComplement(p)
+      fwd <- Biostrings::vcountPattern(p, refseq, fixed = FALSE) > 0
+      rev <- Biostrings::vcountPattern(rc_p, refseq, fixed = FALSE) > 0
+      data.frame(
+        phyloseq = ps_name,
+        primer = p_name,
+        sequence = primers[[p_name]],
+        n_fwd = sum(fwd),
+        n_rev = sum(rev),
+        n_any = sum(fwd | rev)
+      )
+    }))
+  }))
+}
+
+d_16S <- clean_pq(tar_read("d_vs", store = here::here("_targets/")))
+
+primer_check <- check_primers_in_refseq(
+  primers_cross,
+  list("16S" = d_16S, "pmoA" = d_pmoA, "mcrA" = d_mcrA)
+)
+kable(primer_check, caption = "Number of refseq sequences containing each cross-marker primer (fwd or rc). fixed = FALSE expands IUPAC codes (M, R, Y, …).")
+```
+
+```{r}
+#| cache: true
+all_primers <- c(
+  archaea_16S_fwd = "CCCTACGGGGTGCASCAG",
+  archaea_16S_rev = "GGACTACVSGGGTATCTAAT",
+  mcrA_fwd        = "GGTGGTGTMGGDTTCACMCARTA",
+  mcrA_rev        = "CGTTCATBGCGTAGTTVGGRTAGT",
+  pmoA_fwd        = "GGNGACTGGGACTTCTGG",
+  pmoA_rev        = "CCGGMGCAACGTCYTTACC"
+)
+
+#' Find taxa whose refseq contains any primer sequence
+#'
+#' For each taxon in `ps`, checks whether the representative sequence in
+#' `@refseq` contains any primer from `primers` (forward or reverse complement),
+#' using IUPAC-aware pattern matching (`fixed = FALSE`).
+#'
+#' @param ps A phyloseq object with a populated `@refseq` slot.
+#' @param primers Named character vector of primer sequences (IUPAC codes
+#'   allowed, e.g. M, R, Y, N).
+#'
+#' @return A data.frame with columns `taxon`, `matched_primers` (comma-separated
+#'   names of all primers that matched), and `n_reads` (total reads across
+#'   samples). Returns `NULL` if no contaminated taxa are found.
+find_taxa_with_primers <- function(ps, primers) {
+  refseq <- ps@refseq
+  match_mat <- vapply(names(primers), function(p_name) {
+    p <- Biostrings::DNAString(primers[[p_name]])
+    rc_p <- Biostrings::reverseComplement(p)
+    fwd <- Biostrings::vcountPattern(p, refseq, fixed = FALSE) > 0
+    rev <- Biostrings::vcountPattern(rc_p, refseq, fixed = FALSE) > 0
+    fwd | rev
+  }, logical(length(refseq)))
+
+  any_match <- rowSums(match_mat) > 0
+  if (!any(any_match)) {
+    return(NULL)
+  }
+  bad_idx <- which(any_match)
+  data.frame(
+    taxon = names(refseq)[bad_idx],
+    matched_primers = apply(match_mat[bad_idx, , drop = FALSE], 1, \(row) paste(names(primers)[row], collapse = ", ")),
+    n_reads = phyloseq::taxa_sums(ps)[bad_idx],
+    row.names = NULL
+  )
+}
+
+bad_taxa <- list(
+  "16S"  = find_taxa_with_primers(d_16S, all_primers),
+  "pmoA" = find_taxa_with_primers(d_pmoA, all_primers),
+  "mcrA" = find_taxa_with_primers(d_mcrA, all_primers)
+)
+
+for (ps_name in names(bad_taxa)) {
+  df <- bad_taxa[[ps_name]]
+  if (is.null(df) || nrow(df) == 0) {
+    message(ps_name, ": no taxa with primer contamination.")
+  } else {
+    print(kable(
+      df[order(-df$n_reads), ],
+      caption = sprintf("%s — %d taxa containing a primer sequence (%d total reads)", ps_name, nrow(df), sum(df$n_reads))
+    ))
+  }
+}
+```
+
+To filter out the contaminated taxa, use `prune_taxa()`:
+
+```{r}
+filter_primer_taxa <- function(ps, primers) {
+  bad <- find_taxa_with_primers(ps, primers)
+  if (is.null(bad) || nrow(bad) == 0) {
+    return(ps)
+  }
+  message("Removing ", nrow(bad), " taxa containing primer sequences (", sum(bad$n_reads), " reads).")
+  phyloseq::prune_taxa(!phyloseq::taxa_names(ps) %in% bad$taxon, ps)
+}
+
+d_16S  <- filter_primer_taxa(d_16S,  all_primers)
+d_pmoA <- filter_primer_taxa(d_pmoA, all_primers)
+d_mcrA <- filter_primer_taxa(d_mcrA, all_primers)
+```
+
+```{r}
+#| cache: true
+
+#' Compare refseq sequences across three phyloseq objects
+#'
+#' Computes pairwise sequence similarity between the `@refseq` slots of three
+#' phyloseq objects using k-mer Jaccard similarity, then groups near-identical
+#' sequences via connected components (igraph). Produces a ggplot2 line plot
+#' and a Venn diagram (ggVennDiagram) for each dissimilarity threshold.
+#'
+#' Similarity is approximated as `p ≈ (2j / (1 + j))^(1/k)` where `j` is the
+#' Jaccard index of shared k-mer presence and `k` is the k-mer size. The
+#' approximation is accurate within ~2 pp for identities between 90–100%.
+#'
+#' @param ps1,ps2,ps3 phyloseq objects whose `@refseq` slot will be compared.
+#' @param labels Character vector of length 3. Display names for `ps1`, `ps2`,
+#'   and `ps3` respectively. Default: `c("ps1", "ps2", "ps3")`.
+#' @param thresholds Numeric vector of maximum dissimilarity thresholds (in %).
+#'   `0` means exact matches only; `10` means sequences within 10% divergence
+#'   are considered equivalent. Default: `c(0, 1, 2, 3, 5, 10)`.
+#' @param k Integer. K-mer size used to build presence/absence profiles.
+#'   Larger `k` increases specificity; smaller `k` increases sensitivity for
+#'   divergent sequences. Default: `7`.
+#'
+#' @return A named list with three elements:
+#'   \describe{
+#'     \item{`line_plot`}{ggplot2 line plot: x = number of shared sequence
+#'       clusters, y = minimum similarity threshold, one line per pairwise
+#'       comparison.}
+#'     \item{`venn_plots`}{Named list of ggVennDiagram objects, one per
+#'       threshold. Names follow the pattern `"<threshold>_pct"`.}
+#'     \item{`results`}{List of per-threshold results, each containing
+#'       `threshold`, `venn_data`, `n12`, `n13`, and `n23` (number of shared
+#'       sequence clusters between each pair).}
+#'   }
+compare_refseq_similarity <- function(ps1, ps2, ps3,
+                                      labels = c("ps1", "ps2", "ps3"),
+                                      thresholds = c(0, 1, 2, 3, 5, 10),
+                                      k = 7) {
+  seq1 <- as.character(ps1@refseq)
+  seq2 <- as.character(ps2@refseq)
+  seq3 <- as.character(ps3@refseq)
+  n1 <- length(seq1)
+  n2 <- length(seq2)
+  n3 <- length(seq3)
+
+  kmer_presence <- function(seqs) {
+    dna <- Biostrings::DNAStringSet(seqs)
+    (Biostrings::oligonucleotideFrequency(dna, width = k) > 0) * 1
+  }
+
+  jaccard_to_pid <- function(jaccard) {
+    100 * (2 * jaccard / (1 + jaccard))^(1 / k)
+  }
+
+  compute_pid_matrix <- function(km_a, km_b, n_a, n_b) {
+    shared <- tcrossprod(km_a, km_b)
+    union_size <- outer(n_a, n_b, "+") - shared
+    jaccard_to_pid(shared / pmax(union_size, 1))
+  }
+
+  message("Building k-mer profiles (k = ", k, ")...")
+  km1 <- kmer_presence(seq1)
+  km2 <- kmer_presence(seq2)
+  km3 <- kmer_presence(seq3)
+  n1k <- rowSums(km1)
+  n2k <- rowSums(km2)
+  n3k <- rowSums(km3)
+
+  message("Computing ", labels[1], " vs ", labels[2], "...")
+  pid12 <- compute_pid_matrix(km1, km2, n1k, n2k)
+  message("Computing ", labels[1], " vs ", labels[3], "...")
+  pid13 <- compute_pid_matrix(km1, km3, n1k, n3k)
+  message("Computing ", labels[2], " vs ", labels[3], "...")
+  pid23 <- compute_pid_matrix(km2, km3, n2k, n3k)
+
+  process_threshold <- function(thresh) {
+    if (thresh == 0) {
+      all_seqs <- c(seq1, seq2, seq3)
+      seq_groups <- split(seq_along(all_seqs), all_seqs)
+      edges <- do.call(rbind, lapply(seq_groups, function(idx) {
+        if (length(idx) < 2) {
+          return(NULL)
+        }
+        t(combn(idx, 2))
+      }))
+    } else {
+      min_pid_val <- 100 - thresh
+      e12 <- which(pid12 >= min_pid_val, arr.ind = TRUE)
+      e13 <- which(pid13 >= min_pid_val, arr.ind = TRUE)
+      e23 <- which(pid23 >= min_pid_val, arr.ind = TRUE)
+      if (nrow(e12) > 0) {
+        e12[, 2] <- e12[, 2] + n1
+      }
+      if (nrow(e13) > 0) {
+        e13[, 2] <- e13[, 2] + n1 + n2
+      }
+      if (nrow(e23) > 0) {
+        e23[, 1] <- e23[, 1] + n1
+        e23[, 2] <- e23[, 2] + n1 + n2
+      }
+      edges <- rbind(e12, e13, e23)
+    }
+
+    g <- igraph::make_empty_graph(n = n1 + n2 + n3, directed = FALSE)
+    if (!is.null(edges) && nrow(edges) > 0) {
+      g <- igraph::add_edges(g, t(edges))
+    }
+    comp_id <- igraph::components(g)$membership
+
+    node_set <- rep(labels, c(n1, n2, n3))
+    ct <- table(comp_id, node_set)
+    in_A <- ct[, labels[1]] > 0
+    in_B <- ct[, labels[2]] > 0
+    in_C <- ct[, labels[3]] > 0
+    comp_names <- paste0("c", rownames(ct))
+
+    list(
+      threshold = thresh,
+      venn_data = stats::setNames(
+        list(comp_names[in_A], comp_names[in_B], comp_names[in_C]),
+        labels
+      ),
+      n12 = sum(in_A & in_B),
+      n13 = sum(in_A & in_C),
+      n23 = sum(in_B & in_C)
+    )
+  }
+
+  results <- lapply(thresholds, process_threshold)
+
+  df_line <- do.call(rbind, lapply(results, function(r) {
+    data.frame(
+      similarity = 100 - r$threshold,
+      n_shared = c(r$n12, r$n13, r$n23),
+      comparison = c(
+        paste(labels[1], "vs", labels[2]),
+        paste(labels[1], "vs", labels[3]),
+        paste(labels[2], "vs", labels[3])
+      )
+    )
+  }))
+
+  p_line <- ggplot2::ggplot(
+    df_line,
+    ggplot2::aes(x = n_shared, y = similarity, color = comparison, group = comparison)
+  ) +
+    ggplot2::geom_line(linewidth = 1.2) +
+    ggplot2::geom_point(size = 3) +
+    ggplot2::scale_y_continuous(
+      breaks = 100 - thresholds,
+      labels = paste0(100 - thresholds, "%")
+    ) +
+    ggplot2::labs(
+      x = "Number of shared sequence clusters",
+      y = "Minimum sequence similarity",
+      color = "Comparison"
+    )
+
+  venn_plots <- lapply(results, function(r) {
+    thresh <- r$threshold
+    ggVennDiagram::ggVennDiagram(r$venn_data, label_alpha = 0, label = "count") +
+      ggplot2::scale_fill_gradient(low = "white", high = "#4CAF50") +
+      ggplot2::labs(
+        title = if (thresh == 0) "Exact matches" else sprintf("Within %d%% dissim.", thresh)
+      ) +
+      ggplot2::theme(legend.position = "none")
+  })
+  names(venn_plots) <- paste0(thresholds, "_pct")
+
+  list(line_plot = p_line, venn_plots = venn_plots, results = results)
+}
+
+sim_results <- compare_refseq_similarity(
+  d_16S, d_pmoA, d_mcrA,
+  labels = c("16S", "pmoA", "mcrA"),
+  thresholds = c(0)
+)
+```
+
+```{r}
+#| fig-width: 14
+#| fig-height: 9
+patchwork::wrap_plots(sim_results$venn_plots, ncol = 3)
+```
+
+## Save phyloseq object without primer-contaminated taxa
+
+```{r}
+saveRDS(d_16S, file =paste0(here::here("data/data_final"), "/d_16S.rds"))
+saveRDS(d_pmoA, file =paste0(here::here("data/data_final"), "/d_pmoA.rds"))
+saveRDS(d_mcrA, file =paste0(here::here("data/data_final"), "/d_mcrA.rds"))
 ```
 
 
@@ -342,8 +713,8 @@ kable(df_raw_seq, caption = "Number of sequences after cutadapt filtering step f
 
 ```{r}
 track_wkflow(list("16S"=d_16S,
-                  "pmoA"=d_pq_pmoA, 
-                  "mcrA"=d_pq_mcrA
+                  "pmoA"=d_pmoA, 
+                  "mcrA"=d_mcrA
                   ))
 ```
 
@@ -352,18 +723,18 @@ track_wkflow(list("16S"=d_16S,
 ```{r}
 richness_archaea <- data.frame(
   Marker = "Archaea 16S",
-  Sample = sample_names(d_pq_archaea),
-  OTUs = estimate_richness(d_pq_archaea, measures = "Observed")$Observed
+  Sample = sample_names(d_16S),
+  OTUs = estimate_richness(d_16S, measures = "Observed")$Observed
 )
 richness_mcrA <- data.frame(
   Marker = "mcrA",
-  Sample = sample_names(d_pq_mcrA),
-  OTUs = estimate_richness(d_pq_mcrA, measures = "Observed")$Observed
+  Sample = sample_names(d_mcrA),
+  OTUs = estimate_richness(d_mcrA, measures = "Observed")$Observed
 )
 richness_pmoA <- data.frame(
   Marker = "pmoA",
-  Sample = sample_names(d_pq_pmoA),
-  OTUs = estimate_richness(d_pq_pmoA, measures = "Observed")$Observed
+  Sample = sample_names(d_pmoA),
+  OTUs = estimate_richness(d_pmoA, measures = "Observed")$Observed
 )
 
 richness_all <- rbind(richness_archaea, richness_mcrA, richness_pmoA)
@@ -382,18 +753,18 @@ ggplot(richness_all, aes(x = Marker, y = OTUs, fill = Marker)) +
 ```{r}
 reads_archaea <- data.frame(
   Marker = "Archaea 16S",
-  Sample = sample_names(d_pq_archaea),
-  Reads = sample_sums(d_pq_archaea)
+  Sample = sample_names(d_16S),
+  Reads = sample_sums(d_16S)
 )
 reads_mcrA <- data.frame(
   Marker = "mcrA",
-  Sample = sample_names(d_pq_mcrA),
-  Reads = sample_sums(d_pq_mcrA)
+  Sample = sample_names(d_mcrA),
+  Reads = sample_sums(d_mcrA)
 )
 reads_pmoA <- data.frame(
   Marker = "pmoA",
-  Sample = sample_names(d_pq_pmoA),
-  Reads = sample_sums(d_pq_pmoA)
+  Sample = sample_names(d_pmoA),
+  Reads = sample_sums(d_pmoA)
 )
 
 reads_all <- rbind(reads_archaea, reads_mcrA, reads_pmoA)

@@ -14,7 +14,13 @@ if (tar_active()) {
 
 here::i_am("_targets.R")
 source(here("R/functions.R"))
-lapply(list.files("~/Nextcloud/IdEst/Projets/pqverse/pqverse_pkg/MiscMetabar/R/", full.names = TRUE), source)
+lapply(
+  list.files(
+    "~/Nextcloud/IdEst/Projets/pqverse/pqverse_pkg/MiscMetabar/R/",
+    full.names = TRUE
+  ),
+  source
+)
 
 # mcrA marker: mlas (GGTGGTGTMGGDTTCACMCARTA) and mcrA-rev (CGTTCATBGCGTAGTTVGGRTAGT)
 seq_len_min <- 200
@@ -42,10 +48,11 @@ tar_plan(
 
   #> Match samples names from fastq files and metadata sam_data
   #> ———————————————————
-  tar_target(s_d,
+  tar_target(
+    s_d,
     sam_data_matching_names(
       path_sam_data = here("data/data_raw/metadata", sam_data_file_name),
-      path_raw_seq =  fastq_files_folder,
+      path_raw_seq = fastq_files_folder,
       sample_col_name = sample_col_name,
       pattern_remove_fastq_files = "_S.*",
       prefix = "samp_"
@@ -72,7 +79,9 @@ tar_plan(
   ),
   tar_target(data_raw, {
     cutadapt
-    list_fastq_files(path = here::here("data/data_intermediate/mcrA_seq_wo_primers/"))
+    list_fastq_files(
+      path = here::here("data/data_intermediate/mcrA_seq_wo_primers/")
+    )
   }),
 
   ##> Classical dada2 pipeline
@@ -103,11 +112,27 @@ tar_plan(
   tar_target(derep_fs, derepFastq(filtered[[1]]), format = "qs"),
   tar_target(derep_rs, derepFastq(filtered[[2]]), format = "qs"),
   ### Learns the error rates
-  tar_target(err_fs, learnErrors(derep_fs, multithread = n_threads), format = "qs"),
-  tar_target(err_rs, learnErrors(derep_rs, multithread = n_threads), format = "qs"),
+  tar_target(
+    err_fs,
+    learnErrors(derep_fs, multithread = n_threads),
+    format = "qs"
+  ),
+  tar_target(
+    err_rs,
+    learnErrors(derep_rs, multithread = n_threads),
+    format = "qs"
+  ),
   ### Make amplicon sequence variants
-  tar_target(ddF, dada(derep_fs, err_fs, multithread = n_threads), format = "qs"),
-  tar_target(ddR, dada(derep_rs, err_rs, multithread = n_threads), format = "qs"),
+  tar_target(
+    ddF,
+    dada(derep_fs, err_fs, multithread = n_threads),
+    format = "qs"
+  ),
+  tar_target(
+    ddR,
+    dada(derep_rs, err_rs, multithread = n_threads),
+    format = "qs"
+  ),
   ### Merge paired sequences
   tar_target(
     merged_seq,
@@ -133,87 +158,155 @@ tar_plan(
   #### Remove chimera
   tar_target(seqtab_wo_chimera_paired, chimera_removal_vs(seq_tab_Pairs)),
   #### Remove sequences based on length
-  tar_target(seqtab_paired, seqtab_wo_chimera_paired[, nchar(colnames(seqtab_wo_chimera_paired)) >= seq_len_min]),
+  tar_target(
+    seqtab_paired,
+    seqtab_wo_chimera_paired[,
+      nchar(colnames(seqtab_wo_chimera_paired)) >= seq_len_min
+    ]
+  ),
 
   ### Forward only
   tar_target(seqtab_wo_chimera, chimera_removal_vs(seq_tab_Fw)),
-  tar_target(seqtab, seqtab_wo_chimera[, nchar(colnames(seqtab_wo_chimera)) >= seq_len_min]),
+  tar_target(
+    seqtab,
+    seqtab_wo_chimera[, nchar(colnames(seqtab_wo_chimera)) >= seq_len_min]
+  ),
 
   ##> Load sample data and rename samples
   tar_target(
     sam_tab,
-    rename_samples(sample_data(s_d$sam_data), names_of_samples = s_d$sam_data$samples_names_common)
-  ),
-  tar_target(samp_n_otu_table,
-      s_d$sam_names_matching$common_names[match(rownames(seqtab), s_d$sam_names_matching$raw_fastq)]
-    ),
-
-  tar_target(asv_tab, otu_table(
     rename_samples(
-      otu_table(seqtab[!(duplicated(samp_n_otu_table) | duplicated(samp_n_otu_table, fromLast=TRUE)),], taxa_are_rows = FALSE),
-        names_of_samples = samp_n_otu_table[!(duplicated(samp_n_otu_table) | duplicated(samp_n_otu_table, fromLast=TRUE))]),
-    taxa_are_rows = FALSE
-  )),
+      sample_data(s_d$sam_data),
+      names_of_samples = s_d$sam_data$samples_names_common
+    )
+  ),
+  tar_target(
+    samp_n_otu_table,
+    s_d$sam_names_matching$common_names[match(
+      rownames(seqtab),
+      s_d$sam_names_matching$raw_fastq
+    )]
+  ),
+
+  tar_target(
+    asv_tab,
+    otu_table(
+      rename_samples(
+        otu_table(
+          seqtab[
+            !(duplicated(samp_n_otu_table) |
+              duplicated(samp_n_otu_table, fromLast = TRUE)),
+          ],
+          taxa_are_rows = FALSE
+        ),
+        names_of_samples = samp_n_otu_table[
+          !(duplicated(samp_n_otu_table) |
+            duplicated(samp_n_otu_table, fromLast = TRUE))
+        ]
+      ),
+      taxa_are_rows = FALSE
+    )
+  ),
 
   ##> Create the phyloseq object without taxonomy (no reference database for mcrA)
   ##> An empty tax_table is added as a placeholder required by downstream functions (e.g. mumu_pq)
   tar_target(data_phyloseq, {
     ps <- add_dna_to_phyloseq(phyloseq(asv_tab, sam_tab))
     tax_table(ps) <- tax_table(
-      matrix(NA_character_, nrow = ntaxa(ps), ncol = 1,
-        dimnames = list(taxa_names(ps), "marker"))
+      matrix(
+        NA_character_,
+        nrow = ntaxa(ps),
+        ncol = 1,
+        dimnames = list(taxa_names(ps), "marker")
+      )
     )
     ps
   }),
 
   ##> Create post-clustering ASV into OTU using vsearch
-  tar_target(d_vs, asv2otu(
-    data_phyloseq, method = "vsearch", tax_adjust = 0
-  )),
+  tar_target(
+    d_vs,
+    asv2otu(
+      data_phyloseq,
+      method = "vsearch",
+      tax_adjust = 0
+    )
+  ),
 
   ##> Make a rarefied dataset
   tar_target(d_vs_rarefy, rarefy_even_depth(d_vs, sample.size = 2000)),
 
   ##> Track sequences through the pipeline
-  tar_target(track_sequences_samples_clusters, track_wkflow(
-    list(
-      "Raw Forward sequences" = unlist(list_fastq_files(fastq_files_folder, paired_end = FALSE)),
-      "Forward wo primers (mcrA)" = unlist(list_fastq_files(here::here("data/data_intermediate/mcrA_seq_wo_primers/"), paired_end = FALSE)),
-      "Forward sequences" = ddF,
-      "Paired sequences" = seq_tab_Pairs,
-      "Forward sequences without chimera" = seqtab_wo_chimera,
-      "Forward sequences wo chimera (+200 bp)" = seqtab,
-      "ASV table" = data_phyloseq,
-      "OTU after vsearch reclustering at 97%" = d_vs,
-      "OTU vs + rarefaction by sequencing depth" = d_vs_rarefy
+  tar_target(
+    track_sequences_samples_clusters,
+    track_wkflow(
+      list(
+        "Raw Forward sequences" = unlist(list_fastq_files(
+          fastq_files_folder,
+          paired_end = FALSE
+        )),
+        "Forward wo primers (mcrA)" = unlist(list_fastq_files(
+          here::here("data/data_intermediate/mcrA_seq_wo_primers/"),
+          paired_end = FALSE
+        )),
+        "Forward sequences" = ddF,
+        "Paired sequences" = seq_tab_Pairs,
+        "Forward sequences without chimera" = seqtab_wo_chimera,
+        "Forward sequences wo chimera (+200 bp)" = seqtab,
+        "ASV table" = data_phyloseq,
+        "OTU after vsearch reclustering at 97%" = d_vs,
+        "OTU vs + rarefaction by sequencing depth" = d_vs_rarefy
+      )
     )
-  )),
-  tar_target(track_by_samples, track_wkflow_samples(
-    list(
-      "ASV table" = data_phyloseq,
-      "OTU after vsearch reclustering at 97%" = d_vs,
-      "OTU vs + rarefaction by sequencing depth" = d_vs_rarefy
+  ),
+  tar_target(
+    track_by_samples,
+    track_wkflow_samples(
+      list(
+        "ASV table" = data_phyloseq,
+        "OTU after vsearch reclustering at 97%" = d_vs,
+        "OTU vs + rarefaction by sequencing depth" = d_vs_rarefy
+      )
     )
-  )),
+  ),
 
   ##> Build fastq quality report across the pipeline
   ### With raw sequences
   tar_target(
     quality_raw_seq,
-    fastqc_agg(fastq_files_folder, qc.dir = here("data/data_final/quality_fastqc/mcrA_raw_seq/"), multiqc=TRUE)
+    fastqc_agg(
+      fastq_files_folder,
+      qc.dir = here("data/data_final/quality_fastqc/mcrA_raw_seq/"),
+      multiqc = TRUE
+    )
   ),
   ### After cutadapt
   tar_target(
-    quality_seq_wo_primers, {cutadapt
-    fastqc_agg(here("data/data_intermediate/mcrA_seq_wo_primers/"), qc.dir = here("data/data_final/quality_fastqc/mcrA_seq_wo_primers/"), multiqc=TRUE)
-  }),
+    quality_seq_wo_primers,
+    {
+      cutadapt
+      fastqc_agg(
+        here("data/data_intermediate/mcrA_seq_wo_primers/"),
+        qc.dir = here("data/data_final/quality_fastqc/mcrA_seq_wo_primers/"),
+        multiqc = TRUE
+      )
+    }
+  ),
   ### After filtering and trimming (separate report for forward and reverse)
   tar_target(
     quality_seq_filtered_trimmed_FW,
-    fastqc_agg(here(filtered[[1]]), qc.dir = here("data/data_final/quality_fastqc/mcrA_filterAndTrim_fwd/"), multiqc=TRUE)
+    fastqc_agg(
+      here(filtered[[1]]),
+      qc.dir = here("data/data_final/quality_fastqc/mcrA_filterAndTrim_fwd/"),
+      multiqc = TRUE
+    )
   ),
   tar_target(
     quality_seq_filtered_trimmed_REV,
-    fastqc_agg(here(filtered[[1]]), qc.dir = here("data/data_final/quality_fastqc/mcrA_filterAndTrim_rev/"), multiqc=TRUE)
+    fastqc_agg(
+      here(filtered[[1]]),
+      qc.dir = here("data/data_final/quality_fastqc/mcrA_filterAndTrim_rev/"),
+      multiqc = TRUE
+    )
   )
 )

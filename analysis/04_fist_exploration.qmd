@@ -36,9 +36,9 @@ devtools::load_all("~/Nextcloud/IdEst/Projets/pqverse/pqverse_pkg/tidypq")
 ```
 
 ```{r}
-d_16S <- clean_pq(tar_read("d_vs", store=here::here("_targets/")))
-d_pmoA <- clean_pq(tar_read("d_vs", store=here::here("_targets_pmoA/")))
-d_mcrA <- clean_pq(tar_read("d_vs", store=here::here("_targets_mcrA/")))
+d_16S <- readRDS(here::here("data/data_final/d_16S.rds"))
+d_pmoA <- readRDS(here::here("data/data_final/d_pmoA.rds"))
+d_mcrA <- readRDS(here::here("data/data_final/d_mcrA.rds"))
 ```
 
 
@@ -50,4 +50,12 @@ d_3 <- comparpq::list_phyloseq( list("16S" = d_16S, "pmoA" = d_pmoA, "mcrA" = d_
 ```{r}
 comparpq::estim_diff_pq(d_16S, "Humidity")
 gg_bubbles_pq(d_16S, facet_by = "Humidity") + no_legend()
+```
+
+
+```{r}
+hill_curves_pq(d_16S, "Humidity", one_plot = TRUE) + theme_idest() + no_legend()
+MiscMetabar::ggbetween_pq(d_16S, q = 1, "Humidity", one_plot = TRUE) + theme_idest()
+MiscMetabar::ggbetween_pq(d_16S, q = 1, "Agricultural_practices", one_plot = TRUE) + theme_idest()
+MiscMetabar::ggbetween_pq(d_16S, q = 1, "Site", one_plot = TRUE) + theme_idest()
 ```
