@@ -101,7 +101,7 @@ docker push adrienta/mycea_starter:$version_build --all-tags
 #### Exemple avec projet XXXX
 
 ```sh
-docker run --rm --env PROJECT="XXXX" -p 8787:8787 -e PASSWORD=221310 -e ROOT=TRUE -ti -v /media/adrien/homeMX3/kDrive/BIO_INFO/data_raw_mycea:/home/rstudio/data/data_raw:ro -v /home/adrien/Nextcloud/IdEst/Projets/BIOINFORMATIQUE/Mycea/Rendus_clients_RetD/ANALYSES_JANVIER_2024:/home/rstudio/data/  adrienta/mycea_starter:latest
+docker run --rm --env PROJECT="XXXX" -p 8787:8787 -e PASSWORD=your_password -e ROOT=TRUE -ti -v /media/adrien/homeMX3/kDrive/BIO_INFO/data_raw_mycea:/home/rstudio/data/data_raw:ro -v /home/adrien/Nextcloud/IdEst/Projets/BIOINFORMATIQUE/Mycea/Rendus_clients_RetD/ANALYSES_JANVIER_2024:/home/rstudio/data/  adrienta/mycea_starter:latest
 ```
 
 ```sh
