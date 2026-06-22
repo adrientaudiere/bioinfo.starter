@@ -1,8 +1,13 @@
 project:
   type: website
+  resources:
+    - assets/particlesjs-config.json
+    - assets/particlesjs-config-dark.json
 format:
   html:
-    theme: custom.scss
+    theme:
+      light: custom.scss
+      dark: assets/dark.scss
     css: "/assets/styles.css"
     toc: true
     toc-location: left

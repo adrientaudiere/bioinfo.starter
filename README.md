@@ -1,17 +1,10 @@
 # bioinfo.starter
 
-<!-- badges: start -->
-
-<!-- badges: end -->
-
-The goal of bioinfo.starter is to [...]
-
 ## Installation
 
 ### Possible local requirements
 
 Some tools need to be installed locally before running the pipeline for some functions (not all are mandatory, depending on your analysis):
-
 
 - Probably neccessary for most analysis:
     - [cutadapt](https://cutadapt.readthedocs.io/en/stable/installation.html)
@@ -80,15 +73,15 @@ targets::tar_make()
 
 ### Run the entire website build
 
-```{r, eval=FALSE}
-devtools::install_deps()
+```r
+pak::local_install_deps(dependencies = TRUE)
 quarto::quarto_render()
 ```
 
 
 ### Run only selected reports
 
-```{r, eval=FALSE}
+```r
 quarto::quarto_render(here::here("analysis/01_bioinformatics.qmd"))
 ```
 

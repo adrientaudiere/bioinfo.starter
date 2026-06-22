@@ -81,11 +81,35 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
 
     <!-- use the particle js library with our own config (json file). -->
+    <!-- Theme-aware: loads a lighter particle config when Quarto dark mode is active. -->
     <script>
-      particlesJS.load(
-        "particles-js",
-        "https://raw.githubusercontent.com/holtzy/lumo/main/_extensions/lumo/particles.json"
-      );
+      (function () {
+        function loadParticlesForTheme() {
+          var isDark = document.body.classList.contains("quarto-dark");
+          var configPath = isDark
+            ? "/assets/particlesjs-config-dark.json"
+            : "/assets/particlesjs-config.json";
+          if (typeof particlesJS !== "undefined") {
+            var container = document.getElementById("particles-js");
+            if (container) {
+              container.innerHTML = "";
+            }
+            particlesJS.load("particles-js", configPath);
+          }
+        }
+
+        loadParticlesForTheme();
+
+        // Watch for Quarto theme toggles so particles update live.
+        var observer = new MutationObserver(function (mutations) {
+          mutations.forEach(function (mutation) {
+            if (mutation.attributeName === "class") {
+              loadParticlesForTheme();
+            }
+          });
+        });
+        observer.observe(document.body, { attributes: true });
+      })();
     </script>
   </div>
 </header>

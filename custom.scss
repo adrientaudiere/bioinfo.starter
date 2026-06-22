@@ -1,0 +1,40 @@
+/*-- scss:defaults --*/
+// IdEst light theme overrides
+
+// Bootstrap / Quarto Sass variables
+$body-bg: #ffffff !default;
+$body-color: #222222 !default;
+$link-color: #c93312 !default;
+
+// Surfaces
+$navbar-bg: #ffffff !default;
+$navbar-fg: #222222 !default;
+$sidebar-bg: #fafafa !default;
+$sidebar-fg: #222222 !default;
+
+// Code
+$code-bg: #f8f9fa !default;
+$code-color: #c93312 !default;
+$code-block-bg: #f8f9fa !default;
+$code-block-bg-alpha: -0.9 !default;
+
+// Forms / popovers
+$popover-bg: #ffffff !default;
+$input-bg: #ffffff !default;
+
+// Borders
+$border-color: rgba(0, 0, 0, 0.15) !default;
+$table-border-color: rgba(0, 0, 0, 0.15) !default;
+
+// Typography
+$font-family-sans-serif: "Lato", sans-serif !default;
+$font-family-monospace: "Fira Code", monospace !default;
+
+/*-- scss:rules --*/
+// IdEst brand custom properties, available site-wide
+:root {
+  --primary-color: #c93312;
+  --secondary-color: #2e7891;
+  --tertiary-color: #c8a734;
+  --grey-bg-color: #faefd1;
+}

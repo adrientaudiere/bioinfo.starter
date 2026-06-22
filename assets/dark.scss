@@ -1,50 +1,183 @@
+/*-- scss:defaults --*/
+// IdEst dark theme overrides
 
-/* ------------------------------------------- Ar.al dark theme ----------------- */
-/* https://ar.al/2021/08/24/implementing-dark-mode-in-a-handful-of-lines-of-css-with-css-filters/*/
+// Core palette
+$body-bg: #181818 !default;
+$body-color: #e6e2dc !default;
+$link-color: #ff7a5c !default;
 
-@media (prefers-color-scheme: dark) {
-  /* Invert all elements on the body while attempting to not alter the hue substantially. */
-  body {
-    filter: invert(100%) hue-rotate(180deg);
-  }
+// Surfaces
+$navbar-bg: #1e1e1e !default;
+$navbar-fg: #e6e2dc !default;
+$sidebar-bg: #1e1e1e !default;
+$sidebar-fg: #e6e2dc !default;
 
-  /* Workarounds and optical adjustments. */
+// Code
+$code-bg: #252525 !default;
+$code-color: #ff7a5c !default;
+$code-block-bg: #252525 !default;
+$code-block-bg-alpha: -0.9 !default;
 
-  /*
-     Firefox workaround: Set the background colour for the html
-     element separately because, unlike other browsers, Firefox
-     doesn’t apply the filter to the root element’s background.
-  */
-  html {
-    background-color: #111;
-  }
+// Forms / popovers
+$popover-bg: #252525 !default;
+$input-bg: #252525 !default;
 
-  /* Do not invert media (revert the invert). */
-  img, video, iframe, svg {
-    filter: invert(100%) hue-rotate(180deg);
-  }
+// Borders
+$border-color: rgba(255, 255, 255, 0.15) !default;
+$table-border-color: rgba(255, 255, 255, 0.15) !default;
 
-  /*
-    Videos running fullscreen are no longer affected by the
-    filter on the body so we need to also unset the
-    revert we applied earlier so we’re left with no filter again.
-   */
-  video:fullscreen {
-    filter: none;
-  }
+// TOC
+$toc-color: #e6e2dc !default;
+$toc-active-border: #ff7a5c !default;
 
-  /* Improve contrast on icons. */
-  .icon {
-    filter: invert(15%) hue-rotate(180deg);
-  }
+// Typography
+$font-family-sans-serif: "Lato", sans-serif !default;
+$font-family-monospace: "Fira Code", monospace !default;
 
-  /* Re-enable code block backgrounds. */
-  pre {
-    filter: invert(6%);
-  }
+/*-- scss:rules --*/
+// IdEst brand custom properties for dark mode
+body.quarto-dark {
+  --primary-color: #ff7a5c;
+  --secondary-color: #6bb6ce;
+  --tertiary-color: #e0c14a;
+  --grey-bg-color: #2a2a2a;
+}
 
-  /* Improve contrast on list item markers. */
-  li::marker {
-    color: #666;
-  }
+// ------------------------------------------------------------------
+// Overrides for hardcoded colors in assets/styles.css
+// ------------------------------------------------------------------
+
+// Tab pills: switch white backgrounds to dark surface
+body.quarto-dark .nav-pills .nav-link {
+  color: var(--primary-color);
+  background-color: #252525;
+  border-color: var(--primary-color);
+}
+
+body.quarto-dark .nav-pills .nav-link.active {
+  color: #181818;
+  background-color: var(--primary-color);
+}
+
+// Collapse buttons
+body.quarto-dark .button-collapse {
+  color: #181818;
+  background-color: var(--secondary-color);
+  border-color: #e6e2dc;
+}
+
+body.quarto-dark .button-collapse.collapsed {
+  color: var(--secondary-color);
+  background-color: #252525;
+  border-color: var(--secondary-color);
+}
+
+// Generic buttons
+body.quarto-dark button {
+  color: var(--primary-color);
+  background-color: #252525;
+  border: 1px solid var(--primary-color);
+}
+
+// Horizontal rule
+body.quarto-dark hr {
+  border-top: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+// ------------------------------------------------------------------
+// Code-chunk popups (originating from R/styles.qmd)
+// ------------------------------------------------------------------
+
+body.quarto-dark .popup {
+  background: #252525;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #e6e2dc;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+}
+
+body.quarto-dark .popup-pre {
+  background: #1e1e1e;
+  color: #e6e2dc;
+}
+
+body.quarto-dark .popup-icons {
+  background: rgba(30, 30, 30, 0.92);
+}
+
+body.quarto-dark .popup-close {
+  color: #a0a0a0;
+}
+
+body.quarto-dark .popup-close:hover {
+  color: #e6e2dc;
+}
+
+// Message / warning accent colors, brightened for dark mode
+body.quarto-dark .popup-toggle[data-target^="msg-popup-"] {
+  color: #6bb6ce;
+}
+
+body.quarto-dark div[id^="msg-popup-"] {
+  border-color: #6bb6ce;
+}
+
+body.quarto-dark div[id^="msg-popup-"] .popup-header strong {
+  color: #6bb6ce;
+}
+
+body.quarto-dark .popup-toggle[data-target^="warn-popup-"] {
+  color: #ff9a7a;
+  text-stroke: 0.5px #ff9a7a;
+  -webkit-text-stroke: 0.5px #ff9a7a;
+}
+
+body.quarto-dark div[id^="warn-popup-"] {
+  border-color: #ff9a7a;
+}
+
+body.quarto-dark div[id^="warn-popup-"] .popup-header strong {
+  color: #ff9a7a;
+}
+
+// ------------------------------------------------------------------
+// Custom divs that use color-mix with CSS variables
+// ------------------------------------------------------------------
+
+body.quarto-dark .question {
+  color: #b8dce8;
+  background-color: var(--grey-bg-color);
+  border-color: var(--secondary-color);
+}
+
+body.quarto-dark .conclusion {
+  color: #ff9a7a !important;
+  border-color: #ff9a7a;
+  box-shadow: color-mix(in srgb, var(--primary-color), transparent 65%) 5px 5px 2px;
+}
+
+// ------------------------------------------------------------------
+// Pinned circular menu
+// ------------------------------------------------------------------
+
+// Keep menu text readable when a list item is hovered in dark mode.
+body.quarto-dark .menu li:hover a {
+  color: var(--grey-bg-color);
+}
+
+// ------------------------------------------------------------------
+// Header / logo / particles adjustments
+// ------------------------------------------------------------------
+
+// The logo has black "IdEst" text on a transparent lower band,
+// so give it a subtle light background in dark mode for visibility.
+body.quarto-dark .title-block-content img {
+  background-color: var(--grey-bg-color);
+  padding: 12px;
+  border-radius: 16px;
+}
+
+// Brighten the particle canvas so mid-tone particles stay visible
+// on the dark background.
+body.quarto-dark #particles-js {
+  filter: brightness(1.5) saturate(1.2);
 }
