@@ -23,7 +23,13 @@ information_report <- list(
   "platform_info" = sessioninfo::platform_info(),
   "external_info" = sessioninfo::external_info(),
   "session_info" = sessioninfo::session_info(),
-  "env_info" = Sys.getenv(),
+  "env_info" = {
+    env <- Sys.getenv()
+    secret_pattern <- "(^|_)(TOKEN|PAT|PWD|PASSWORD|SECRET|KEY|CREDENTIAL|API|PASS)($|_)"
+    is_secret <- grepl(secret_pattern, names(env), ignore.case = TRUE)
+    env[is_secret] <- "<REDACTED>"
+    env
+  },
   "system_locale" = Sys.getlocale(),
   "machine_info" = .Machine,
   "conda_info" = system("export PATH='/home/adrien/miniforge3/bin:$PATH'; conda list -n cutadaptenv"),
