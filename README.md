@@ -44,6 +44,7 @@ git checkout -b name_analyse
 - Add references database in `data/data_raw/refseq`
 - Modify the `_targets.R` files (at least modify primers sequences and name of the reference database)
 - Modify (if necessary) params `pattern_remove_sam_data` and `pattern_remove_fastq_files` to make matching fastq files and sample names in metadata
+- Modify, add, supress the analysis quarto reports (*.qmd)
 
 ### Install mumu if you want to use mumu_pq
 
@@ -75,6 +76,21 @@ devtools::install_github("adrientaudiere/greenAlgoR")
 targets::tar_make()
 ```
 
+## Rerun only the website build
+
+### Run the entire website build
+
+```{r, eval=FALSE}
+devtools::install_deps()
+quarto::quarto_render()
+```
+
+
+### Run only selected reports
+
+```{r, eval=FALSE}
+quarto::quarto_render(here::here("analysis/01_bioinformatics.qmd"))
+```
 
 ## Colophon
 
