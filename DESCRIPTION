@@ -27,7 +27,13 @@ Suggests:
   autometric,
   fastqcr,
   rstantools,
-  emojifont
+  emojifont,
+  tidypq,
+  comparpq,
+  patchwork
+Remotes:
+    adrientaudiere/tidypq
+    adrientaudiere/comparpq
 BugReports: https://github.com/adrientaudiere/bioinfo.starter/issues
 Imports: 
     conflicted
