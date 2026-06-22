@@ -22,7 +22,7 @@ lapply(
   source
 )
 
-# Arch349F (CCC TAC GGG GTG CAS CAG) and Arch806R (GGA CTA CVS GGG TAT CTA AT
+# Arch349F (CCC TAC GGG GTG CAS CAG) and Arch806R (GGA CTA CVS GGG TAT CTA AT)
 seq_len_min <- 200
 fw_primer_sequences <- "CCCTACGGGGTGCASCAG"
 rev_primer_sequences <- "GGACTACVSGGGTATCTAAT"

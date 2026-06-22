@@ -8,24 +8,7 @@ date: last-modified
 ---
 
 
-# Welcome on this project website
+# Welcome on this research project BELOW ARCHEAE
 
+Use the menu at the top right corner to naviguate into this website. 
 
-:::{.question}
- A text with some critical questions and hypothesis.
-:::
-
-## Some calcul and plot
-```{r}
-1+1
-```
-
-```{r}
-plot(c(1:10),c(1:10))
-```
-
-
-
-:::{.conclusion}
-A precise and straightforward conclusion
-:::

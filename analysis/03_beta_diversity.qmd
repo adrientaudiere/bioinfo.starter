@@ -31,6 +31,7 @@ library(knitr)
 library(targets)
 library(MiscMetabar)
 here::i_am("analysis/03_beta_diversity.qmd")
+source(here::here("R/styles.R"))
 ```
 
 ```{r}
