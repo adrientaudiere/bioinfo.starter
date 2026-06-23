@@ -25,7 +25,7 @@ information_report <- list(
   "session_info" = sessioninfo::session_info(),
   "env_info" = {
     env <- Sys.getenv()
-    secret_pattern <- "(^|_)(TOKEN|PAT|PWD|PASSWORD|SECRET|KEY|CREDENTIAL|API|PASS)($|_)"
+    secret_pattern <- "(^|_)(TOKEN|PAT|PWD|PASSWORD|SECRET|KEY|CREDENTIAL|API|PASS|VSCODE_NONCE)($|_)"
     is_secret <- grepl(secret_pattern, names(env), ignore.case = TRUE)
     env[is_secret] <- "<REDACTED>"
     env
