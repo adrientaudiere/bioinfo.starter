@@ -769,6 +769,81 @@ result |>
   no_legend()
 ```
 
+### Accross step, by sample
+
+```{r}
+track_16S_samp  <- tar_read(track_by_samples, store = here::here("_targets/"))
+track_mcrA_samp <- tar_read(track_by_samples, store = here::here("_targets_mcrA/"))
+track_pmoA_samp <- tar_read(track_by_samples, store = here::here("_targets_pmoA/"))
+```
+
+```{r}
+#| message: false
+# Build a long data frame with one row per (marker, sample, step).
+# track_by_samples is a named list (one element per sample) of data frames
+# with rownames = step names and columns nb_sequences / nb_clusters / nb_samples.
+samp_to_long <- function(track_samp, marker) {
+  bind_rows(lapply(names(track_samp), function(s) {
+    data.frame(
+      marker = marker,
+      sample = s,
+      rownames_to_column(track_samp[[s]], "step"),
+      check.names = FALSE
+    )
+  }))
+}
+
+result_samp <- bind_rows(
+  samp_to_long(track_16S_samp,  "16S"),
+  samp_to_long(track_mcrA_samp, "mcrA"),
+  samp_to_long(track_pmoA_samp, "pmoA")
+) |>
+  mutate(nb_clusters = ifelse(nb_sequences==0, 0, nb_clusters)) |> 
+  mutate(
+    step = ifelse(step == "ASV denoising", "ASV table", step),
+    step = ifelse(step == "ASV denoising", "ASV table", step),
+    step = factor(step, levels = c(
+      "ASV table",
+      "OTU after vsearch reclustering at 97%",
+      "OTU vs after mumu cleaning algorithm",
+      "OTU vs + mumu + rarefaction by sequencing depth",
+      "OTU vs + rarefaction by sequencing depth"
+    ))
+  ) |>
+    filter(step %in%c( "ASV table",
+      "OTU after vsearch reclustering at 97%",
+      "OTU vs after mumu cleaning algorithm"))
+```
+
+```{r}
+#| fig-width: 14
+#| fig-height: 5
+result_samp |>
+  ggplot(aes(x = marker, y = nb_sequences, color = marker)) +
+  geom_jitter(width = 0.2, size = 1, alpha = 0.5) +
+  facet_grid(~step) +
+  no_legend() +
+  theme_idest() +
+  xlab("") +
+  ylab("Sequences per sample")
+```
+
+```{r}
+#| fig-width: 14
+#| fig-height: 5
+result_samp |>
+  ggplot(aes(x = step, y = nb_clusters, color = step, group = sample)) +
+  geom_line(alpha = 0.7, color="grey80", position = position_jitter(seed=2213,width = 0.2)) +
+  geom_point(width = 0.2, size = 1, alpha = 0.5, position=position_jitter(seed = 2213, width=0.2)) +
+  facet_grid(~marker) +
+  theme_idest() +
+   scale_x_discrete(labels = c("ASV table" = "ASV",
+                              "OTU after vsearch reclustering at 97%" = "OTU",
+                              "OTU vs after mumu cleaning algorithm" = "mumu")) +
+  xlab("") +
+  ylab("Clusters (OTUs) per sample") +
+  no_legend() 
+```
 
 ## OTU richness per sample
 

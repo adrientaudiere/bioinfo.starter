@@ -226,9 +226,9 @@ POSITRON                1
 POSITRON_LONG_VERSION   2026.05.2+3
 POSITRON_MODE           desktop
 POSITRON_VERSION        2026.05.2
-PROCESSX_PS2f3035f1d9e4_1782144471
+PROCESSX_PS2f3033f60460d_1782145593
                         YES
-PWD                     /media/adrien/d85e746d-736e-4642-a6d2-a220da20d3c7/below_archae
+PWD                     <REDACTED>
 PYDEVD_DISABLE_FILE_VALIDATION
                         1
 QT_ACCESSIBILITY        1
@@ -240,9 +240,9 @@ QUARTO_BIN_PATH         /opt/quarto/bin
 QUARTO_DENO             /opt/quarto/bin/tools/x86_64/deno
 QUARTO_DOCUMENT_FILE    01_bioinformatics.qmd
 QUARTO_DOCUMENT_PATH    /media/adrien/d85e746d-736e-4642-a6d2-a220da20d3c7/below_archae/analysis
-QUARTO_EXECUTE_INFO     /media/adrien/d85e746d-736e-4642-a6d2-a220da20d3c7/below_archae/.quarto/quarto-session-temp30b7ecd56dea97dd/ccc958eaa5957ff9
+QUARTO_EXECUTE_INFO     /media/adrien/d85e746d-736e-4642-a6d2-a220da20d3c7/below_archae/.quarto/quarto-session-temp4946f88fb3d4da91/2d75dd72df1ce1ee
 QUARTO_FILTER_DEPENDENCY_FILE
-                        /tmp/quarto-session33520a32a31f7be6/1e12540fb77be6e8/1e21126d93e2c13e
+                        /tmp/quarto-sessionfd05fb54a8304675/a8ea908731929e8d/fdd03e80136ef8ea
 QUARTO_PROFILE          
 QUARTO_PROJECT_DIR      /media/adrien/d85e746d-736e-4642-a6d2-a220da20d3c7/below_archae
 QUARTO_PROJECT_ROOT     /media/adrien/d85e746d-736e-4642-a6d2-a220da20d3c7/below_archae
@@ -264,7 +264,7 @@ R_PDFVIEWER             /usr/bin/xdg-open
 R_PLATFORM              x86_64-pc-linux-gnu
 R_PRINTCMD              /usr/bin/lpr
 R_RD4PDF                times,inconsolata,hyper
-R_SESSION_TMPDIR        /tmp/RtmpAFKfeD
+R_SESSION_TMPDIR        /tmp/RtmpnK4RTq
 R_SHARE_DIR             /usr/share/R/share
 R_STRIP_SHARED_LIB      x86_64-linux-gnu-strip --strip-unneeded
 R_STRIP_STATIC_LIB      x86_64-linux-gnu-strip --strip-debug
