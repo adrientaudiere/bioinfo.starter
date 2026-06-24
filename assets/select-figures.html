@@ -1,0 +1,469 @@
+<!-- select-figures.html — Quarto Figure Picker overlay
+  Included via _quarto.yml: format: html: include-in-header: "assets/select-figures.html"
+  Dormant unless the current page URL contains ?select=1
+  Adds per-figure checkboxes, stores selections in localStorage, exports a JSON manifest.
+-->
+<style>
+  /* ===== Figure Picker toolbar ===== */
+  #qfd-toolbar {
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    z-index: 99999;
+    background: rgba(30, 30, 35, 0.95);
+    color: #f0f0f0;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 13px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    min-width: 260px;
+    display: none;
+  }
+  #qfd-toolbar.visible { display: block; }
+
+  #qfd-toolbar h3 {
+    margin: 0 0 8px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+  }
+
+  #qfd-toolbar .qfd-stats {
+    margin-bottom: 8px;
+    color: #bbb;
+    font-size: 12px;
+  }
+
+  #qfd-toolbar .qfd-btn-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .qfd-btn {
+    cursor: pointer;
+    border: 1px solid #555;
+    background: #3a3a40;
+    color: #f0f0f0;
+    border-radius: 6px;
+    padding: 5px 10px;
+    font-size: 12px;
+    font-family: inherit;
+    transition: background 0.15s;
+  }
+  .qfd-btn:hover { background: #4a4a50; }
+  .qfd-btn.qfd-primary {
+    background: #2e7891;
+    border-color: #2e7891;
+    font-weight: 600;
+  }
+  .qfd-btn.qfd-primary:hover { background: #3a8fa9; }
+  .qfd-btn.qfd-danger {
+    background: #aa4c26;
+    border-color: #aa4c26;
+  }
+  .qfd-btn.qfd-danger:hover { background: #c25a30; }
+
+  /* ===== Per-figure checkbox overlay ===== */
+  .qfd-fig-wrapper {
+    position: relative;
+  }
+  .qfd-fig-checkbox {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 99998;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    accent-color: #2e7891;
+    background: rgba(255, 255, 255, 0.9);
+    border: 2px solid #2e7891;
+    border-radius: 4px;
+    appearance: auto;
+    -webkit-appearance: checkbox;
+  }
+  .qfd-fig-wrapper.qfd-selected {
+    outline: 3px solid #2e7891;
+    outline-offset: 4px;
+    border-radius: 2px;
+  }
+  .qfd-fig-wrapper:hover .qfd-fig-checkbox {
+    background: #fff;
+  }
+  /* Dim unselected figures slightly to make selection state clear */
+  .qfd-fig-wrapper:not(.qfd-selected) img {
+    opacity: 0.55;
+    transition: opacity 0.2s;
+  }
+  .qfd-fig-wrapper:not(.qfd-selected):hover img {
+    opacity: 0.8;
+  }
+  .qfd-fig-wrapper.qfd-selected img {
+    opacity: 1;
+  }
+</style>
+
+<script>
+(function () {
+  "use strict";
+
+  // Only activate when ?select=1 is in the URL
+  var params = new URLSearchParams(window.location.search);
+  if (params.get("select") !== "1") return;
+
+  // Scope localStorage by site root segment to avoid cross-project pollution
+  // when multiple Quarto sites are served from the same domain.
+  var SITE_SCOPE = (function () {
+    var seg = window.location.pathname.replace(/^\//, "").split("/")[0];
+    // If the first segment looks like a file (has a dot), treat as root-level site
+    if (seg && seg.indexOf(".") === -1) return seg;
+    return "root";
+  })();
+  var STORAGE_PREFIX = "qfd:" + SITE_SCOPE + ":";
+  var MANIFEST_VERSION = 1;
+
+  // ---- Page path (relative to site root) ----
+  function pagePath() {
+    // Use the pathname without leading slash, e.g. "analysis/02_alpha.html"
+    var p = window.location.pathname;
+    // Strip trailing index.html → "" so the root page is just ""
+    if (p === "/" || p === "") return "index.html";
+    return p.replace(/^\//, "");
+  }
+
+  function storageKey() {
+    return STORAGE_PREFIX + pagePath();
+  }
+
+  // ---- Selection persistence ----
+  function loadPageData() {
+    try {
+      var raw = localStorage.getItem(storageKey());
+      if (raw) return JSON.parse(raw);
+    } catch (e) { /* ignore */ }
+    return { figures: {} };
+  }
+
+  function savePageData(data) {
+    try {
+      localStorage.setItem(storageKey(), JSON.stringify(data));
+    } catch (e) {
+      console.warn("[qfd] Could not save selections:", e);
+    }
+  }
+
+  // ---- Gather ALL localStorage entries (cross-page) ----
+  function gatherAllSelections() {
+    var all = [];
+    for (var i = 0; i < localStorage.length; i++) {
+      var key = localStorage.key(i);
+      if (key && key.indexOf(STORAGE_PREFIX) === 0) {
+        var page = key.slice(STORAGE_PREFIX.length);
+        try {
+          var data = JSON.parse(localStorage.getItem(key));
+          if (data && data.figures) {
+            var figs = data.figures;
+            for (var figId in figs) {
+              if (figs.hasOwnProperty(figId)) {
+                all.push({
+                  fig_id: figId,
+                  page: page,
+                  source_qmd: page.replace(/\.html$/, ".qmd"),
+                  caption: figs[figId].caption || "",
+                  ordinal: figs[figId].ordinal || 0,
+                  code_text: figs[figId].code_text || "",
+                  selected: !!figs[figId].selected
+                });
+              }
+            }
+          }
+        } catch (e) { /* skip corrupt entries */ }
+      }
+    }
+    return all;
+  }
+
+  function countSelected() {
+    var all = gatherAllSelections();
+    return all.filter(function (s) { return s.selected; }).length;
+  }
+
+  // ---- Extract caption text from a figure element ----
+  function extractCaption(figEl) {
+    // Quarto 1.4+: figcaption.quarto-float-caption
+    var cap = figEl.querySelector("figcaption.quarto-float-caption, figcaption.figure-caption, .quarto-caption, figcaption");
+    if (cap) return cap.textContent.trim();
+    // Fallback: aria-describedby
+    var inner = figEl.querySelector("[aria-describedby]");
+    if (inner) {
+      var descId = inner.getAttribute("aria-describedby");
+      var desc = document.getElementById(descId);
+      if (desc) return desc.textContent.trim();
+    }
+    // fig-cap-location: margin — caption is in a .column-margin sibling of the
+    // figure or its parent wrapper (Quarto places it outside the fig element).
+    var searchRoot = figEl.parentElement || figEl;
+    var sibling = searchRoot.nextElementSibling;
+    for (var tries = 0; tries < 3 && sibling; tries++) {
+      if (sibling.classList && sibling.classList.contains("column-margin")) {
+        var marginCap = sibling.querySelector("figcaption, p");
+        if (marginCap) return marginCap.textContent.trim();
+      }
+      sibling = sibling.nextElementSibling;
+    }
+    return "";
+  }
+
+  // ---- Extract code text from the details.code-fold preceding a cell-output-display ----
+  function extractCodeForCellOutput(cellOutput) {
+    var sibling = cellOutput.previousElementSibling;
+    while (sibling) {
+      if (sibling.tagName === "DETAILS") {
+        var codeEl = sibling.querySelector("code.sourceCode");
+        if (codeEl) return codeEl.textContent.trim();
+      }
+      sibling = sibling.previousElementSibling;
+    }
+    return "";
+  }
+
+  // ---- Find all figures on the page ----
+  function findFigures() {
+    var figs = [];
+    var plotCounter = 0;
+    var seenOutputs = new Set();
+
+    // Pass 1: named figures — Quarto wraps labeled chunks in div[id^="fig-"] or figure[id^="fig-"]
+    document.querySelectorAll("div[id^='fig-'], figure[id^='fig-']").forEach(function (node) {
+      var ancestorFig = node.closest("div.quarto-figure[id^='fig-'], figure[id^='fig-']");
+      if (ancestorFig && ancestorFig !== node) return; // skip subfigures
+      var cellOutput = node.closest(".cell-output-display");
+      if (cellOutput) seenOutputs.add(cellOutput);
+      figs.push({ element: node, id: node.id, caption: extractCaption(node), code_text: "" });
+    });
+
+    // Pass 2: unnamed figures — Quarto renders these as figure.figure inside .cell-output-display
+    // without any fig- id (only labeled chunks get ids).
+    document.querySelectorAll(".cell-output-display").forEach(function (cellOutput) {
+      if (seenOutputs.has(cellOutput)) return;
+      var fig = cellOutput.querySelector("figure, img.img-fluid");
+      if (!fig) return;
+      plotCounter++;
+      figs.push({
+        element: fig,
+        id: "fig-plot-" + plotCounter,
+        caption: extractCaption(fig),
+        code_text: extractCodeForCellOutput(cellOutput)
+      });
+    });
+
+    // Sort by DOM order and assign ordinals
+    figs.sort(function (a, b) {
+      return (a.element.compareDocumentPosition(b.element) & Node.DOCUMENT_POSITION_FOLLOWING) ? -1 : 1;
+    });
+    figs.forEach(function (f, i) { f.ordinal = i + 1; });
+
+    return figs;
+  }
+
+  // ---- Toolbar ----
+  var toolbar, statsEl;
+
+  function createToolbar() {
+    toolbar = document.createElement("div");
+    toolbar.id = "qfd-toolbar";
+    toolbar.className = "visible";
+
+    var title = document.createElement("h3");
+    title.textContent = "Figure Picker";
+    toolbar.appendChild(title);
+
+    statsEl = document.createElement("div");
+    statsEl.className = "qfd-stats";
+    toolbar.appendChild(statsEl);
+
+    var btnRow = document.createElement("div");
+    btnRow.className = "qfd-btn-row";
+
+    var btnSelectAll = document.createElement("button");
+    btnSelectAll.className = "qfd-btn";
+    btnSelectAll.textContent = "Select all";
+    btnSelectAll.onclick = selectAll;
+    btnRow.appendChild(btnSelectAll);
+
+    var btnDeselectAll = document.createElement("button");
+    btnDeselectAll.className = "qfd-btn";
+    btnDeselectAll.textContent = "Deselect all";
+    btnDeselectAll.onclick = deselectAll;
+    btnRow.appendChild(btnDeselectAll);
+
+    var btnExport = document.createElement("button");
+    btnExport.className = "qfd-btn qfd-primary";
+    btnExport.textContent = "Export manifest";
+    btnExport.onclick = exportManifest;
+    btnRow.appendChild(btnExport);
+
+    var btnClear = document.createElement("button");
+    btnClear.className = "qfd-btn qfd-danger";
+    btnClear.textContent = "Clear all";
+    btnClear.onclick = clearAll;
+    btnRow.appendChild(btnClear);
+
+    var btnDone = document.createElement("button");
+    btnDone.className = "qfd-btn";
+    btnDone.textContent = "Done";
+    btnDone.onclick = exitSelectMode;
+    btnRow.appendChild(btnDone);
+
+    toolbar.appendChild(btnRow);
+    document.body.appendChild(toolbar);
+  }
+
+  function updateStats() {
+    var figs = findFigures();
+    var pageData = loadPageData();
+    var onPageSelected = 0;
+    figs.forEach(function (f) {
+      if (pageData.figures[f.id] && pageData.figures[f.id].selected) onPageSelected++;
+    });
+    var totalSelected = countSelected();
+    statsEl.innerHTML =
+      "This page: <strong>" + onPageSelected + "/" + figs.length + "</strong> selected" +
+      "<br>Total across all pages: <strong>" + totalSelected + "</strong>";
+  }
+
+  // ---- Per-figure checkboxes ----
+  function addCheckboxes() {
+    var figs = findFigures();
+    var pageData = loadPageData();
+
+    figs.forEach(function (f) {
+      var el = f.element;
+      // Wrap figure if not already wrapped
+      if (el.parentElement && el.parentElement.classList.contains("qfd-fig-wrapper")) {
+        var wrapper = el.parentElement;
+      } else {
+        var wrapper = document.createElement("div");
+        wrapper.className = "qfd-fig-wrapper";
+        el.parentNode.insertBefore(wrapper, el);
+        wrapper.appendChild(el);
+      }
+
+      // Skip if checkbox already added
+      if (wrapper.querySelector(".qfd-fig-checkbox")) return;
+
+      var cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.className = "qfd-fig-checkbox";
+      cb.title = f.id + (f.caption ? " — " + f.caption : "");
+
+      // Restore saved state
+      var saved = pageData.figures[f.id];
+      cb.checked = saved && saved.selected;
+      if (cb.checked) wrapper.classList.add("qfd-selected");
+
+      cb.addEventListener("change", function () {
+        var data = loadPageData();
+        if (!data.figures[f.id]) {
+          data.figures[f.id] = { caption: f.caption, ordinal: f.ordinal, code_text: f.code_text || "" };
+        }
+        data.figures[f.id].selected = cb.checked;
+        data.figures[f.id].caption = f.caption;
+        data.figures[f.id].ordinal = f.ordinal;
+        data.figures[f.id].code_text = f.code_text || "";
+        savePageData(data);
+        if (cb.checked) wrapper.classList.add("qfd-selected");
+        else wrapper.classList.remove("qfd-selected");
+        updateStats();
+      });
+
+      wrapper.appendChild(cb);
+    });
+  }
+
+  // ---- Toolbar actions ----
+  function selectAll() {
+    var figs = findFigures();
+    var data = loadPageData();
+    figs.forEach(function (f) {
+      if (!data.figures[f.id]) data.figures[f.id] = {};
+      data.figures[f.id].selected = true;
+      data.figures[f.id].caption = f.caption;
+      data.figures[f.id].ordinal = f.ordinal;
+      data.figures[f.id].code_text = f.code_text || "";
+    });
+    savePageData(data);
+    refreshUI();
+  }
+
+  function deselectAll() {
+    var figs = findFigures();
+    var data = loadPageData();
+    figs.forEach(function (f) {
+      if (!data.figures[f.id]) data.figures[f.id] = {};
+      data.figures[f.id].selected = false;
+    });
+    savePageData(data);
+    refreshUI();
+  }
+
+  function clearAll() {
+    if (!confirm("Clear ALL selections across ALL pages?")) return;
+    for (var i = localStorage.length - 1; i >= 0; i--) {
+      var key = localStorage.key(i);
+      if (key && key.indexOf(STORAGE_PREFIX) === 0) localStorage.removeItem(key);
+    }
+    refreshUI();
+  }
+
+  function exportManifest() {
+    var selections = gatherAllSelections();
+    var selectedOnly = selections.filter(function (s) { return s.selected; });
+    var manifest = {
+      version: MANIFEST_VERSION,
+      exported_at: new Date().toISOString(),
+      total_selected: selectedOnly.length,
+      selections: selectedOnly
+    };
+    var json = JSON.stringify(manifest, null, 2);
+    var blob = new Blob([json], { type: "application/json" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "figure-manifest.json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    updateStats();
+  }
+
+  function exitSelectMode() {
+    var url = new URL(window.location.href);
+    url.searchParams.delete("select");
+    window.location.href = url.href;
+  }
+
+  function refreshUI() {
+    // Remove existing checkboxes and re-add
+    document.querySelectorAll(".qfd-fig-checkbox").forEach(function (cb) { cb.remove(); });
+    document.querySelectorAll(".qfd-fig-wrapper").forEach(function (w) {
+      w.classList.remove("qfd-selected");
+    });
+    addCheckboxes();
+    updateStats();
+  }
+
+  // ---- Init ----
+  function init() {
+    createToolbar();
+    addCheckboxes();
+    updateStats();
+  }
+
+  if (document.readyState !== "loading") init();
+  else document.addEventListener("DOMContentLoaded", init);
+})();
+</script>

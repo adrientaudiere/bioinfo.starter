@@ -249,14 +249,12 @@ tar_plan(
           here::here("data/data_intermediate/mcrA_seq_wo_primers/"),
           paired_end = FALSE
         )),
-        "Forward sequences" = ddF,
-        "Paired sequences" = seq_tab_Pairs,
-        "Forward sequences without chimera" = seqtab_wo_chimera,
-        "Forward sequences wo chimera (+200 bp)" = seqtab,
+        "Fw seq" = ddF,
+        "Paired seq" = seq_tab_Pairs,
+        "Fw seq without chimera" = seqtab_wo_chimera,
+        "Fw seq wo chimera (+200 bp)" = seqtab,
         "ASV table" = data_phyloseq,
-        "OTU after vsearch reclustering at 97%" = d_vs,
-        "OTU vs + rarefaction by sequencing depth" = d_vs_rarefy
-      )
+        "OTU" = d_vs      )
     )
   ),
   tar_target(
@@ -264,9 +262,7 @@ tar_plan(
     track_wkflow_samples(
       list(
         "ASV table" = data_phyloseq,
-        "OTU after vsearch reclustering at 97%" = d_vs,
-        "OTU vs + rarefaction by sequencing depth" = d_vs_rarefy
-      )
+        "OTU" = d_vs      )
     )
   ),
 

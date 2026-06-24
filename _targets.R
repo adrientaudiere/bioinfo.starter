@@ -1,9 +1,11 @@
 library("conflicted")
 library("MiscMetabar")
+library("dada2")
 library("targets")
 library("tarchetypes")
 library("here")
 library("autometric")
+devtools::load_all("~/Nextcloud/IdEst/Projets/pqverse/pqverse_pkg/tidypq")
 
 if (tar_active()) {
   log_start(
@@ -27,9 +29,8 @@ seq_len_min <- 200
 fw_primer_sequences <- "CCCTACGGGGTGCASCAG"
 rev_primer_sequences <- "GGACTACVSGGGTATCTAAT"
 n_threads <- 3
-refseq_file_name <- "KSGP_v3.1_with_tax.fasta"
-refseq_file_name_lca <- "KSGP_v3.1_with_tax_lca.fasta"
-refseq_file_name_ARCHEAE <- "KSGP_v3.1_with_tax_ARCHEAE.fasta"
+refseq_file_name <- "KSGP_v3.1.fasta"
+refseq_file_name_ARCHEAE <- "KSGP_v3.1_ARCHEAE.fasta"
 sam_data_file_name <- "sam_data.csv"
 sample_col_name <- "Samples_names"
 set.seed(22)
@@ -40,12 +41,6 @@ tar_plan(
   tar_target(
     name = file_sam_data_csv,
     command = here("data/data_raw/metadata", sam_data_file_name),
-    format = "file"
-  ),
-
-  tar_target(
-    name = file_refseq_taxo_lca,
-    command = here("data/data_raw/refseq/", refseq_file_name_lca),
     format = "file"
   ),
 
@@ -230,21 +225,38 @@ tar_plan(
 
   tar_target(
     tax_tab,
-    assignTaxonomy(
-      seqs = seqtab,
-      refFasta = file_refseq_taxo_ARCHEAE,
-      minBoot = 50,
-      taxLevels = c(
+    {
+      seqs_to_assign <- Biostrings::DNAStringSet(colnames(seqtab))
+      names(seqs_to_assign) <- colnames(seqtab)
+      sintax_res <- assign_sintax(
+        seq2search = seqs_to_assign,
+        ref_fasta = file_refseq_taxo_ARCHEAE,
+        behavior = "return_matrix",
+        nproc = n_threads,
+        min_bootstrap = 0.5,
+        taxa_ranks = c(
+          "Kingdom",
+          "Phylum",
+          "Class",
+          "Order",
+          "Family",
+          "Genus",
+          "Species"
+        )
+      )
+      rank_cols <- c(
         "Kingdom",
-        "Phyla",
+        "Phylum",
         "Class",
         "Order",
         "Family",
         "Genus",
         "Species"
-      ),
-      multithread = n_threads
-    )
+      )
+      tax_val <- as.matrix(sintax_res$taxo_value[, rank_cols, drop = FALSE])
+      rownames(tax_val) <- sintax_res$taxo_value$taxa_names
+      tax_val
+    }
   ),
 
   ##> Create the phyloseq object 'data_asv' with
@@ -267,21 +279,9 @@ tar_plan(
   ),
 
   tar_target(
-    d_asv_lca,
+    d_asv_with_neg_control,
     add_new_taxonomy_pq(
       data_phyloseq,
-      ref_fasta = file_refseq_taxo_lca,
-      method = "sintax",
-      suffix = "_KSGP_lca",
-      min_bootstrap = 0.5,
-      nproc = n_threads
-    )
-  ),
-
-  tar_target(
-    d_asv,
-    add_new_taxonomy_pq(
-      d_asv_lca,
       ref_fasta = file_refseq_taxo,
       method = "sintax",
       suffix = "_KSGP",
@@ -289,7 +289,30 @@ tar_plan(
       nproc = n_threads
     )
   ),
+  tar_target(d_asv_wo_neg_control, {
+    temp_d <- d_asv_with_neg_control
+    temp_d@sam_data$is_neg_control <-
+      ifelse(
+        grepl("Control", d_asv_with_neg_control@sam_data$Numeric_code),
+        TRUE,
+        FALSE
+      )
+    tidypq::neg_control_clean_pq(temp_d, is_neg_control)
+  }),
 
+  tar_target(d_asv_wo_chimera_vs, chimera_removal_vs(d_asv_wo_neg_control)),
+
+  tar_target(d_asv, {
+    all_primers <- c(
+      archaea_16S_fwd = "CCCTACGGGGTGCASCAG",
+      archaea_16S_rev = "GGACTACVSGGGTATCTAAT",
+      mcrA_fwd = "GGTGGTGTMGGDTTCACMCARTA",
+      mcrA_rev = "CGTTCATBGCGTAGTTVGGRTAGT",
+      pmoA_fwd = "GGNGACTGGGACTTCTGG",
+      pmoA_rev = "CCGGMGCAACGTCYTTACC"
+    )
+    filter_taxa_primer_pq(d_asv_wo_chimera_vs, all_primers)
+  }),
   ##> Create post-clustering ASV into OTU using vsearch
   tar_target(
     d_vs,
@@ -306,6 +329,18 @@ tar_plan(
     d_vs_mumu_rarefy,
     rarefy_even_depth(d_vs_mumu, sample.size = 2000)
   ),
+  tar_target(
+    d_asv_Arch,
+    tidypq::filter_taxa_pq(d_asv, Kingdom_KSGP == "Archaea")
+  ),
+  tar_target(
+    d_vs_Arch,
+    tidypq::filter_taxa_pq(d_vs, Kingdom_KSGP == "Archaea")
+  ),
+  tar_target(
+    d_vs_mumu_Arch,
+    tidypq::filter_taxa_pq(d_vs_mumu, Kingdom_KSGP == "Archaea")
+  ),
 
   ##> Create the phyloseq object 'd_asv' with
   tar_target(
@@ -320,13 +355,20 @@ tar_plan(
           here::here("data/data_intermediate/seq_wo_primers/"),
           paired_end = FALSE
         )),
-        "Forward sequences" = ddF,
-        "Paired sequences" = seq_tab_Pairs,
-        "Forward sequences without chimera" = seqtab_wo_chimera,
-        "Forward sequences wo chimera (+200 bp)" = seqtab,
-        "ASV denoising" = d_asv,
-        "OTU after vsearch reclustering at 97%" = d_vs,
-        "OTU vs after mumu cleaning algorithm" = d_vs_mumu,
+        "Fw seq" = ddF,
+        "Paired seq" = seq_tab_Pairs,
+        "Fw seq without chimera" = seqtab_wo_chimera,
+        "Fw seq wo chimera (+200 bp)" = seqtab,
+        "ASV table with neg control" = d_asv_with_neg_control,
+        "ASV table without neg control" = d_asv_wo_neg_control,
+        "ASV table wo chimera vs" = d_asv_wo_chimera_vs,
+        "ASV table without primer contamination" = d_asv,
+        "ASV table" = d_asv,
+        "ASV table Archaea" = d_asv_Arch,
+        "OTU" = d_vs,
+        "OTU Archaea" = d_vs_Arch,
+        "OTU mumu" = d_vs_mumu,
+        "OTU mumu Archaea" = d_vs_mumu_Arch,
         "OTU vs + mumu + rarefaction by sequencing depth" = d_vs_mumu_rarefy
       )
     )
@@ -335,10 +377,12 @@ tar_plan(
     track_by_samples,
     track_wkflow_samples(
       list(
-        "ASV denoising" = d_asv,
-        "OTU after vsearch reclustering at 97%" = d_vs,
-        "OTU vs after mumu cleaning algorithm" = d_vs_mumu,
-        "OTU vs + mumu + rarefaction by sequencing depth" = d_vs_mumu_rarefy
+        "ASV table" = d_asv,
+        "ASV table Archaea" = d_asv_Arch,
+        "OTU" = d_vs,
+        "OTU Archaea" = d_vs_Arch,
+        "OTU mumu" = d_vs_mumu,
+        "OTU mumu Archaea" = d_vs_mumu_Arch
       )
     )
   ),

@@ -1,5 +1,9 @@
 project:
   type: website
+  render:
+    - "*.qmd"
+    - "analysis/"
+    - "!R/"
 format:
   html:
     theme: custom.scss
@@ -18,7 +22,7 @@ format:
     tertiary-color: "#c8a734"
     grey-bg-color: "#faefd1"
     self-contained: true
-    # include-in-header:
+    include-in-header: "assets/select-figures.html"
     include-after-body: "assets/footer.html"
     template-partials: "/assets/title-block.html"
     code-fold: true

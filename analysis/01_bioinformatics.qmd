@@ -68,7 +68,8 @@ tar_glimpse(script = here::here("_targets.R"), targets_only = TRUE, callr_argume
 ## Phyloseq object
 
 ```{r}
-d_16S <- clean_pq(tar_read("d_vs_mumu", store = here::here("_targets/")))
+d_16S <- clean_pq(tar_read("d_vs_mumu_Arch", store = here::here("_targets/")))
+d_16S <- simplify_taxo(d_16S, pattern_to_NA = "_X+$|_sp\\.$")
 ```
 
 ```{r}
@@ -102,11 +103,11 @@ d_16S <- MiscMetabar::chimera_removal_vs(d_16S)
 ## Control samples
 
 ```{r}
-d_16S@sam_data$is_neg_control <- ifelse(grepl("Control", d_16S@sam_data$Numeric_code), TRUE, FALSE)
+d_16S_wo_neg_control <- tar_read(d_vs_wo_neg_control, store = here::here("_targets/"))
+d_16S_wo_neg_control@sam_data$is_neg_control <- 
+  ifelse(grepl("Control", d_16S_wo_neg_control@sam_data$Numeric_code), TRUE, FALSE)
 
-tidypq::neg_control_diag_pq(d_16S, is_neg_control)
-
-d_16S_wo_neg_control <- tidypq::neg_control_clean_pq(d_16S, is_neg_control)
+tidypq::neg_control_diag_pq(d_d_16S_wo_neg_control16S, is_neg_control)
 ```
 
 
